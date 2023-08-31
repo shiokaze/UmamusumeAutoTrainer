@@ -20,13 +20,13 @@ git clone https://github.com/shiokaze/UmamusumeAutoTrainer
 ```
 ##### 安装依赖
 
-建议使用python3.10
+建议使用python3.10.9
 
 ```commandline
 pip install -r requirements.txt
 ```
-#### 方式B. 下载一键包（暂无）
-在release页面下载zip文件并解压
+#### 方式B. 下载一键包
+在[release页面](https://github.com/shiokaze/UmamusumeAutoTrainer/releases)下载最新zip文件并解压 
 
 ### 2. 配置
 
@@ -53,6 +53,8 @@ bot:
 ```
 py main.py
 ```
+
+如果使用一键包，双击运行run.ps1即可。如果打开是记事本，右键文件打开方式选择powershell运行
 
 控制台显示以下内容即为启动成功
 ```commandline
