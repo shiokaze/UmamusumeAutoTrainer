@@ -20,7 +20,7 @@ git clone https://github.com/shiokaze/UmamusumeAutoTrainer
 ##### 安装依赖
 
 1. 安装python3.10.9，[下载地址](https://www.python.org/downloads/release/python-3109/)
-2. 双击运行install.ps1, 如果打开是记事本，右键文件打开方式选择powershell运行
+2. 双击运行install.ps1, 如果打开是记事本，右键文件打开方式选择powershell运行, 启动时需要保证当前目录下没有venv文件夹
 
 
 ### 2. 配置
