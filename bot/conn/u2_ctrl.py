@@ -1,4 +1,5 @@
 import time
+import random
 
 import cv2
 import uiautomator2 as u2
@@ -41,25 +42,30 @@ class U2AndroidController(AndroidController):
 
     # ===== ctrl =====
 
-    def click_by_point(self, point: ClickPoint):
+    def click_by_point(self, point: ClickPoint, random_offset=True):
         if self.recent_point is not None:
             if self.recent_point == point and time.time() - self.recent_operation_time < self.same_point_operation_interval:
                 log.warning("request for a same point too frequently")
                 return
         if point.target_type == ClickPointType.CLICK_POINT_TYPE_COORDINATE:
-            self.click(point.coordinate.x, point.coordinate.y, name=point.desc)
+            self.click(point.coordinate.x, point.coordinate.y, name=point.desc, random_offset=random_offset)
         elif point.target_type == ClickPointType.CLICK_POINT_TYPE_TEMPLATE:
             cur_screen = self.get_screen(to_gray=True)
             if point.template.image_match_config.match_mode == ImageMatchMode.IMAGE_MATCH_MODE_TEMPLATE_MATCH:
                 match_result = template_match(cur_screen, point.template.template_image)
                 if match_result.find_match:
-                    self.click(match_result.center_point[0], match_result.center_point[1])
+                    self.click(match_result.center_point[0], match_result.center_point[1], random_offset=random_offset)
         self.recent_point = point
         self.recent_operation_time = time.time()
 
-    def click(self, x, y, name=""):
+    def click(self, x, y, name="", random_offset=True):
         if name != "":
             log.debug("click >> " + name)
+        if random:
+            offset_x = random.randint(-5, 5)
+            offset_y = random.randint(-5, 5)
+            x += offset_x
+            y += offset_y
         _ = self.execute_adb_shell("shell input tap " + str(x) + " " + str(y), True)
         time.sleep(CONFIG.bot.auto.adb.delay)
 
