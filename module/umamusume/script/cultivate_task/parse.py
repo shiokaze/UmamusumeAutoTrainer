@@ -4,7 +4,7 @@ from difflib import SequenceMatcher
 import cv2
 import numpy as np
 
-from bot.recog.image_matcher import image_match
+from bot.recog.image_matcher import image_match, compare_color_equal
 from bot.recog.ocr import ocr_line, find_similar_text
 from module.umamusume.asset.race_data import RACE_LIST
 from module.umamusume.context import UmamusumeContext, SupportCardInfo
@@ -131,12 +131,11 @@ def trans_attribute_value(text: str, ctx: UmamusumeContext, train_type: Training
         return int(text)
 
 
-
 def parse_umamusume_remain_stamina_value(ctx: UmamusumeContext, img):
     sub_img_remain_stamina = img[160:161, 229:505]
     stamina_counter = 0
     for c in sub_img_remain_stamina[0]:
-        if not (np.all(c == (117, 117, 117)) or np.all(c == (118, 117, 118))):
+        if not compare_color_equal(c, [117, 117, 117]):
             stamina_counter += 1
     remain_stamina = int(stamina_counter / 276 * 100)
     ctx.cultivate_detail.turn_info.remain_stamina = remain_stamina
@@ -180,14 +179,14 @@ def parse_training_support_card(ctx: UmamusumeContext, img, train_type: Training
         favor_process_check_list = [support_card_icon[95, 16], support_card_icon[95, 20]]
         support_card_favor_process = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN
         for support_card_favor_process_pos in favor_process_check_list:
-            if np.all(support_card_favor_process_pos == (255, 235, 120)):
+            if compare_color_equal(support_card_favor_process_pos, [255, 235, 120]):
                 support_card_favor_process = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_4
-            elif np.all(support_card_favor_process_pos == (255, 173, 30)):
+            elif compare_color_equal(support_card_favor_process_pos, [255, 173, 30]):
                 support_card_favor_process = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_3
-            elif np.all(support_card_favor_process_pos == (162, 230, 30)):
+            elif compare_color_equal(support_card_favor_process_pos, [162, 230, 30]):
                 support_card_favor_process = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_2
-            elif (np.all(support_card_favor_process_pos == (42, 192, 255)) or
-                  np.all(support_card_favor_process_pos == (109, 108, 117))):
+            elif (compare_color_equal(support_card_favor_process_pos, [42, 192, 255]) or
+                  compare_color_equal(support_card_favor_process_pos, [109, 108, 117])):
                 support_card_favor_process = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_1
             if support_card_favor_process != SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN:
                 break
@@ -386,11 +385,6 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
         else:
             break
     return find
-
-
-
-
-
 
 
 

@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 from bot.base.common import ImageMatchMode
 from bot.base.resource import Template
@@ -42,3 +43,8 @@ def template_match(target, template, accuracy: float = 0.95) -> ImageMatchResult
     else:
         match_result.find_match = False
     return match_result
+
+
+def compare_color_equal(p: list, target: list, tolerance: int = 10) -> bool:
+    distance = np.sqrt(np.sum((np.array(target) - np.array(p)) ** 2))
+    return distance < tolerance

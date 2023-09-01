@@ -159,6 +159,7 @@ def script_cultivate_goal_race(ctx: UmamusumeContext):
 
 
 def script_cultivate_race_list(ctx: UmamusumeContext):
+    time.sleep(2)
     if ctx.cultivate_detail.turn_info is None:
         log.warning("回合信息未初始化")
         ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_MAIN_MENU)
@@ -173,7 +174,13 @@ def script_cultivate_race_list(ctx: UmamusumeContext):
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_MAIN_MENU)
             return
         if ctx.cultivate_detail.turn_info.turn_operation.turn_operation_type == TurnOperationType.TURN_OPERATION_TYPE_RACE:
-            img = ctx.current_screen
+            while True:
+                ctx.ctrl.swipe(x1=20, y1=850, x2=20, y2=1000, duration=200, name="")
+                img = cv2.cvtColor(ctx.ctrl.get_screen(), cv2.COLOR_BGR2RGB)
+                if not compare_color_equal(img[705, 701], [211, 209, 219]):
+                    time.sleep(1.5)
+                    break
+            img = ctx.ctrl.get_screen()
             while True:
                 selected = find_race(ctx, img, ctx.cultivate_detail.turn_info.turn_operation.race_id)
                 if selected:
@@ -182,9 +189,11 @@ def script_cultivate_race_list(ctx: UmamusumeContext):
                     time.sleep(1)
                     return
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                if np.all(img[1006, 701] != [211, 209, 219]):
+                if not compare_color_equal(img[1006, 701], [211, 209, 219]):
+                    log.warning("未找到目标赛事")
+                    ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_MAIN_MENU)
                     break
-                ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=850, duration=1000, name="")
+                ctx.ctrl.swipe(x1=20, y1=1000, x2=20, y2=850, duration=1000, name="")
                 time.sleep(1)
                 img = ctx.ctrl.get_screen()
         else:
@@ -276,7 +285,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
         while True:
             find_skill(ctx, img, learn_skill_list[i], learn_any_skill=False)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            if np.all(img[1006, 701] != [211, 209, 219]):
+            if not compare_color_equal(img[1006, 701], [211, 209, 219]):
                 break
             ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=660, duration=1000, name="")
             time.sleep(1)
@@ -284,7 +293,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
         while True:
             ctx.ctrl.swipe(x1=23, y1=620, x2=23, y2=1000, duration=200, name="")
             img = cv2.cvtColor(ctx.ctrl.get_screen(), cv2.COLOR_BGR2RGB)
-            if np.all(img[488, 701] != [211, 209, 219]):
+            if not compare_color_equal(img[488, 701], [211, 209, 219]):
                 time.sleep(1.5)
                 break
     time.sleep(1)
@@ -292,7 +301,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     while True:
         find_skill(ctx, img, [], learn_any_skill=True)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        if np.all(img[1006, 701] != [211, 209, 219]):
+        if not compare_color_equal(img[1006, 701], [211, 209, 219]):
             break
         ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=640, duration=1000, name="")
         time.sleep(1)
