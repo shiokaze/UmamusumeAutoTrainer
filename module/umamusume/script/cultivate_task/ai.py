@@ -96,11 +96,11 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
         trip = True
 
     rest = False
-    if ctx.cultivate_detail.turn_info.remain_stamina <= 40:
+    if ctx.cultivate_detail.turn_info.remain_stamina <= 45:
         rest = True
     elif (ctx.cultivate_detail.turn_info.date == 36 or ctx.cultivate_detail.turn_info.date == 60) and ctx.cultivate_detail.turn_info.remain_stamina < 65:
         rest = True
-    elif np.max(training_score) - np.average(training_score) < 0.1 and ctx.cultivate_detail.turn_info.remain_stamina < 50:
+    elif np.max(training_score) - np.average(training_score) < 0.2 and ctx.cultivate_detail.turn_info.remain_stamina < 50:
         rest = True
 
     if medic:
@@ -179,6 +179,9 @@ def get_basic_status_score(status: int) -> float:
             status -= 100
             result += status_score[i] * 100
         else:
+            if i - 1 > 11:
+                log.debug("识别错误")
+                return 0
             result += status * status_score[i - 1]
             break
     return result
