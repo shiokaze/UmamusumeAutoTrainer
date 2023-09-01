@@ -32,7 +32,10 @@ TITLE = [
     "战术",
     "目标粉丝数不足",
     "连续参赛",
-    "医务室确认"
+    "医务室确认",
+    "礼物箱",
+    "领取成功",
+    "解锁角色剧情",
 ]
 
 
@@ -96,5 +99,12 @@ def script_info(ctx: UmamusumeContext):
             ctx.ctrl.click_by_point(CULTIVATE_TOO_MUCH_RACE_WARNING_CONFIRM)
         if title_text == TITLE[20]:
             ctx.ctrl.click_by_point(CULTIVATE_OPERATION_COMMON_CONFIRM)
+        if title_text == TITLE[21]:
+            ctx.ctrl.click_by_point(RECEIVE_GIFT)
+        if title_text == TITLE[22]:
+            ctx.ctrl.click_by_point(RECEIVE_GIFT_SUCCESS_CLOSE)
+        if title_text == TITLE[23]:
+            ctx.ctrl.click_by_point(UNLOCK_STORY_TO_HOME_PAGE)
+
         time.sleep(1)
 

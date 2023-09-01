@@ -87,6 +87,8 @@ CULTIVATE_FACTOR_RECEIVE_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_CO
 HISTORICAL_RATING_UPDATE_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 1115), "历代评分更新-下一页", None)
 SCENARIO_RATING_UPDATE_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 1115), "历代评分更新-下一页", None)
 
-
+RECEIVE_GIFT = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(515, 1180), "礼物箱-一键领取", None)
+RECEIVE_GIFT_SUCCESS_CLOSE = ClickPoint(ClickPointType.CLICK_POINT_TYPE_TEMPLATE, BTN_CLOSE, None, "礼物箱-领取成功-关闭", None)
+UNLOCK_STORY_TO_HOME_PAGE = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 835), "解锁角色剧情-前往主页", None)
 
 
