@@ -51,8 +51,11 @@ def parse_date(img, ctx: UmamusumeContext) -> int:
     if month_text != DATE_MONTH[0]:
         date_id = DATE_YEAR.index(year_text) * 24 + DATE_MONTH.index(month_text)
     else:
-        sub_img_turn_to_race = cv2.copyMakeBorder(img[99:156, 13:140], 20, 20, 20, 20, cv2.BORDER_CONSTANT, None, (255, 255, 255))
+        sub_img_turn_to_race = cv2.copyMakeBorder(img[99:158, 13:140], 20, 20, 20, 20, cv2.BORDER_CONSTANT, None, (255, 255, 255))
         turn_to_race_text = ocr_line(sub_img_turn_to_race)
+        if turn_to_race_text == "比赛日":
+            log.debug("出道比赛日")
+            return 12
         turn_to_race_text = re.sub("\\D", "", turn_to_race_text)
         if turn_to_race_text == '':
             log.warning("出道战前日期识别异常")
