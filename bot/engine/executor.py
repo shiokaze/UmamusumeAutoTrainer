@@ -130,7 +130,7 @@ class Executor:
                 else:
                     log.debug("任务结束")
                     break
-                time.sleep(0.4)
+                time.sleep(0.5)
         except Exception:
             task.end_task(TaskStatus.TASK_STATUS_FAILED, EndTaskReason.SYSTEM_ERROR)
             traceback.print_exc()

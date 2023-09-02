@@ -70,16 +70,19 @@ class UmaAttribute:
 
 class TurnOperation:
     turn_operation_type: TurnOperationType
+    turn_operation_type_replace: TurnOperationType
     training_type: TrainingType
     race_id: int
 
     def __init__(self):
         self.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN
+        self.turn_operation_type_replace = TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN
         self.training_type = TrainingType.TRAINING_TYPE_UNKNOWN
         self.race_id = 0
 
     def log_turn_operation(self):
         log.info("本回合执行操作：%s", self.turn_operation_type.name)
+        log.info("本回合备选操作：%s", self.turn_operation_type_replace.name)
         if self.turn_operation_type == TurnOperationType.TURN_OPERATION_TYPE_TRAINING:
             log.info("训练类型：%s", self.training_type.name)
 
@@ -142,6 +145,8 @@ class CultivateContextDetail:
     learn_skill_selected: bool
     cultivate_finish: bool
     tactic_list: list[int]
+    debut_race_checked: bool
+    debut_race_win: bool
 
     def __init__(self):
         self.expect_attribute = None
@@ -153,6 +158,8 @@ class CultivateContextDetail:
         self.learn_skill_selected = False
         self.cultivate_finish = False
         self.tactic_list = []
+        self.debut_race_checked = False
+        self.debut_race_win = False
 
 
 class UmamusumeContext(BotContext):

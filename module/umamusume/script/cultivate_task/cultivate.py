@@ -95,6 +95,9 @@ def script_cultivate_training_select(ctx: UmamusumeContext):
                 parse_training_result(ctx, img, TrainingType(i + 1))
                 parse_training_support_card(ctx, img, TrainingType(i + 1))
         ctx.cultivate_detail.turn_info.parse_train_info_finish = True
+    if not ctx.cultivate_detail.turn_info.parse_main_menu_finish:
+        ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_MAIN_MENU)
+        return
 
 
 def script_main_menu(ctx: UmamusumeContext):
@@ -202,6 +205,9 @@ def script_cultivate_race_list(ctx: UmamusumeContext):
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 if not compare_color_equal(img[1006, 701], [211, 209, 219]):
                     log.warning("未找到目标赛事")
+                    # 没有合适的赛事就使用备用的操作
+                    if ctx.cultivate_detail.turn_info.turn_operation.race_id == 0:
+                        ctx.cultivate_detail.turn_info.turn_operation.turn_operation_type = ctx.cultivate_detail.turn_info.turn_operation.turn_operation_type_replace
                     ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_MAIN_MENU)
                     break
                 ctx.ctrl.swipe(x1=20, y1=1000, x2=20, y2=850, duration=1000, name="")
@@ -224,12 +230,11 @@ def script_cultivate_before_race(ctx: UmamusumeContext):
             p_check_tactic = tactic_check_point_list[3]
         if compare_color_equal(p_check_tactic, [170, 170, 170]):
             ctx.ctrl.click_by_point(BEFORE_RACE_CHANGE_TACTIC)
+            return
 
     if p_check_skip[0] < 200 and p_check_skip[1] < 200 and p_check_skip[2] < 200:
-        log.debug("跳过")
         ctx.ctrl.click_by_point(BEFORE_RACE_START)
     else:
-        log.debug("进入")
         ctx.ctrl.click_by_point(BEFORE_RACE_SKIP)
 
 

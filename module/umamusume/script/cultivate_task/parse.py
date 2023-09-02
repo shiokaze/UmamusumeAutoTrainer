@@ -69,7 +69,18 @@ def parse_cultivate_main_menu(ctx: UmamusumeContext, img):
     parse_umamusume_remain_stamina_value(ctx, img)
     parse_umamusume_basic_ability_value(ctx, img)
     parse_motivation(ctx, img)
+    if not ctx.cultivate_detail.debut_race_checked:
+        parse_debut_race(ctx, img)
     ctx.cultivate_detail.turn_info.parse_main_menu_finish = True
+
+
+def parse_debut_race(ctx: UmamusumeContext, img):
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    ctx.cultivate_detail.debut_race_checked = True
+    if image_match(img, REF_DEBUT_RACE_NOT_WIN).find_match:
+        ctx.cultivate_detail.debut_race_win = False
+    else:
+        ctx.cultivate_detail.debut_race_win = True
 
 
 def parse_motivation(ctx: UmamusumeContext, img):
@@ -334,18 +345,20 @@ def parse_cultivate_event(ctx: UmamusumeContext, img) -> (str, list[int]):
     return event_name, event_selector_list
 
 
-def find_race(ctx: UmamusumeContext, img,  race_id: int) -> bool:
+def find_race(ctx: UmamusumeContext, img,  race_id: int = 0) -> bool:
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     target_race_template = RACE_LIST[race_id][2]
     while True:
         match_result = image_match(img, REF_RACE_LIST_DETECT_LABEL)
         if match_result.find_match:
             pos = match_result.matched_area
-            race_name_img = img[pos[0][1] - 60:pos[1][1] + 25, pos[0][0] - 250: pos[1][0] - 75]
-            if target_race_template is not None:
-                if image_match(race_name_img, target_race_template).find_match:
-                    ctx.ctrl.click(match_result.center_point[0], match_result.center_point[1], "选择比赛：" + str(RACE_LIST[race_id][1]))
-                    return True
+            pos_center = match_result.center_point
+            if 685 < pos_center[1] < 1110:
+                race_name_img = img[pos[0][1] - 60:pos[1][1] + 25, pos[0][0] - 250: pos[1][0] + 400]
+                if target_race_template is not None:
+                    if image_match(race_name_img, target_race_template).find_match:
+                        ctx.ctrl.click(match_result.center_point[0], match_result.center_point[1], "选择比赛：" + str(RACE_LIST[race_id][1]))
+                        return True
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
                 match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
         else:

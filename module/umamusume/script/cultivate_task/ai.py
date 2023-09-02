@@ -8,6 +8,8 @@ log = logger.get_logger(__name__)
 def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
 
     turn_operation = TurnOperation()
+    if not ctx.cultivate_detail.debut_race_win:
+        turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_RACE
 
     attribute_result = get_training_basic_attribute_score(ctx.cultivate_detail.turn_info,
                                                           ctx.cultivate_detail.expect_attribute)
@@ -77,13 +79,14 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
                               support_card_weight + normalized_training_level_result[i] * training_level_weight)
     log.debug("训练综合得分：" + str(training_score))
 
-    # 参加比赛
-    extra_race_this_turn = [i for i in ctx.cultivate_detail.extra_race_list if str(i)[:2]
-                            == str(ctx.cultivate_detail.turn_info.date)]
-    if len(extra_race_this_turn) != 0:
-        turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_RACE
-        turn_operation.race_id = extra_race_this_turn[0]
-        return turn_operation
+    # 出道战成功才能参加比赛
+    if ctx.cultivate_detail.debut_race_win:
+        extra_race_this_turn = [i for i in ctx.cultivate_detail.extra_race_list if str(i)[:2]
+                                == str(ctx.cultivate_detail.turn_info.date)]
+        if len(extra_race_this_turn) != 0:
+            turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_RACE
+            turn_operation.race_id = extra_race_this_turn[0]
+            return turn_operation
 
     medic = False
     if ctx.cultivate_detail.turn_info.medic_room_available and ctx.cultivate_detail.turn_info.remain_stamina <= 60:
@@ -103,21 +106,25 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
     elif np.max(training_score) - np.average(training_score) < 0.2 and ctx.cultivate_detail.turn_info.remain_stamina < 50:
         rest = True
 
-    if medic:
-        turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_MEDIC
-        return turn_operation
+    expect_operation_type = TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN
 
-    if trip:
-        turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_TRIP
-        return turn_operation
+    if medic and expect_operation_type is TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN:
+        expect_operation_type = TurnOperationType.TURN_OPERATION_TYPE_MEDIC
 
-    if rest:
-        turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_REST
-        return turn_operation
+    if trip and expect_operation_type is TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN:
+        expect_operation_type = TurnOperationType.TURN_OPERATION_TYPE_TRIP
 
-    turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_TRAINING
-    turn_operation.training_type = TrainingType(training_score.index(np.max(training_score))+1)
+    if rest and expect_operation_type is TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN:
+        expect_operation_type = TurnOperationType.TURN_OPERATION_TYPE_REST
 
+    if expect_operation_type is TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN:
+        expect_operation_type = TurnOperationType.TURN_OPERATION_TYPE_TRAINING
+        turn_operation.training_type = TrainingType(training_score.index(np.max(training_score))+1)
+
+    if turn_operation.turn_operation_type != TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN:
+        turn_operation.turn_operation_type_replace = expect_operation_type
+    else:
+        turn_operation.turn_operation_type = expect_operation_type
     return turn_operation
 
 

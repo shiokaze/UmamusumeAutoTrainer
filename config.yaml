@@ -3,7 +3,7 @@ bot:
   auto:
     adb:
       device_name: "127.0.0.1:16384"
-      delay: 0
+      delay: 0.5
     cpu_alloc: 4
 
 
