@@ -69,8 +69,7 @@ def parse_cultivate_main_menu(ctx: UmamusumeContext, img):
     parse_umamusume_remain_stamina_value(ctx, img)
     parse_umamusume_basic_ability_value(ctx, img)
     parse_motivation(ctx, img)
-    if not ctx.cultivate_detail.debut_race_win:
-        parse_debut_race(ctx, img)
+    parse_debut_race(ctx, img)
     ctx.cultivate_detail.turn_info.parse_main_menu_finish = True
 
 
