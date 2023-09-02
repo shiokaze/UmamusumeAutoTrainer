@@ -10,6 +10,10 @@ log = logger.get_logger(__name__)
 
 
 def before_hook(ctx: UmamusumeContext):
+    pass
+
+
+def after_hook(ctx: UmamusumeContext):
     img = cv2.cvtColor(ctx.current_screen, cv2.COLOR_BGR2GRAY)
     if image_match(img, BTN_SKIP).find_match:
         ctx.ctrl.click_by_point(SKIP)
@@ -17,9 +21,6 @@ def before_hook(ctx: UmamusumeContext):
         ctx.ctrl.click_by_point(SCENARIO_SKIP_OFF)
     if image_match(img, BTN_SKIP_SPEED_1).find_match:
         ctx.ctrl.click_by_point(SCENARIO_SKIP_SPEED_1)
-
-
-def after_hook(ctx: UmamusumeContext):
     if ctx.cultivate_detail and ctx.cultivate_detail.turn_info is not None:
         if ctx.cultivate_detail.turn_info.parse_train_info_finish and ctx.cultivate_detail.turn_info.parse_main_menu_finish:
             if not ctx.cultivate_detail.turn_info.turn_info_logged:
