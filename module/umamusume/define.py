@@ -59,6 +59,9 @@ class SupportCardUma(Enum):
     SUPPORT_CARD_UMA_REPORTER = 2
 
 
-
-
-
+class RaceTacticType(Enum):
+    RACE_TACTIC_TYPE_UNKNOWN = 0
+    RACE_TACTIC_TYPE_BACK = 1
+    RACE_TACTIC_TYPE_MIDDLE = 2
+    RACE_TACTIC_TYPE_FRONT = 3
+    RACE_TACTIC_TYPE_ESCAPE = 4

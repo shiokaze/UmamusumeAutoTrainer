@@ -24,6 +24,11 @@ CULTIVATE_GOAL_RACE_INTER_3 = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDIN
 
 BEFORE_RACE_CHANGE_TACTIC = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(575, 745), "比赛前-更改战术", None)
 BEFORE_RACE_CHANGE_TACTIC_4 = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(585, 780), "更改战术-领跑", None)
+BEFORE_RACE_CHANGE_TACTIC_3 = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(435, 780), "更改战术-跟前", None)
+BEFORE_RACE_CHANGE_TACTIC_2 = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(285, 780), "更改战术-居中", None)
+BEFORE_RACE_CHANGE_TACTIC_1 = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(125, 780), "更改战术-后追", None)
+TACTIC_LIST = [BEFORE_RACE_CHANGE_TACTIC_1, BEFORE_RACE_CHANGE_TACTIC_2, BEFORE_RACE_CHANGE_TACTIC_3, BEFORE_RACE_CHANGE_TACTIC_4]
+
 BEFORE_RACE_CHANGE_TACTIC_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(515, 920), "更改战术-确认", None)
 BEFORE_RACE_START = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(465, 1175), "比赛前-开始比赛", None)
 BEFORE_RACE_SKIP = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(255, 1175), "比赛前-跳过比赛", None)

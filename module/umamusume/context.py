@@ -141,6 +141,7 @@ class CultivateContextDetail:
     learn_skill_done: bool
     learn_skill_selected: bool
     cultivate_finish: bool
+    tactic_list: list[int]
 
     def __init__(self):
         self.expect_attribute = None
@@ -151,6 +152,7 @@ class CultivateContextDetail:
         self.learn_skill_done = False
         self.learn_skill_selected = False
         self.cultivate_finish = False
+        self.tactic_list = []
 
 
 class UmamusumeContext(BotContext):
@@ -173,6 +175,7 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
         detail.follow_support_card_level = task.detail.follow_support_card_level
         detail.extra_race_list = task.detail.extra_race_list
         detail.learn_skill_list = task.detail.learn_skill_list
+        detail.tactic_list = task.detail.tactic_list
         ctx.cultivate_detail = detail
     return ctx
 

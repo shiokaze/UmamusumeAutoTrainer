@@ -155,6 +155,17 @@ def script_cultivate_event(ctx: UmamusumeContext):
 
 
 def script_cultivate_goal_race(ctx: UmamusumeContext):
+    img = ctx.current_screen
+    current_date = parse_date(img, ctx)
+    if current_date == -1:
+        log.warning("解析日期失败")
+        return
+    # 如果进入新的一回合，记录旧的回合信息并创建新的
+    if ctx.cultivate_detail.turn_info is None or current_date != ctx.cultivate_detail.turn_info.date:
+        if ctx.cultivate_detail.turn_info is not None:
+            ctx.cultivate_detail.turn_info_history.append(ctx.cultivate_detail.turn_info)
+        ctx.cultivate_detail.turn_info = TurnInfo()
+        ctx.cultivate_detail.turn_info.date = current_date
     ctx.ctrl.click_by_point(CULTIVATE_GOAL_RACE_INTER_1)
 
 
@@ -203,17 +214,22 @@ def script_cultivate_race_list(ctx: UmamusumeContext):
 def script_cultivate_before_race(ctx: UmamusumeContext):
     img = cv2.cvtColor(ctx.current_screen, cv2.COLOR_BGR2RGB)
     p_check_skip = img[1175, 330]
-    p_check_tactic_1 = img[668, 480]
-    p_check_tactic_2 = img[668, 542]
-    p_check_tactic_3 = img[668, 600]
-    p_check_tactic_4 = img[668, 670]
 
-    if p_check_tactic_4[0] < 200 and p_check_tactic_4[1] < 200 and p_check_tactic_4[2] < 200:
-        ctx.ctrl.click_by_point(BEFORE_RACE_CHANGE_TACTIC)
+    date = ctx.cultivate_detail.turn_info.date
+    if date != -1:
+        tactic_check_point_list = [img[668, 480], img[668, 542], img[668, 600], img[668, 670]]
+        if date <= 72:
+            p_check_tactic = tactic_check_point_list[ctx.cultivate_detail.tactic_list[int((date-1)/24)] - 1]
+        else:
+            p_check_tactic = tactic_check_point_list[3]
+        if compare_color_equal(p_check_tactic, [170, 170, 170]):
+            ctx.ctrl.click_by_point(BEFORE_RACE_CHANGE_TACTIC)
 
     if p_check_skip[0] < 200 and p_check_skip[1] < 200 and p_check_skip[2] < 200:
+        log.debug("跳过")
         ctx.ctrl.click_by_point(BEFORE_RACE_START)
     else:
+        log.debug("进入")
         ctx.ctrl.click_by_point(BEFORE_RACE_SKIP)
 
 

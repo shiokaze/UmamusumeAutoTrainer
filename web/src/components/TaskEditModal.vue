@@ -104,6 +104,44 @@
               </div>
             </div>
             <div class="form-group">
+              <div>跑法选择</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="selectTactic1">第一年</label>
+                  <select v-model="selectedRaceTactic1" class="form-control" id="selectTactic1">
+                    <option :value=1>后追（追）</option>
+                    <option :value=2>居中（差）</option>
+                    <option :value=3>前列（先）</option>
+                    <option :value=4>领头（逃）</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="selectTactic2">第二年</label>
+                  <select v-model="selectedRaceTactic2" class="form-control" id="selectTactic2">
+                    <option :value=1>后追（追）</option>
+                    <option :value=2>居中（差）</option>
+                    <option :value=3>前列（先）</option>
+                    <option :value=4>领头（逃）</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="selectTactic3">第三年</label>
+                  <select v-model="selectedRaceTactic3" class="form-control" id="selectTactic3">
+                    <option :value=1>后追（追）</option>
+                    <option :value=2>居中（差）</option>
+                    <option :value=3>前列（先）</option>
+                    <option :value=4>领头（逃）</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
               <div class="row">
                 <div class="col">
                   <div class="form-group">
@@ -329,6 +367,13 @@ export default {
           race_list: [1701, 2303],
           skill: "",
           expect_attribute:[900, 800, 800, 300, 400]
+        },
+        {
+          id: 3,
+          name: "目白麦昆基础育成赛程",
+          race_list: [2203, 2401],
+          skill: "",
+          expect_attribute:[900, 800, 600, 400, 400]
         }
       ],
       expectSpeedValue : 800,
@@ -349,7 +394,10 @@ export default {
       selectedSupportCard: undefined,
       extraRace: [],
       skillLearn: "",
-      
+      selectedRaceTactic1: 4,
+      selectedRaceTactic2: 4,
+      selectedRaceTactic3: 4,
+  
     }
   },
   mounted() {
@@ -375,7 +423,8 @@ export default {
           "follow_support_card_name": this.selectedSupportCard.name,
           "follow_support_card_level": this.supportCardLevel,
           "extra_race_list": this.extraRace,
-          "learn_skill_list": learn_skill_list
+          "learn_skill_list": learn_skill_list,
+          "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3]
         },
         cron_job_info:{},
       }

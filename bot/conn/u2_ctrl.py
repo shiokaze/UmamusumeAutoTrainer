@@ -58,7 +58,7 @@ class U2AndroidController(AndroidController):
         self.recent_point = point
         self.recent_operation_time = time.time()
 
-    def click(self, x, y, name="", random_offset=True):
+    def click(self, x, y, name="", random_offset=True, max_x=720, max_y=1280):
         if name != "":
             log.debug("click >> " + name)
         if random:
@@ -66,6 +66,14 @@ class U2AndroidController(AndroidController):
             offset_y = random.randint(-5, 5)
             x += offset_x
             y += offset_y
+        if x >= max_x:
+            x = max_x-1
+        if y >= max_y:
+            y = max_y-1
+        if x < 0:
+            x = 1
+        if y <= 0:
+            y = 1
         _ = self.execute_adb_shell("shell input tap " + str(x) + " " + str(y), True)
         time.sleep(CONFIG.bot.auto.adb.delay)
 

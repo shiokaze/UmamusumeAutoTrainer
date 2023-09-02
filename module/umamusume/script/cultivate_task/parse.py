@@ -55,10 +55,12 @@ def parse_date(img, ctx: UmamusumeContext) -> int:
         turn_to_race_text = ocr_line(sub_img_turn_to_race)
         turn_to_race_text = re.sub("\\D", "", turn_to_race_text)
         if turn_to_race_text == '':
-            log.warning("出道站前日期识别异常")
+            log.warning("出道战前日期识别异常")
             return 12 - (len(ctx.cultivate_detail.turn_info_history) + 1)
         date_id = 12 - int(turn_to_race_text)
-
+        if date_id < 1:
+            log.warning("出道战前日期识别异常")
+            return 12 - (len(ctx.cultivate_detail.turn_info_history) + 1)
     return date_id
 
 

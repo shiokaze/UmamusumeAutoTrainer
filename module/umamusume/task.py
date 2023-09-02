@@ -9,6 +9,7 @@ class TaskDetail:
     follow_support_card_level: int
     extra_race_list = list[int]
     learn_skill_list = list[str]
+    tactic_list = list[int]
 
 
 class UmamusumeTask(Task):
@@ -37,6 +38,7 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.follow_support_card_name = attachment_data['follow_support_card_name']
     td.extra_race_list = attachment_data['extra_race_list']
     td.learn_skill_list = attachment_data['learn_skill_list']
+    td.tactic_list = attachment_data['tactic_list']
     # td.scenario_name = attachment_data['scenario_name']
     ut.detail = td
     return ut
