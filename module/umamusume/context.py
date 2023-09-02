@@ -146,6 +146,8 @@ class CultivateContextDetail:
     cultivate_finish: bool
     tactic_list: list[int]
     debut_race_win: bool
+    clock_use_limit: int
+    clock_used: int
 
     def __init__(self):
         self.expect_attribute = None
@@ -158,6 +160,8 @@ class CultivateContextDetail:
         self.cultivate_finish = False
         self.tactic_list = []
         self.debut_race_win = False
+        self.clock_use_limit = 0
+        self.clock_used = 0
 
 
 class UmamusumeContext(BotContext):
@@ -181,6 +185,7 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
         detail.extra_race_list = task.detail.extra_race_list
         detail.learn_skill_list = task.detail.learn_skill_list
         detail.tactic_list = task.detail.tactic_list
+        detail.clock_use_limit = task.detail.clock_use_limit
         ctx.cultivate_detail = detail
     return ctx
 

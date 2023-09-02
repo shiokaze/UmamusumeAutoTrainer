@@ -4,12 +4,13 @@ from bot.base.task import Task, TaskExecuteMode
 
 class TaskDetail:
     scenario_name: str
-    expect_attribute = list[int]
+    expect_attribute: list[int]
     follow_support_card_name: str
     follow_support_card_level: int
-    extra_race_list = list[int]
-    learn_skill_list = list[str]
-    tactic_list = list[int]
+    extra_race_list: list[int]
+    learn_skill_list: list[str]
+    tactic_list: list[int]
+    clock_use_limit: int
 
 
 class UmamusumeTask(Task):
@@ -39,6 +40,7 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.extra_race_list = attachment_data['extra_race_list']
     td.learn_skill_list = attachment_data['learn_skill_list']
     td.tactic_list = attachment_data['tactic_list']
+    td.clock_use_limit = attachment_data['clock_use_limit']
     # td.scenario_name = attachment_data['scenario_name']
     ut.detail = td
     return ut

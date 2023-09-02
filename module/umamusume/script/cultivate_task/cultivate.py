@@ -296,21 +296,21 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
         else:
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
         return
-    img = ctx.current_screen
     learn_skill_list: list
     if len(ctx.cultivate_detail.learn_skill_list) == 0:
         learn_skill_list = SKILL_LEARN_PRIORITY_LIST
     else:
         learn_skill_list = [ctx.cultivate_detail.learn_skill_list] + SKILL_LEARN_PRIORITY_LIST
     for i in range(len(learn_skill_list)):
+        log.debug("目标技能列表：%s, 优先级：%s", str(learn_skill_list[i]), str(i))
         while True:
+            img = ctx.ctrl.get_screen()
             find_skill(ctx, img, learn_skill_list[i], learn_any_skill=False)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             if not compare_color_equal(img[1006, 701], [211, 209, 219]):
                 break
             ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=660, duration=1000, name="")
             time.sleep(1)
-            img = ctx.ctrl.get_screen()
         while True:
             ctx.ctrl.swipe(x1=23, y1=620, x2=23, y2=1000, duration=200, name="")
             img = cv2.cvtColor(ctx.ctrl.get_screen(), cv2.COLOR_BGR2RGB)
@@ -318,15 +318,14 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
                 time.sleep(1.5)
                 break
     time.sleep(1)
-    img = ctx.ctrl.get_screen()
     while True:
+        img = ctx.ctrl.get_screen()
         find_skill(ctx, img, [], learn_any_skill=True)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         if not compare_color_equal(img[1006, 701], [211, 209, 219]):
             break
         ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=640, duration=1000, name="")
         time.sleep(1)
-        img = ctx.ctrl.get_screen()
     ctx.cultivate_detail.learn_skill_done = True
 
 

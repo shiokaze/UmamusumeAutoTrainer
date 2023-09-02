@@ -6,6 +6,7 @@ from bot.base.task import TaskStatus, EndTaskReason
 from bot.recog.image_matcher import image_match
 from bot.recog.ocr import ocr_line, find_similar_text
 from module.umamusume.asset.point import *
+from module.umamusume.asset.ui import INFO
 from module.umamusume.context import UmamusumeContext
 import bot.base.log as logger
 
@@ -59,7 +60,15 @@ def script_info(ctx: UmamusumeContext):
         if title_text == TITLE[2]:
             ctx.ctrl.click_by_point(NETWORK_ERROR_CONFIRM)
         if title_text == TITLE[3]:
-            ctx.ctrl.click_by_point(RACE_FAIL_CONTINUE_USE_CLOCK)
+            if ctx.prev_ui is INFO:
+                ctx.cultivate_detail.clock_used -= 1
+            if ctx.cultivate_detail.clock_use_limit > ctx.cultivate_detail.clock_used:
+                ctx.ctrl.click_by_point(RACE_FAIL_CONTINUE_USE_CLOCK)
+                ctx.cultivate_detail.clock_used += 1
+            else:
+                ctx.ctrl.click_by_point(RACE_FAIL_CONTINUE_CANCEL)
+            log.debug("闹钟限制%s,已使用%s", str(ctx.cultivate_detail.clock_use_limit),
+                      str(ctx.cultivate_detail.clock_used))
         if title_text == TITLE[4]:
             ctx.ctrl.click_by_point(GET_TITLE_CONFIRM)
         if title_text == TITLE[5]:

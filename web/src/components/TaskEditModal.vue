@@ -63,8 +63,14 @@
               </div>
               <div class="col">
                 <div class="form-group">
-                  <label for="selectSupportCardLevel">支援卡等级</label>
+                  <label for="selectSupportCardLevel">支援卡等级(大于或等于)</label>
                   <input v-model="supportCardLevel" type="number" class="form-control" id="selectSupportCardLevel" placeholder="">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="inputClockUseLimit">使用闹钟数量限制</label>
+                  <input v-model="clockUseLimit" type="number" class="form-control" id="inputClockUseLimit" placeholder="">
                 </div>
               </div>
             </div>
@@ -149,18 +155,6 @@
                     <input type="text" disabled v-model="extraRace" class="form-control" id="race-select">
                   </div>
                 </div>
-                <!-- <div class="col-3">
-                  <div class="form-group">
-                    <label for="race-select">使用预设</label>
-                    
-                    <div class="form-inline">
-                    <select v-model="presetsUse" style="text-overflow: ellipsis;width: 10em;"  class="form-control" id="use_presets">
-                      <option v-for="set in extraRacePresets" :value="set.id">{{set.name}}</option>
-                    </select>
-                    <span class="btn auto-btn ml-2" v-on:click="applyPresetRace">应用</span>
-                  </div>
-                  </div>
-                </div> -->
               </div>
               <div class="form-group">
               <span v-if="!showRaceList" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchRaceList">展开赛程选项</span>
@@ -397,7 +391,7 @@ export default {
       selectedRaceTactic1: 4,
       selectedRaceTactic2: 4,
       selectedRaceTactic3: 4,
-  
+      clockUseLimit: 99,
     }
   },
   mounted() {
@@ -424,7 +418,8 @@ export default {
           "follow_support_card_level": this.supportCardLevel,
           "extra_race_list": this.extraRace,
           "learn_skill_list": learn_skill_list,
-          "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3]
+          "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
+          "clock_use_limit": this.clockUseLimit
         },
         cron_job_info:{},
       }

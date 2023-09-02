@@ -118,6 +118,7 @@ class Executor:
                         log.debug("未检测到图像")
                         time.sleep(1)
                         continue
+                    ctx.prev_ui = ctx.current_ui
                     ctx.current_ui = self.detect_ui(ui_list, ctx.current_screen)
                     log.debug("current_ui:" + ctx.current_ui.ui_name)
                     if before_hook is not None:
