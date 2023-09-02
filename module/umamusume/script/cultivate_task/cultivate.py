@@ -1,5 +1,7 @@
 import time
 
+import numpy as np
+
 from bot.base.task import TaskStatus, EndTaskReason
 from module.umamusume.asset.point import *
 from module.umamusume.context import TurnInfo
@@ -133,7 +135,7 @@ def script_follow_support_card_select(ctx: UmamusumeContext):
         if selected:
             break
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        if np.all(img[1096, 693] == [125, 120, 142]):
+        if compare_color_equal(img[1096, 693], [125, 120, 142]):
             ctx.ctrl.click_by_point(FOLLOW_SUPPORT_CARD_SELECT_REFRESH)
             break
         ctx.ctrl.swipe(x1=350, y1=1000, x2=350, y2=400, duration=1000, name="")
