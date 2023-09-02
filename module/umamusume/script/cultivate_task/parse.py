@@ -121,6 +121,7 @@ def parse_umamusume_basic_ability_value(ctx: UmamusumeContext, img):
 
 
 def trans_attribute_value(text: str, ctx: UmamusumeContext, train_type: TrainingType) -> int:
+    text = re.sub("\\D", "", text)
     if text == "":
         prev_turn_idx = len(ctx.cultivate_detail.turn_info_history)
         if prev_turn_idx != 0:
@@ -139,7 +140,6 @@ def trans_attribute_value(text: str, ctx: UmamusumeContext, train_type: Training
         else:
             return 100
     else:
-        text = re.sub("\\D", "", text)
         return int(text)
 
 
