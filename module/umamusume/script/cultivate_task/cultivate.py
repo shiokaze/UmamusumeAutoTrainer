@@ -125,6 +125,7 @@ def script_support_card_select(ctx: UmamusumeContext):
     img = ctx.ctrl.get_screen(to_gray=True)
     if image_match(img, REF_CULTIVATE_SUPPORT_CARD_EMPTY).find_match:
         ctx.ctrl.click_by_point(TO_FOLLOW_SUPPORT_CARD_SELECT)
+        return 
     ctx.ctrl.click_by_point(TO_CULTIVATE_PREPARE_NEXT)
 
 
@@ -136,8 +137,14 @@ def script_follow_support_card_select(ctx: UmamusumeContext):
             break
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         if compare_color_equal(img[1096, 693], [125, 120, 142]):
+            while True:
+                img = cv2.cvtColor(ctx.ctrl.get_screen(), cv2.COLOR_BGR2RGB)
+                if compare_color_equal(img[127, 697], [211, 209, 219]):
+                    ctx.ctrl.swipe(x1=350, y1=400, x2=350, y2=1000, duration=200, name="")
+                else:
+                    break
             ctx.ctrl.click_by_point(FOLLOW_SUPPORT_CARD_SELECT_REFRESH)
-            break
+            return
         ctx.ctrl.swipe(x1=350, y1=1000, x2=350, y2=400, duration=1000, name="")
         time.sleep(1)
         img = ctx.ctrl.get_screen()
