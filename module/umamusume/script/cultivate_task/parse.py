@@ -69,14 +69,13 @@ def parse_cultivate_main_menu(ctx: UmamusumeContext, img):
     parse_umamusume_remain_stamina_value(ctx, img)
     parse_umamusume_basic_ability_value(ctx, img)
     parse_motivation(ctx, img)
-    if not ctx.cultivate_detail.debut_race_checked:
+    if not ctx.cultivate_detail.debut_race_win:
         parse_debut_race(ctx, img)
     ctx.cultivate_detail.turn_info.parse_main_menu_finish = True
 
 
 def parse_debut_race(ctx: UmamusumeContext, img):
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    ctx.cultivate_detail.debut_race_checked = True
     if image_match(img, REF_DEBUT_RACE_NOT_WIN).find_match:
         ctx.cultivate_detail.debut_race_win = False
     else:

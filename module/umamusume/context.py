@@ -145,7 +145,6 @@ class CultivateContextDetail:
     learn_skill_selected: bool
     cultivate_finish: bool
     tactic_list: list[int]
-    debut_race_checked: bool
     debut_race_win: bool
 
     def __init__(self):
@@ -158,7 +157,6 @@ class CultivateContextDetail:
         self.learn_skill_selected = False
         self.cultivate_finish = False
         self.tactic_list = []
-        self.debut_race_checked = False
         self.debut_race_win = False
 
 
