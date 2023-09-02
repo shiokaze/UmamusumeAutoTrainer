@@ -2,7 +2,6 @@ import re
 from difflib import SequenceMatcher
 
 import cv2
-import numpy as np
 
 from bot.recog.image_matcher import image_match, compare_color_equal
 from bot.recog.ocr import ocr_line, find_similar_text

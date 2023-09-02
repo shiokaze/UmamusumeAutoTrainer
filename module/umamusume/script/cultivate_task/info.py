@@ -92,7 +92,10 @@ def script_info(ctx: UmamusumeContext):
         if title_text == TITLE[17]:
             date = ctx.cultivate_detail.turn_info.date
             if date != -1:
-                ctx.ctrl.click_by_point(TACTIC_LIST[ctx.cultivate_detail.tactic_list[int((date - 1)/ 24)] - 1])
+                if date <= 72:
+                    ctx.ctrl.click_by_point(TACTIC_LIST[ctx.cultivate_detail.tactic_list[int((date - 1)/ 24)] - 1])
+                else:
+                    ctx.ctrl.click_by_point(TACTIC_LIST[ctx.cultivate_detail.tactic_list[2] - 1])
             time.sleep(0.5)
             ctx.ctrl.click_by_point(BEFORE_RACE_CHANGE_TACTIC_CONFIRM)
         if title_text == TITLE[18]:
