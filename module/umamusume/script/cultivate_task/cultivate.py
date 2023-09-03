@@ -30,6 +30,13 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
         parse_cultivate_main_menu(ctx, img)
         return
 
+    if ctx.cultivate_detail.turn_info.uma_attribute.skill_point > ctx.cultivate_detail.learn_skill_threshold:
+        ctx.ctrl.click_by_point(CULTIVATE_SKILL_LEARN)
+        ctx.cultivate_detail.turn_info.parse_main_menu_finish = False
+        return
+    else:
+        ctx.cultivate_detail.reset_skill_learn()
+
     if not ctx.cultivate_detail.turn_info.parse_train_info_finish:
         ctx.ctrl.click_by_point(TO_TRAINING_SELECT)
         return
@@ -125,7 +132,7 @@ def script_support_card_select(ctx: UmamusumeContext):
     img = ctx.ctrl.get_screen(to_gray=True)
     if image_match(img, REF_CULTIVATE_SUPPORT_CARD_EMPTY).find_match:
         ctx.ctrl.click_by_point(TO_FOLLOW_SUPPORT_CARD_SELECT)
-        return 
+        return
     ctx.ctrl.click_by_point(TO_CULTIVATE_PREPARE_NEXT)
 
 

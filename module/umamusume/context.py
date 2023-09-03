@@ -59,6 +59,7 @@ class UmaAttribute:
     power: int
     will: int
     intelligence: int
+    skill_point: int
 
     def __init__(self):
         self.speed = 0
@@ -66,6 +67,7 @@ class UmaAttribute:
         self.power = 0
         self.will = 0
         self.intelligence = 0
+        self.skill_point = 0
 
 
 class TurnOperation:
@@ -119,8 +121,8 @@ class TurnInfo:
         log.info("当前回合时间 >" + str(self.date))
         log.info("干劲状态 " + str(self.motivation_level.name))
         log.info("体力剩余" + str(self.remain_stamina))
-        log.info("当前属性值 速度：%s, 耐力：%s, 力量：%s, 毅力：%s, 智力：%s", self.uma_attribute.speed,
-                 self.uma_attribute.stamina, self.uma_attribute.power, self.uma_attribute.will, self.uma_attribute.intelligence)
+        log.info("当前属性值 速度：%s, 耐力：%s, 力量：%s, 毅力：%s, 智力：%s, 技能点：%s", self.uma_attribute.speed,
+                 self.uma_attribute.stamina, self.uma_attribute.power, self.uma_attribute.will, self.uma_attribute.intelligence, self.uma_attribute.skill_point)
         log.info("速度训练结果：")
         self.training_info_list[0].log_training_info()
         log.info("耐力训练结果：")
@@ -148,6 +150,8 @@ class CultivateContextDetail:
     debut_race_win: bool
     clock_use_limit: int
     clock_used: int
+    learn_skill_threshold: int
+    learn_skill_only_user_provided: bool
 
     def __init__(self):
         self.expect_attribute = None
@@ -162,6 +166,10 @@ class CultivateContextDetail:
         self.debut_race_win = False
         self.clock_use_limit = 0
         self.clock_used = 0
+
+    def reset_skill_learn(self):
+        self.learn_skill_done = False
+        self.learn_skill_selected = False
 
 
 class UmamusumeContext(BotContext):
@@ -186,6 +194,7 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
         detail.learn_skill_list = task.detail.learn_skill_list
         detail.tactic_list = task.detail.tactic_list
         detail.clock_use_limit = task.detail.clock_use_limit
+        detail.learn_skill_threshold = task.detail.learn_skill_threshold
         ctx.cultivate_detail = detail
     return ctx
 

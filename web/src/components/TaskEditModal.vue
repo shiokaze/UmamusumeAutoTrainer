@@ -73,6 +73,12 @@
                   <input v-model="clockUseLimit" type="number" class="form-control" id="inputClockUseLimit" placeholder="">
                 </div>
               </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
+                  <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
+                </div>
+              </div>
             </div>
             <div class="form-group">
               <div>目标属性</div>
@@ -392,6 +398,7 @@ export default {
       selectedRaceTactic2: 4,
       selectedRaceTactic3: 4,
       clockUseLimit: 99,
+      learnSkillThreshold: 9999
     }
   },
   mounted() {
@@ -419,7 +426,8 @@ export default {
           "extra_race_list": this.extraRace,
           "learn_skill_list": learn_skill_list,
           "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
-          "clock_use_limit": this.clockUseLimit
+          "clock_use_limit": this.clockUseLimit,
+          "learn_skill_threshold": this.learnSkillThreshold
         },
         cron_job_info:{},
       }

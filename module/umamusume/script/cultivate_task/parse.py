@@ -114,14 +114,20 @@ def parse_umamusume_basic_ability_value(ctx: UmamusumeContext, img):
                                               (255, 255, 255))
     intelligence_text = ocr_line(sub_img_intelligence)
 
+    sub_img_skill = img[855:902, 602:690]
+    sub_img_skill = cv2.copyMakeBorder(sub_img_skill, 20, 20, 20, 20, cv2.BORDER_CONSTANT, None,
+                                              (255, 255, 255))
+    skill_point_text = ocr_line(sub_img_skill)
+
     ctx.cultivate_detail.turn_info.uma_attribute.speed = trans_attribute_value(speed_text,ctx, TrainingType.TRAINING_TYPE_SPEED)
     ctx.cultivate_detail.turn_info.uma_attribute.stamina = trans_attribute_value(stamina_text,ctx, TrainingType.TRAINING_TYPE_STAMINA)
     ctx.cultivate_detail.turn_info.uma_attribute.power = trans_attribute_value(power_text,ctx, TrainingType.TRAINING_TYPE_POWER)
     ctx.cultivate_detail.turn_info.uma_attribute.will = trans_attribute_value(will_text,ctx, TrainingType.TRAINING_TYPE_WILL)
     ctx.cultivate_detail.turn_info.uma_attribute.intelligence = trans_attribute_value(intelligence_text,ctx, TrainingType.TRAINING_TYPE_INTELLIGENCE)
+    ctx.cultivate_detail.turn_info.uma_attribute.skill_point = trans_attribute_value(skill_point_text, ctx)
 
-
-def trans_attribute_value(text: str, ctx: UmamusumeContext, train_type: TrainingType) -> int:
+def trans_attribute_value(text: str, ctx: UmamusumeContext,
+                          train_type: TrainingType=TrainingType.TRAINING_TYPE_UNKNOWN) -> int:
     text = re.sub("\\D", "", text)
     if text == "":
         prev_turn_idx = len(ctx.cultivate_detail.turn_info_history)
@@ -138,6 +144,8 @@ def trans_attribute_value(text: str, ctx: UmamusumeContext, train_type: Training
                 return history.uma_attribute.will
             elif train_type.value == 5:
                 return history.uma_attribute.intelligence
+            else:
+                return 0
         else:
             return 100
     else:
