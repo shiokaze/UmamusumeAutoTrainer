@@ -181,7 +181,10 @@ def parse_train_main_menu_operations_availability(ctx: UmamusumeContext, img):
     rest_available = btn_rest_check_point[0] > 200
     train_available = btn_train_check_point[0] > 200
     skill_available = btn_skill_check_point[0] > 200
-    medic_room_available = btn_medic_room_check_point[0] > 200
+    if btn_medic_room_check_point[0] > 200 and btn_medic_room_check_point[1] > 200 and btn_medic_room_check_point[2] > 200:
+        medic_room_available = True
+    else:
+        medic_room_available = False
     trip_available = btn_trip_check_point[0] > 200
     race_available = btn_race_check_point[0] > 200
 

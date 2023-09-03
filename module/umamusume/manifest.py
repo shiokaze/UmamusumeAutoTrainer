@@ -43,7 +43,7 @@ script_dicts: Dict[UmamusumeTaskType, dict] = {
         CULTIVATE_LEARN_SKILL: script_cultivate_learn_skill,
         CULTIVATE_FINISH: script_cultivate_finish,
         NOT_FOUND_UI: script_not_found_ui,
-        CULTIVATE_RECEIVE_CUP: script_receive_cup,
+        RECEIVE_CUP: script_receive_cup,
         GOAL_FAILED: script_cultivate_goal_failed,
         CULTIVATE_LEVEL_RESULT: script_cultivate_level_result,
         FACTOR_RECEIVE:script_factor_receive,
