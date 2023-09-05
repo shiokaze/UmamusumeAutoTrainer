@@ -52,6 +52,8 @@ script_dicts: Dict[UmamusumeTaskType, dict] = {
         CULTIVATE_URA_RACE_1: script_cultivate_goal_race,
         CULTIVATE_URA_RACE_2: script_cultivate_goal_race,
         CULTIVATE_URA_RACE_3: script_cultivate_goal_race,
+        ACTIVITY_RESULT: script_cultivate_result,
+        ACTIVITY_REWARD: script_cultivate_result
     }
 }
 
