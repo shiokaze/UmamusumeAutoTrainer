@@ -37,7 +37,8 @@ TITLE = [
     "礼物箱",
     "领取成功",
     "解锁角色剧情",
-    "目标达成次数不足"
+    "目标达成次数不足",
+    "活动剧情解锁"
 ]
 
 
@@ -122,5 +123,7 @@ def script_info(ctx: UmamusumeContext):
             ctx.ctrl.click_by_point(UNLOCK_STORY_TO_HOME_PAGE)
         if title_text == TITLE[24]:
             ctx.ctrl.click_by_point(WIN_TIMES_NOT_ENOUGH_RETURN)
+        if title_text == TITLE[25]:
+            ctx.ctrl.click_by_point(ACTIVITY_STORY_UNLOCK_CONFIRM)
         time.sleep(1)
 

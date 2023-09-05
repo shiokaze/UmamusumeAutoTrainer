@@ -97,5 +97,5 @@ RECEIVE_GIFT = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coor
 RECEIVE_GIFT_SUCCESS_CLOSE = ClickPoint(ClickPointType.CLICK_POINT_TYPE_TEMPLATE, BTN_CLOSE, None, "礼物箱-领取成功-关闭", None)
 UNLOCK_STORY_TO_HOME_PAGE = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 835), "解锁角色剧情-前往主页", None)
 WIN_TIMES_NOT_ENOUGH_RETURN = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(200, 915), "目标达成次数不足-返回", None)
-
+ACTIVITY_STORY_UNLOCK_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 830), "活动剧情解锁-关闭", None)
 
