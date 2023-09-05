@@ -42,6 +42,8 @@ bot:
 ### 3. 模拟器设置
 
 设置模拟器分辨率为720 * 1280, dpi 180（竖屏）
+mumu模拟器不能开启后台保活功能
+
 
 ### 4. 启动
 
@@ -70,7 +72,17 @@ UAT running on http://127.0.0.1:8071
 2. 如果出现了识别错误导致程序报错、进入了预期之外的界面、或者卡在某一界面不动的情况下，人工操作进入下一回合并在webui内重置任务再启动即可。可以保存一下卡住的界面截图并附上报错日志提issue。
 
 
+### 常见问题
 
-
-
-
+#### 1. 运行install.ps1或run.ps1时闪退
+可以先打开控制台再运行powershell脚本，此时报错即可看到报错原因。
+#### 2. 系统禁止运行powershell脚本
+参考：https://www.jianshu.com/p/4eaad2163567
+#### 3. 脚本启动时报错
+检查用户文件夹是否为中文\
+参考： https://github.com/shiokaze/UmamusumeAutoTrainer/issues/18 \
+https://github.com/shiokaze/UmamusumeAutoTrainer/issues/24
+#### 4. 启动成功，但是webui打不开，且浏览器控制台报错
+如果报错信息是：Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/plain". Strict MIME type checking is enforced for module scripts per HTML spec. \
+参考： https://github.com/shiokaze/UmamusumeAutoTrainer/issues/9
+https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
