@@ -88,7 +88,7 @@ https://github.com/shiokaze/UmamusumeAutoTrainer/issues/24
 https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
 
 
-### TODO
+## TODO
 
 - [ ] 体力不足时自动使用体力药水
 - [ ] 定时执行任务
@@ -97,7 +97,7 @@ https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
 - [ ] 自动完成每日金币/支援点/jjc
 
 
-### 参与开发
+## 参与开发
 
 如果觉得现在的代码有不足之处，欢迎提交PR
 
