@@ -86,3 +86,18 @@ https://github.com/shiokaze/UmamusumeAutoTrainer/issues/24
 如果报错信息是：Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/plain". Strict MIME type checking is enforced for module scripts per HTML spec. \
 参考： https://github.com/shiokaze/UmamusumeAutoTrainer/issues/9
 https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
+
+
+### TODO
+
+- [ ] 体力不足时自动使用体力药水
+- [ ] 定时执行任务
+- [ ] 育成中ai逻辑优化
+- [ ] 事件支持配置选项
+- [ ] 自动完成每日金币/支援点/jjc
+
+
+### 参与开发
+
+如果觉得现在的代码有不足之处，欢迎提交PR
+
