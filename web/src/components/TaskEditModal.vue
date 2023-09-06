@@ -28,26 +28,43 @@
                   </select>
                 </div>
               </div>
-
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <div class="form-group">
-                  <label for="race-select">使用预设</label>
-                    <div class="form-inline">
-                      <select v-model="presetsUse" style="text-overflow: ellipsis;width: 29em;"  class="form-control" id="use_presets">
-                        <option v-for="set in cultivatePresets" :value="set.id">{{set.name}}</option>
-                      </select>
-                      <span class="btn auto-btn ml-2" v-on:click="applyPresetRace">应用</span>
-                    </div>
-                </div>
-              </div>
-              <div class="col-6">
+              <div class="col">
                 <div class="form-group">
                   <label for="selectUmamusume">赛马娘选择</label>
                   <select disabled class="form-control" id="selectUmamusume">
                     <option value=1>使用上次选择</option>
                   </select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="selectAutoRecoverTP">TP不足时自动恢复（仅使用药水）</label>
+                  <select disabled v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
+                    <option :value=true>是</option>
+                    <option :value=false>否</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <div class="form-group">
+                  <label for="race-select">使用预设</label>
+                    <div class="form-inline">
+                      <select v-model="presetsUse" style="text-overflow: ellipsis;width: 40em;"  class="form-control" id="use_presets">
+                        <option v-for="set in cultivatePresets" :value="set">{{set.name}}</option>
+                      </select>
+                      <span class="btn auto-btn ml-2" v-on:click="applyPresetRace">应用</span>
+                    </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="presetNameEditInput">保存为预设</label>
+                  <div class="form-inline">
+                    <input v-model="presetNameEdit" type="text" class="form-control" id="presetNameEditInput" placeholder="预设名称">
+                    <span class="btn auto-btn ml-2" v-on:click="addPresets">保存</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -199,7 +216,7 @@
             <div class="form-group">
               <div class="form-group">
                 <label for="skill-learn">技能学习</label>
-                <input type="text"  v-model="skillLearn" class="form-control" id="skill-learn" placeholder="技能1名称, 技能2名称, ....">
+                <input type="text"  v-model="skillLearn" class="form-control" id="skill-learn" placeholder="技能1名称,技能2名称,....(使用英文逗号)">
               </div>
             </div>
           </form>
@@ -217,6 +234,14 @@
         </div>
         <div class="modal-footer">
           <span class="btn auto-btn" v-on:click="addTask">确定</span>
+        </div>
+      </div>
+      <!-- 通知 -->
+      <div class="position-fixed" style="z-index: 5; right: 40%; width: 300px;">
+        <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+          <div class="toast-body">
+            ✔ 预设保存成功
+          </div>
         </div>
       </div>
     </div>
@@ -347,33 +372,58 @@ export default {
         {id:7204, name:'中山大奖赛', date: '12月后', type: 'g1'},
         {id:7205, name:'东京大奖赛', date: '12月后', type: 'g1'}],
       cultivatePresets:[
-        {
-          id: 0,
+      {
           name: "默认",
           race_list: [],
           skill: "",
-          expect_attribute:[800, 800, 800, 400, 400]
+          expect_attribute:[800, 800, 800, 400, 400],
+          follow_support_card: {id:1, name:'在耀眼景色的前方'},
+          follow_support_card_level: 50,
+          clock_use_limit: 99,
+          learn_skill_threshold: 9999,
+          race_tactic_1: 4,
+          race_tactic_2: 4,
+          race_tactic_3: 4,
+
         },
         {
-          id: 1,
           name: "小栗帽基础育成赛程",
           race_list: [1701, 2303, 2401, 5208, 5407, 5904],
           skill: "",
-          expect_attribute:[900, 750, 850, 300, 400]
+          expect_attribute:[900, 750, 850, 300, 400],
+          follow_support_card: {id:16, name:'一颗安心糖'},
+          follow_support_card_level: 50,
+          clock_use_limit: 99,
+          learn_skill_threshold: 9999,
+          race_tactic_1: 4,
+          race_tactic_2: 4,
+          race_tactic_3: 4,
         },
         {
-          id: 2,
           name: "大和赤骥基础育成赛程",
           race_list: [1701, 2303],
           skill: "",
-          expect_attribute:[900, 800, 800, 300, 400]
+          expect_attribute:[900, 800, 800, 300, 400],
+          follow_support_card: {id:16, name:'一颗安心糖'},
+          follow_support_card_level: 50,
+          clock_use_limit: 99,
+          learn_skill_threshold: 9999,
+          race_tactic_1: 4,
+          race_tactic_2: 4,
+          race_tactic_3: 4,
         },
         {
-          id: 3,
           name: "目白麦昆基础育成赛程",
           race_list: [2203, 2401],
           skill: "",
-          expect_attribute:[900, 800, 600, 400, 400]
+          expect_attribute:[900, 800, 600, 400, 400],
+          follow_support_card: {id:16, name:'一颗安心糖'},
+          follow_support_card_level: 50,
+          clock_use_limit: 99,
+          learn_skill_threshold: 9999,
+          race_tactic_1: 4,
+          race_tactic_2: 4,
+          race_tactic_3: 4,
         }
       ],
       expectSpeedValue : 800,
@@ -384,7 +434,19 @@ export default {
 
       supportCardLevel: 50,
       
-      presetsUse: 0,
+      presetsUse: {
+          name: "默认",
+          race_list: [],
+          skill: "",
+          expect_attribute:[800, 800, 800, 400, 400],
+          follow_support_card: {id:1, name:'在耀眼景色的前方'},
+          follow_support_card_level: 50,
+          clock_use_limit: 99,
+          learn_skill_threshold: 9999,
+          race_tactic_1: 4,
+          race_tactic_2: 4,
+          race_tactic_3: 4,
+        },
       // ===  已选择  ===
       selectedExecuteMode: 1,
       expectTimes: 0,
@@ -398,11 +460,16 @@ export default {
       selectedRaceTactic2: 4,
       selectedRaceTactic3: 4,
       clockUseLimit: 99,
-      learnSkillThreshold: 9999
+      learnSkillThreshold: 9999,
+      recoverTP: false,
+      presetNameEdit: "",
+      successToast: undefined,
     }
   },
   mounted() {
     this.initSelect()
+    this.getPresets()
+    this.successToast = $('.toast').toast({})
   },
   methods:{
     initSelect: function (){
@@ -427,7 +494,8 @@ export default {
           "learn_skill_list": learn_skill_list,
           "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
           "clock_use_limit": this.clockUseLimit,
-          "learn_skill_threshold": this.learnSkillThreshold
+          "learn_skill_threshold": this.learnSkillThreshold,
+          "recover_tp": this.recoverTP
         },
         cron_job_info:{},
       }
@@ -444,13 +512,51 @@ export default {
       )
     },
     applyPresetRace: function(){
-      this.extraRace = this.cultivatePresets[this.presetsUse].race_list
-      this.expectSpeedValue = this.cultivatePresets[this.presetsUse].expect_attribute[0]
-      this.expectStaminaValue = this.cultivatePresets[this.presetsUse].expect_attribute[1]
-      this.expectPowerValue = this.cultivatePresets[this.presetsUse].expect_attribute[2]
-      this.expectWillValue = this.cultivatePresets[this.presetsUse].expect_attribute[3]
-      this.expectIntelligenceValue = this.cultivatePresets[this.presetsUse].expect_attribute[4]
-
+      this.extraRace = this.presetsUse.race_list
+      this.expectSpeedValue = this.presetsUse.expect_attribute[0]
+      this.expectStaminaValue = this.presetsUse.expect_attribute[1]
+      this.expectPowerValue = this.presetsUse.expect_attribute[2]
+      this.expectWillValue = this.presetsUse.expect_attribute[3]
+      this.expectIntelligenceValue = this.presetsUse.expect_attribute[4]
+      this.selectedSupportCard = this.presetsUse.follow_support_card,
+      this.supportCardLevel = this.presetsUse.follow_support_card_level,
+      this.clockUseLimit = this.presetsUse.clock_use_limit,
+      this.learnSkillThreshold = this.presetsUse.learn_skill_threshold,
+      this.selectedRaceTactic1 = this.presetsUse.race_tactic_1,
+      this.selectedRaceTactic2 = this.presetsUse.race_tactic_2,
+      this.selectedRaceTactic3 = this.presetsUse.race_tactic_3
+      this.skillLearn = this.presetsUse.skill
+    },
+    getPresets: function(){
+      this.axios.post("/umamusume/get-presets", "").then(
+          res=>{
+          this.cultivatePresets = this.cultivatePresets.concat(res.data);
+        }
+      )
+    },
+    addPresets: function(){
+      let preset = {
+        name: this.presetNameEdit,
+        race_list: this.extraRace,
+        skill: this.skillLearn,
+        expect_attribute:[this.expectSpeedValue, this.expectStaminaValue, this.expectPowerValue, this.expectWillValue, this.expectIntelligenceValue],
+        follow_support_card: this.selectedSupportCard,
+        follow_support_card_level: this.supportCardLevel,
+        clock_use_limit: this.clockUseLimit,
+        learn_skill_threshold: this.learnSkillThreshold,
+        race_tactic_1: this.selectedRaceTactic1,
+        race_tactic_2: this.selectedRaceTactic2,
+        race_tactic_3: this.selectedRaceTactic3,
+      }
+      let payload = {
+        "preset": JSON.stringify(preset)
+      }
+      console.log(JSON.stringify(payload))
+      this.axios.post("/umamusume/add-presets", JSON.stringify(payload)).then(
+        ()=>{
+          this.successToast.toast('show')
+        } 
+      )
     }
   },
   watch:{

@@ -28,12 +28,12 @@
 </template>
 
 <script>
-import RunningTaskPanel from "./RunningTaskPanel.vue";
-import WaitingTaskList from "../components/WaitingTaskList.vue";
-import AutoStatusPanel from "../components/AutoStatusPanel.vue"
-import TaskEditModal from "../components/TaskEditModal.vue";
-import HistoryTaskList from "./HistoryTaskList.vue";
-import CronJobList from "./CronJobList.vue";
+import RunningTaskPanel from "@/components/RunningTaskPanel.vue";
+import WaitingTaskList from "@/components/WaitingTaskList.vue";
+import AutoStatusPanel from "@/components/AutoStatusPanel.vue"
+import TaskEditModal from "@/components/TaskEditModal.vue";
+import HistoryTaskList from "@/components/HistoryTaskList.vue";
+import CronJobList from "@/components/CronJobList.vue";
 export default {
   name: "SchedulerPanel",
   components: {CronJobList, HistoryTaskList, TaskEditModal, WaitingTaskList, AutoStatusPanel, RunningTaskPanel},

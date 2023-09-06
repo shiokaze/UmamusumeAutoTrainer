@@ -2,12 +2,15 @@ from typing import Dict
 
 from bot.base.manifest import AppManifest
 from bot.base.resource import NOT_FOUND_UI
+from bot.server.handler import server
 from module.umamusume.asset.ui import *
 from module.umamusume.context import build_context
 from module.umamusume.hook import after_hook, before_hook
 from module.umamusume.script.cultivate_task.cultivate import *
 from module.umamusume.script.cultivate_task.info import script_info
+from module.umamusume.protocol.preset import AddPresetRequest
 from module.umamusume.task import UmamusumeTaskType, build_task
+from module.umamusume.user_data import read_presets, write_preset
 
 script_dicts: Dict[UmamusumeTaskType, dict] = {
     UmamusumeTaskType.UMAMUSUME_TASK_TYPE_CULTIVATE: {
@@ -73,7 +76,6 @@ def exec_script(ctx: UmamusumeContext):
         print("未找到此界面对应的默认脚本")
 
 
-# adb shell dumpsys activity top | find "ACTIVITY"
 UmamusumeManifest = AppManifest(
     app_name="umamusume",
     app_package_name="com.bilibili.umamusu",
@@ -86,3 +88,13 @@ UmamusumeManifest = AppManifest(
     after_hook=after_hook
 )
 
+
+@server.post("/umamusume/get-presets")
+def get_presets():
+    return read_presets()
+
+
+@server.post("/umamusume/add-presets")
+def add_preset(req: AddPresetRequest):
+    write_preset(req.preset)
+    return

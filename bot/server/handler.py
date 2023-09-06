@@ -20,7 +20,6 @@ server.add_middleware(
 
 @server.post("/task")
 def add_task(req: AddTaskRequest):
-    print(str(req.attachment_data))
     bot_ctrl.add_task(req.app_name, req.task_execute_mode, req.task_type, req.task_desc,
                       req.cron_job_config, req.attachment_data)
 
