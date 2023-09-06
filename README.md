@@ -72,7 +72,7 @@ UAT running on http://127.0.0.1:8071
 2. 如果出现了识别错误导致程序报错、进入了预期之外的界面、或者卡在某一界面不动的情况下，人工操作进入下一回合并在webui内重置任务再启动即可。可以保存一下卡住的界面截图并附上报错日志提issue。
 
 
-### 常见问题
+## 常见问题
 
 #### 1. 运行install.ps1或run.ps1时闪退
 可以先打开控制台再运行powershell脚本，此时报错即可看到报错原因。
@@ -88,7 +88,7 @@ https://github.com/shiokaze/UmamusumeAutoTrainer/issues/24
 https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
 
 
-## TODO
+### TODO
 
 - [ ] 体力不足时自动使用体力药水
 - [ ] 定时执行任务
@@ -97,7 +97,7 @@ https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
 - [ ] 自动完成每日金币/支援点/jjc
 
 
-## 参与开发
+### 参与开发
 
 如果觉得现在的代码有不足之处，欢迎提交PR
 
