@@ -49,13 +49,13 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
         training_level_weight = 0
     # 第二年合宿后至第三年前
     elif 40 < ctx.cultivate_detail.turn_info.date <= 48:
-        attr_weight = 0.4
-        support_card_weight = 0.3
-        training_level_weight = 0.3
+        attr_weight = 0.6
+        support_card_weight = 0.2
+        training_level_weight = 0.2
     # 第三年合宿前
     elif 48 < ctx.cultivate_detail.turn_info.date <= 60:
-        attr_weight = 0.4
-        support_card_weight = 0.3
+        attr_weight = 0.6
+        support_card_weight = 0.1
         training_level_weight = 0.3
     # 第三年合宿期间
     elif 60 < ctx.cultivate_detail.turn_info.date <= 64:
@@ -64,9 +64,9 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
         training_level_weight = 0
     # 第三年至结束
     elif 64 < ctx.cultivate_detail.turn_info.date <= 99:
-        attr_weight = 0.7
-        support_card_weight = 0.2
-        training_level_weight = 0.1
+        attr_weight = 0.8
+        support_card_weight = 0
+        training_level_weight = 0.2
     else:
         attr_weight = 1
         support_card_weight = 0
@@ -151,6 +151,13 @@ def get_training_support_card_score(ctx: UmamusumeContext) -> list[float]:
 
 
 def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: list[int]) -> list[float]:
+    date = turn_info.date
+    tmp_expect_attribute = expect_attribute.copy()
+    if date > 72:
+        date = 72
+    for i in range(len(tmp_expect_attribute)):
+        turn_expect_attribute = int(((tmp_expect_attribute[i] - 150)*(date/72)) + 100)
+        tmp_expect_attribute[i] = turn_expect_attribute
     origin = [turn_info.uma_attribute.speed, turn_info.uma_attribute.stamina, turn_info.uma_attribute.power,
               turn_info.uma_attribute.will, turn_info.uma_attribute.intelligence]
     result = []
@@ -161,14 +168,15 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
         rating_incr = 0
         for j in range(len(incr)):
             if incr[j] != 0:
-                rating_incr += get_basic_status_score(incr[j] + origin[j]) - get_basic_status_score(origin[j])
+                # rating_incr += get_basic_status_score(incr[j] + origin[j]) - get_basic_status_score(origin[j])
+                rating_incr += incr[j]
         rating_incr += turn_info.training_info_list[i].skill_point_incr * 1.45
         result.append(rating_incr)
-    log.debug("每个训练的属性增长得分：" + str(result))
-
+    log.debug("每个训练的原始属性增长得分：" + str(result))
+    log.debug("本回合预期属性：" + str(tmp_expect_attribute))
     target_percent = [0, 0, 0, 0, 0]
     for i in range(len(origin)):
-        target_percent[i] = origin[i] / expect_attribute[i]
+        target_percent[i] = origin[i] / tmp_expect_attribute[i]
     avg = sum(target_percent) / len(target_percent)
     for i in range(len(result)):
         result[i] = result[i] * (1 - (target_percent[i] - avg))
