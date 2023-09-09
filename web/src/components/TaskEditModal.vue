@@ -189,7 +189,10 @@
                   <br/>
                   <div class="form-check">
                     <div v-for="race in umamusumeRaceList_1">
-                      <input class="form-check-input position-static" v-model="extraRace" type="checkbox" :id="race.id" :value="race.id"><label :for="race.id">{{race.date}} {{race.name}}</label>
+                      <input class="form-check-input position-static" v-model="extraRace" type="checkbox" :id="race.id" :value="race.id"><label :for="race.id" v-if="race.type==='GI'||race.type==='GII'&&!this.hideG2||race.type==='GIII'&&!this.hideG3">
+                        <span v-if="race.type === 'GIII'">&nbsp;<span style="background-color: #58C471;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>
+                        <span v-if="race.type === 'GII'">&nbsp;<span style="background-color: #F75A86;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>
+                        <span v-if="race.type === 'GI'">&nbsp;<span style="background-color: #3485E3;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>{{race.date}} {{race.name}}</label>
                     </div>
                   </div>
                 </div>
@@ -198,7 +201,10 @@
                   <br/>
                   <div class="form-check">
                     <div v-for="race in umamusumeRaceList_2">
-                      <input class="form-check-input position-static" v-model="extraRace" type="checkbox" :id="race.id" :value="race.id"><label :for="race.id">{{race.date}} {{race.name}}</label>
+                      <input class="form-check-input position-static" v-model="extraRace" type="checkbox" :id="race.id" :value="race.id"><label :for="race.id" v-if="race.type==='GI'||race.type==='GII'&&!this.hideG2||race.type==='GIII'&&!this.hideG3">
+                        <span v-if="race.type === 'GIII'">&nbsp;<span style="background-color: #58C471;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>
+                        <span v-if="race.type === 'GII'">&nbsp;<span style="background-color: #F75A86;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>
+                        <span v-if="race.type === 'GI'">&nbsp;<span style="background-color: #3485E3;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>{{race.date}} {{race.name}}</label>
                     </div>
                   </div>
                 </div>
@@ -207,7 +213,10 @@
                   <br/>
                   <div class="form-check">
                     <div v-for="race in umamusumeRaceList_3">
-                      <input class="form-check-input position-static" v-model="extraRace" type="checkbox" :id="race.id" :value="race.id"><label :for="race.id">{{race.date}} {{race.name}}</label>
+                      <input class="form-check-input position-static" v-model="extraRace" type="checkbox" :id="race.id" :value="race.id"><label :for="race.id" v-if="race.type==='GI'||race.type==='GII'&&!this.hideG2||race.type==='GIII'&&!this.hideG3">
+                        <span v-if="race.type === 'GIII'">&nbsp;<span style="background-color: #58C471;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>
+                        <span v-if="race.type === 'GII'">&nbsp;<span style="background-color: #F75A86;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>
+                        <span v-if="race.type === 'GI'">&nbsp;<span style="background-color: #3485E3;" class="badge badge-pill badge-secondary">{{race.type}}</span>&nbsp;</span>{{race.date}} {{race.name}}</label>
                     </div>
                   </div>
                 </div>
@@ -255,6 +264,8 @@ export default {
     return{
       showRaceList:false,
       dataReady:false,
+      hideG2: false,
+      hideG3: false,
       levelDataList:[],
       umamusumeTaskTypeList:[
         {
@@ -313,64 +324,92 @@ export default {
         {id:20, name:'欢迎来到特雷森学园！'},
       ],
       umamusumeRaceList_1:[
-        {id:1401, name:'函馆初级锦标赛',date: '7月后', type: 'g3'},
-        {id:1601, name:'新潟初级锦标赛',date: '8月后', type: 'g3'},
-        {id:1701, name:'札幌初级锦标赛',date: '9月前', type: 'g3'},
-        {id:1702, name:'小仓初级锦标赛',date: '9月前', type: 'g3'},
-        {id:1902, name:'沙特阿拉伯皇家杯',date: '10月前', type: 'g3'},
-        {id:2002, name:'阿耳忒米斯锦标赛',date: '10月后', type: 'g3'},
-        {id:2102, name:'京王杯初级锦标赛',date: '11月前', type: 'g2'},
-        {id:2103, name:'每日杯初级锦标赛',date: '11月前', type: 'g2'},
-        {id:2104, name:'幻想锦标赛',date: '11月前', type: 'g3'},
-        {id:2202, name:'东京体育馆初级锦标赛',date: '11月后', type: 'g3'},
-        {id:2203, name:'京都初级锦标赛',date: '11月后', type: 'g3'},
-        {id:2302, name:'阪神初级少女杯赛', date: '12月前', type: 'g1'},
-        {id:2303, name:'朝日杯未来锦标赛', date: '12月前', type: 'g1'},
-        {id:2401, name:'希望锦标赛', date: '12月前', type: 'g1'},
+        {id:1401, name:'函馆初级锦标赛',date: '7月后', type: 'GIII'},
+        {id:1601, name:'新潟初级锦标赛',date: '8月后', type: 'GIII'},
+        {id:1701, name:'札幌初级锦标赛',date: '9月前', type: 'GIII'},
+        {id:1702, name:'小仓初级锦标赛',date: '9月前', type: 'GIII'},
+        {id:1902, name:'沙特阿拉伯皇家杯',date: '10月前', type: 'GIII'},
+        {id:2002, name:'阿耳忒米斯锦标赛',date: '10月后', type: 'GIII'},
+        {id:2102, name:'京王杯初级锦标赛',date: '11月前', type: 'GII'},
+        {id:2103, name:'每日杯初级锦标赛',date: '11月前', type: 'GII'},
+        {id:2104, name:'幻想锦标赛',date: '11月前', type: 'GIII'},
+        {id:2202, name:'东京体育馆初级锦标赛',date: '11月后', type: 'GIII'},
+        {id:2203, name:'京都初级锦标赛',date: '11月后', type: 'GIII'},
+        {id:2302, name:'阪神初级少女杯赛', date: '12月前', type: 'GI'},
+        {id:2303, name:'朝日杯未来锦标赛', date: '12月前', type: 'GI'},
+        {id:2401, name:'希望锦标赛', date: '12月后', type: 'GI'},
       ],
       umamusumeRaceList_2:[
-        {id:3103, name:'樱花奖', date: '4月前', type: 'g1'},
-        {id:3104, name:'皐月奖', date: '4月前', type: 'g1'},
-        {id:3303, name:'NHK 英里杯', date: '5月前', type: 'g1'},
-        {id:3403, name:'奥克斯', date: '5月后', type: 'g1'},
-        {id:3404, name:'日本德比 东京优骏', date: '5月后', type: 'g1'},
-        {id:3504, name:'东京英里赛', date: '6月前', type: 'g1'},
-        {id:3607, name:'宝塚纪念', date: '6月后', type: 'g1'},
-        {id:3705, name:'日本泥地德比', date: '7月前', type: 'g1'},
-        {id:4201, name:'短途者锦标赛', date: '9月后', type: 'g1'},
-        {id:4407, name:'天王奖(秋)', date: '10月后', type: 'g1'},
-        {id:4408, name:'秋华奖', date: '10月后', type: 'g1'},
-        {id:4409, name:'菊花奖', date: '10月后', type: 'g1'},
-        {id:4506, name:'伊丽莎白女王杯', date: '11月前', type: 'g1'},
-        {id:4507, name:'JBC女士经典赛', date: '11月前', type: 'g1'},
-        {id:4508, name:'JBC短途赛', date: '11月前', type: 'g1'},
-        {id:4509, name:'JBC经典赛', date: '11月前', type: 'g1'},
-        {id:4607, name:'英里冠军杯', date: '11月后', type: 'g1'},
-        {id:4608, name:'日本杯', date: '11月后', type: 'g1'},
-        {id:4711, name:'日本冠军杯', date: '12月前', type: 'g1'},
-        {id:4804, name:'中山大奖赛', date: '12月后', type: 'g1'},
-        {id:4805, name:'东京大奖赛', date: '12月后', type: 'g1'},
+        {id:2501, name:'新山纪念', date: '1月前', type: 'GIII'},
+        {id:2502, name:'精灵锦标赛', date: '1月前', type: 'GIII'},
+        {id:2503, name:'京成杯', date: '1月前', type: 'GIII'},
+        {id:2701, name:'如月奖', date: '2月前', type: 'GIII'},
+        {id:2702, name:'女王杯', date: '2月前', type: 'GIII'},
+        {id:2703, name:'共同通信杯', date: '2月前', type: 'GIII'},
+        {id:2903, name:'弥生奖', date: '3月前', type: 'GII'},
+        {id:2904, name:'少女竞技赛', date: '3月前', type: 'GII'},
+        {id:2905, name:'郁金香奖', date: '3月前', type: 'GII'},
+        {id:3001, name:'百花杯', date: '3月后', type: 'GIII'},
+        {id:3003, name:'春季锦标赛', date: '3月后', type: 'GII'},
+        {id:3004, name:'游隼锦标赛', date: '3月后', type: 'GIII'},
+        {id:3005, name:'每日杯', date: '3月后', type: 'GIII'},
+        {id:3103, name:'樱花奖', date: '4月前', type: 'GI'},
+        {id:3104, name:'皐月奖', date: '4月前', type: 'GI'},
+        {id:3105, name:'新西兰杯', date: '4月前', type: 'GII'},
+        {id:3106, name:'阿灵顿杯', date: '4月前', type: 'GIII'},
+        {id:3204, name:'芙洛拉锦标赛', date: '4月后', type: 'GII'},
+        {id:3205, name:'青叶奖', date: '4月后', type: 'GII'},
+        {id:3303, name:'NHK 英里杯', date: '5月前', type: 'GI'},
+        {id:3304, name:'京都新闻杯', date: '5月前', type: 'GII'},
+        {id:3403, name:'奥克斯', date: '5月后', type: 'GI'},
+        {id:3404, name:'日本德比 东京优骏', date: '5月后', type: 'GI'},
+        {id:3405, name:'葵锦标赛', date: '5月后', type: 'GIII'},
+        {id:3504, name:'东京英里赛', date: '6月前', type: 'GI'},
+        {id:3506, name:'叶森杯', date: '6月前', type: 'GIII'},
+        {id:3505, name:'鸣尾纪念', date: '6月前', type: 'GIII'},
+        {id:3501, name:'人鱼锦标赛', date: '6月前', type: 'GIII'},
+        {id:3608, name:'函馆短途锦标赛', date: '6月后', type: 'GIII'},
+        {id:3601, name:'独角兽锦标赛', date: '6月后', type: 'GIII'},
+        {id:3607, name:'宝塚纪念', date: '6月后', type: 'GI'},
+        {id:3708, name:'函馆纪念', date: '7月前', type: 'GIII'},
+        {id:3706, name:'CBC奖', date: '7月前', type: 'GIII'},
+        {id:3707, name:'七夕奖', date: '7月前', type: 'GIII'},
+        {id:3709, name:'广播NIKKEI奖', date: '7月前', type: 'GIII'},
+        {id:3705, name:'日本泥地德比', date: '7月前', type: 'GI'},
+        {id:4201, name:'短途者锦标赛', date: '9月后', type: 'GI'},
+        {id:4407, name:'天王奖(秋)', date: '10月后', type: 'GI'},
+        {id:4408, name:'秋华奖', date: '10月后', type: 'GI'},
+        {id:4409, name:'菊花奖', date: '10月后', type: 'GI'},
+        {id:4506, name:'伊丽莎白女王杯', date: '11月前', type: 'GI'},
+        {id:4507, name:'JBC女士经典赛', date: '11月前', type: 'GI'},
+        {id:4508, name:'JBC短途赛', date: '11月前', type: 'GI'},
+        {id:4509, name:'JBC经典赛', date: '11月前', type: 'GI'},
+        {id:4607, name:'英里冠军杯', date: '11月后', type: 'GI'},
+        {id:4608, name:'日本杯', date: '11月后', type: 'GI'},
+        {id:4711, name:'日本冠军杯', date: '12月前', type: 'GI'},
+        {id:4804, name:'中山大奖赛', date: '12月后', type: 'GI'},
+        {id:4805, name:'东京大奖赛', date: '12月后', type: 'GI'},
       ],
       umamusumeRaceList_3:[
-        {id:5208, name:'二月锦标赛', date: '2月后', type: 'g1'},
-        {id:5406, name:'中京短途赛', date: '3月后', type: 'g1'},
-        {id:5407, name:'大阪杯', date: '3月后', type: 'g1'},
-        {id:5605, name:'天王奖(春)', date: '4月后', type: 'g1'},
-        {id:5709, name:'维多利亚英里杯', date: '5月前', type: 'g1'},
-        {id:5904, name:'东京英里赛', date: '6月前', type: 'g1'},
-        {id:6006, name:'宝塚記念', date: '6月后', type: 'g1'},
-        {id:6008, name:'帝王奖', date: '6月后', type: 'g1'},
-        {id:6601, name:'短途者锦标赛', date: '9月后', type: 'g1'},
-        {id:6807, name:'天王奖(秋)', date: '10月后', type: 'g1'},
-        {id:6906, name:'伊丽莎白女王杯', date: '11月前', type: 'g1'},
-        {id:6907, name:'JBC女士经典赛', date: '11月前', type: 'g1'},
-        {id:6908, name:'JBC短途赛', date: '11月前', type: 'g1'},
-        {id:6909, name:'JBC经典赛', date: '11月前', type: 'g1'},
-        {id:7007, name:'英里冠军杯', date: '11月后', type: 'g1'},
-        {id:7008, name:'日本杯', date: '11月后', type: 'g1'},
-        {id:7111, name:'日本冠军杯', date: '12月前', type: 'g1'},
-        {id:7204, name:'中山大奖赛', date: '12月后', type: 'g1'},
-        {id:7205, name:'东京大奖赛', date: '12月后', type: 'g1'}],
+        {id:5208, name:'二月锦标赛', date: '2月后', type: 'GI'},
+        {id:5406, name:'中京短途赛', date: '3月后', type: 'GI'},
+        {id:5407, name:'大阪杯', date: '3月后', type: 'GI'},
+        {id:5605, name:'天王奖(春)', date: '4月后', type: 'GI'},
+        {id:5709, name:'维多利亚英里杯', date: '5月前', type: 'GI'},
+        {id:5904, name:'东京英里赛', date: '6月前', type: 'GI'},
+        {id:6006, name:'宝塚記念', date: '6月后', type: 'GI'},
+        {id:6008, name:'帝王奖', date: '6月后', type: 'GI'},
+        {id:6601, name:'短途者锦标赛', date: '9月后', type: 'GI'},
+        {id:6807, name:'天王奖(秋)', date: '10月后', type: 'GI'},
+        {id:6906, name:'伊丽莎白女王杯', date: '11月前', type: 'GI'},
+        {id:6907, name:'JBC女士经典赛', date: '11月前', type: 'GI'},
+        {id:6908, name:'JBC短途赛', date: '11月前', type: 'GI'},
+        {id:6909, name:'JBC经典赛', date: '11月前', type: 'GI'},
+        {id:7007, name:'英里冠军杯', date: '11月后', type: 'GI'},
+        {id:7008, name:'日本杯', date: '11月后', type: 'GI'},
+        {id:7111, name:'日本冠军杯', date: '12月前', type: 'GI'},
+        {id:7204, name:'中山大奖赛', date: '12月后', type: 'GI'},
+        {id:7205, name:'东京大奖赛', date: '12月后', type: 'GI'}],
       cultivatePresets:[
       {
           name: "默认",
