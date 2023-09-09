@@ -70,27 +70,27 @@
             </div>
             
             <div class="row">
-              <div class="col">
+              <div class="col-4">
                 <div class="form-group">
                   <label>借用支援卡选择</label>
                   <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
-                    <option v-for="card in umausumeSupportCardList" :value="card">{{card.name}}</option>
+                    <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
                   </select>
                 </div>
               </div>
-              <div class="col">
+              <div class="col-2">
                 <div class="form-group">
-                  <label for="selectSupportCardLevel">支援卡等级(大于或等于)</label>
+                  <label for="selectSupportCardLevel">支援卡等级(≥)</label>
                   <input v-model="supportCardLevel" type="number" class="form-control" id="selectSupportCardLevel" placeholder="">
                 </div>
               </div>
-              <div class="col">
+              <div class="col-3">
                 <div class="form-group">
                   <label for="inputClockUseLimit">使用闹钟数量限制</label>
                   <input v-model="clockUseLimit" type="number" class="form-control" id="inputClockUseLimit" placeholder="">
                 </div>
               </div>
-              <div class="col">
+              <div class="col-3">
                 <div class="form-group">
                   <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
                   <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
@@ -302,26 +302,33 @@ export default {
         {id:26, name:'帝王光环'},
       ],
       umausumeSupportCardList:[
-        {id:1, name:'在耀眼景色的前方'},
-        {id:2, name:'献上全国第一的演出'},
-        {id:3, name:'有梦想就要大声说出来！'},
-        {id:4, name:'不沉舰的进击'},
-        {id:5, name:'伏特加之路'},
-        {id:6, name:'万紫千红中一枝独秀'},
-        {id:7, name:'热情的冠军'},
-        {id:8, name:'期待已久的计谋'},
-        {id:9, name:'划破天空的闪电少女！'},
-        {id:10, name:'全身心的感谢'},
-        {id:11, name:'飞奔吧，闪耀吧'},
-        {id:12, name:'B·N·Winner!'},
-        {id:13, name:'冲向前方7厘米之外'},
-        {id:14, name:'Run(my)way'},
-        {id:15, name:'好快！好吃！好快'},
-        {id:16, name:'一颗安心糖'},
-        {id:17, name:'这就是我的优俊偶像之道'},
-        {id:18, name:'哪怕还未长大'},
-        {id:19, name:'必杀技！双胡萝卜拳'},
-        {id:20, name:'欢迎来到特雷森学园！'},
+        {id:1, name:'在耀眼景色的前方', desc:'速铃鹿'},
+        {id:2, name:'献上全国第一的演出' , desc: '根特别周'},
+        {id:3, name:'有梦想就要大声说出来！', desc: '速帝王'},
+        {id:4, name:'不沉舰的进击', desc: '耐黄金船'},
+        {id:5, name:'伏特加之路', desc: '力伏特加'},
+        {id:6, name:'万紫千红中一枝独秀', desc: '根草上飞'},
+        {id:7, name:'热情的冠军', desc: '力神鹰'},
+        {id:8, name:'期待已久的计谋', desc: '耐青云'},
+        {id:9, name:'划破天空的闪电少女！', desc: '耐玉藻十字'},
+        {id:10, name:'全身心的感谢', desc: '智美妙姿势'},
+        {id:11, name:'飞奔吧，闪耀吧', desc: '根风神'},
+        {id:12, name:'B·N·Winner!', desc: '根奖券'},
+        {id:13, name:'冲向前方7厘米之外', desc: '智空中神宫'},
+        {id:14, name:'Run(my)way', desc: '速黄金城'},
+        {id:15, name:'好快！好吃！好快', desc: '速进王'},
+        {id:16, name:'一颗安心糖', desc: '耐小海湾'},
+        {id:17, name:'这就是我的优俊偶像之道', desc: '力飞鹰'},
+        {id:18, name:'哪怕还未长大', desc: '速西野花'},
+        {id:19, name:'必杀技！双胡萝卜拳', desc: '速微光飞驹'},
+        {id:20, name:'欢迎来到特雷森学园！', desc: '绿帽'},
+        {id:21, name:'夕阳是憧憬之色', desc: '速特别周'},
+        {id:22, name:'要受人喜爱啊', desc: '力小栗帽'},
+        {id:23, name:'涡轮引擎马力全开！', desc: '速双涡轮'},
+        {id:24, name:'心中的烈火无法抑制', desc: '力八重'},
+        {id:25, name:'身后迫近的热浪是动力', desc: '速北黑'},
+        {id:26, name:'超越那前方的背影', desc: '耐光钻'},
+        {id:27, name:'身为新娘！', desc: '速川上公主'},
       ],
       umamusumeRaceList_1:[
         {id:1401, name:'函馆初级锦标赛',date: '7月后', type: 'GIII'},
