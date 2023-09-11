@@ -90,12 +90,6 @@
                   <input v-model="clockUseLimit" type="number" class="form-control" id="inputClockUseLimit" placeholder="">
                 </div>
               </div>
-              <div class="col-3">
-                <div class="form-group">
-                  <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
-                  <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
-                </div>
-              </div>
             </div>
             <div class="form-group">
               <div>目标属性</div>
@@ -175,7 +169,7 @@
                 <div class="col">
                   <div class="form-group">
                     <label for="race-select">额外赛程选择</label>
-                    <input type="text" disabled v-model="extraRace" class="form-control" id="race-select">
+                    <textarea type="text" disabled v-model="extraRace" class="form-control" id="race-select"></textarea>
                   </div>
                 </div>
               </div>
@@ -222,10 +216,42 @@
                 </div>
               </div>
             </div>
+            <div class="form-group mb-0">
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="skill-learn">技能学习</label>
+                    <textarea type="text"  v-model="skillLearn" class="form-control" id="skill-learn" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="form-group">
-              <div class="form-group">
-                <label for="skill-learn">技能学习</label>
-                <input type="text"  v-model="skillLearn" class="form-control" id="skill-learn" placeholder="技能1名称,技能2名称,....(使用英文逗号)">
+              <div class="row">
+                <div class="col-3">
+                  <div class="form-group">
+                    <label for="learnSkillOnlyUserProvidedSelector">育成中仅允许学习上面的技能</label>
+                    <select v-model="learnSkillOnlyUserProvided" class="form-control" id="learnSkillOnlyUserProvidedSelector">
+                      <option :value=true>是</option>
+                      <option :value=false>否</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="form-group">
+                    <label for="learnSkillBeforeRaceSelector">在参赛前学习技能</label>
+                    <select disabled v-model="learnSkillBeforeRace" class="form-control" id="learnSkillBeforeRace">
+                      <option :value=true>是</option>
+                      <option :value=false>否</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="form-group">
+                    <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
+                    <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
+                  </div>
+                </div>
               </div>
             </div>
           </form>
@@ -383,7 +409,9 @@ export default {
         {id:3707, name:'七夕奖', date: '7月前', type: 'GIII'},
         {id:3709, name:'广播NIKKEI奖', date: '7月前', type: 'GIII'},
         {id:3705, name:'日本泥地德比', date: '7月前', type: 'GI'},
+        {id:4102, name:'玫瑰锦标赛', date: '9月前', type: 'GII'},
         {id:4201, name:'短途者锦标赛', date: '9月后', type: 'GI'},
+        {id:4203, name:'全国邀请赛', date: '9月后', type: 'GII'},
         {id:4407, name:'天王奖(秋)', date: '10月后', type: 'GI'},
         {id:4408, name:'秋华奖', date: '10月后', type: 'GI'},
         {id:4409, name:'菊花奖', date: '10月后', type: 'GI'},
@@ -398,15 +426,20 @@ export default {
         {id:4805, name:'东京大奖赛', date: '12月后', type: 'GI'},
       ],
       umamusumeRaceList_3:[
+        {id:4902, name:'京都金杯', date: '1月前', type: 'GIII'},
+        {id:5102, name:'东京新闻杯', date: '2月前', type: 'GIII'},
         {id:5208, name:'二月锦标赛', date: '2月后', type: 'GI'},
         {id:5406, name:'中京短途赛', date: '3月后', type: 'GI'},
         {id:5407, name:'大阪杯', date: '3月后', type: 'GI'},
+        {id:5601, name:'英里杯', date: '4月后', type: 'GII'},
         {id:5605, name:'天王奖(春)', date: '4月后', type: 'GI'},
         {id:5709, name:'维多利亚英里杯', date: '5月前', type: 'GI'},
         {id:5904, name:'东京英里赛', date: '6月前', type: 'GI'},
         {id:6006, name:'宝塚記念', date: '6月后', type: 'GI'},
         {id:6008, name:'帝王奖', date: '6月后', type: 'GI'},
+        {id:6602, name:'全国邀请赛', date: '9月后', type: 'GII'},
         {id:6601, name:'短途者锦标赛', date: '9月后', type: 'GI'},
+        {id:6701, name:'每日王冠', date: '10月前', type: 'GII'},
         {id:6807, name:'天王奖(秋)', date: '10月后', type: 'GI'},
         {id:6906, name:'伊丽莎白女王杯', date: '11月前', type: 'GI'},
         {id:6907, name:'JBC女士经典赛', date: '11月前', type: 'GI'},
@@ -417,7 +450,8 @@ export default {
         {id:7111, name:'日本冠军杯', date: '12月前', type: 'GI'},
         {id:7204, name:'中山大奖赛', date: '12月后', type: 'GI'},
         {id:7205, name:'东京大奖赛', date: '12月后', type: 'GI'}],
-      cultivatePresets:[
+      cultivatePresets:[],
+      cultivateDefaultPresets:[
       {
           name: "默认",
           race_list: [],
@@ -470,6 +504,19 @@ export default {
           race_tactic_1: 4,
           race_tactic_2: 4,
           race_tactic_3: 4,
+        },
+        {
+          name:"历战小栗帽35战60w粉丝(需求觉醒3,借满破小海湾,种马速耐,支援卡带赛后加成高的)",
+          race_list:[1601,1701,1902,2103,2302,2401,2701,2905,3103,3303,3404,3601,4102,4203,4408,4506,4607,4804,4902,5208,5407,5601,5709,5904,6006,6602,6701,6807,7007,7111,7204],
+          skill:"大胃王",
+          expect_attribute:[700,500,700,350,350],
+          follow_support_card:{"id":16,"name":"一颗安心糖","desc":"耐小海湾"},
+          follow_support_card_level:50,
+          clock_use_limit:1,
+          learn_skill_threshold:400,
+          race_tactic_1:4,
+          race_tactic_2:3,
+          race_tactic_3:3
         }
       ],
       expectSpeedValue : 800,
@@ -502,6 +549,8 @@ export default {
       selectedSupportCard: undefined,
       extraRace: [],
       skillLearn: "",
+      learnSkillOnlyUserProvided: false,
+      learnSkillBeforeRace: false,
       selectedRaceTactic1: 4,
       selectedRaceTactic2: 4,
       selectedRaceTactic3: 4,
@@ -510,6 +559,7 @@ export default {
       recoverTP: false,
       presetNameEdit: "",
       successToast: undefined,
+
     }
   },
   mounted() {
@@ -541,7 +591,8 @@ export default {
           "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
           "clock_use_limit": this.clockUseLimit,
           "learn_skill_threshold": this.learnSkillThreshold,
-          "recover_tp": this.recoverTP
+          "recover_tp": this.recoverTP,
+          "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided
         },
         cron_job_info:{},
       }
@@ -576,7 +627,10 @@ export default {
     getPresets: function(){
       this.axios.post("/umamusume/get-presets", "").then(
           res=>{
-          this.cultivatePresets = this.cultivatePresets.concat(res.data);
+          let tmplist = []
+          tmplist = tmplist.concat(this.cultivateDefaultPresets)
+          tmplist = tmplist.concat(res.data)
+          this.cultivatePresets = tmplist
         }
       )
     },
@@ -601,6 +655,7 @@ export default {
       this.axios.post("/umamusume/add-presets", JSON.stringify(payload)).then(
         ()=>{
           this.successToast.toast('show')
+          this.getPresets()
         } 
       )
     }

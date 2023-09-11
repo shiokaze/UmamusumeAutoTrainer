@@ -1,3 +1,4 @@
+import json
 import time
 
 import numpy as np
@@ -30,7 +31,11 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
         parse_cultivate_main_menu(ctx, img)
         return
 
-    if ctx.cultivate_detail.turn_info.uma_attribute.skill_point > ctx.cultivate_detail.learn_skill_threshold:
+    has_extra_race = len([i for i in ctx.cultivate_detail.extra_race_list if str(i)[:2]
+                            == str(ctx.cultivate_detail.turn_info.date)]) != 0
+
+    if (ctx.cultivate_detail.turn_info.uma_attribute.skill_point > ctx.cultivate_detail.learn_skill_threshold
+            and not ctx.cultivate_detail.turn_info.turn_learn_skill_finish):
         ctx.ctrl.click_by_point(CULTIVATE_SKILL_LEARN)
         ctx.cultivate_detail.turn_info.parse_main_menu_finish = False
         return
@@ -38,8 +43,12 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
         ctx.cultivate_detail.reset_skill_learn()
 
     if not ctx.cultivate_detail.turn_info.parse_train_info_finish:
-        ctx.ctrl.click_by_point(TO_TRAINING_SELECT)
-        return
+        if has_extra_race or ctx.cultivate_detail.turn_info.remain_stamina < 40:
+            ctx.cultivate_detail.turn_info.parse_train_info_finish = True
+            return
+        else:
+            ctx.ctrl.click_by_point(TO_TRAINING_SELECT)
+            return
 
     turn_operation = ctx.cultivate_detail.turn_info.turn_operation
     if turn_operation is not None:
@@ -298,11 +307,11 @@ def script_cultivate_catch_doll_result(ctx: UmamusumeContext):
 
 
 def script_cultivate_finish(ctx: UmamusumeContext):
-    if ctx.cultivate_detail.learn_skill_done:
-        ctx.ctrl.click_by_point(CULTIVATE_FINISH_CONFIRM)
+    if not ctx.cultivate_detail.learn_skill_done or not ctx.cultivate_detail.cultivate_finish:
         ctx.cultivate_detail.cultivate_finish = True
-    else:
         ctx.ctrl.click_by_point(CULTIVATE_FINISH_LEARN_SKILL)
+    else:
+        ctx.ctrl.click_by_point(CULTIVATE_FINISH_CONFIRM)
 
 
 def script_cultivate_learn_skill(ctx: UmamusumeContext):
@@ -313,10 +322,18 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
         return
     learn_skill_list: list
-    if len(ctx.cultivate_detail.learn_skill_list) == 0:
-        learn_skill_list = SKILL_LEARN_PRIORITY_LIST
+    if ctx.cultivate_detail.cultivate_finish or not ctx.cultivate_detail.learn_skill_only_user_provided:
+        if len(ctx.cultivate_detail.learn_skill_list) == 0:
+            learn_skill_list = SKILL_LEARN_PRIORITY_LIST
+        else:
+            learn_skill_list = [ctx.cultivate_detail.learn_skill_list] + SKILL_LEARN_PRIORITY_LIST
     else:
-        learn_skill_list = [ctx.cultivate_detail.learn_skill_list] + SKILL_LEARN_PRIORITY_LIST
+        if len(ctx.cultivate_detail.learn_skill_list) == 0:
+            ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
+            ctx.cultivate_detail.learn_skill_done = True
+            return
+        else:
+            learn_skill_list = [ctx.cultivate_detail.learn_skill_list]
     for i in range(len(learn_skill_list)):
         log.debug("目标技能列表：%s, 优先级：%s", str(learn_skill_list[i]), str(i))
         while True:
@@ -334,16 +351,17 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
                 time.sleep(1.5)
                 break
     time.sleep(1)
-    while True:
-        img = ctx.ctrl.get_screen()
-        find_skill(ctx, img, [], learn_any_skill=True)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        if not compare_color_equal(img[1006, 701], [211, 209, 219]):
-            break
-        ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=640, duration=1000, name="")
-        time.sleep(1)
+    if ctx.cultivate_detail.cultivate_finish or not ctx.cultivate_detail.learn_skill_only_user_provided:
+        while True:
+            img = ctx.ctrl.get_screen()
+            find_skill(ctx, img, [], learn_any_skill=True)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            if not compare_color_equal(img[1006, 701], [211, 209, 219]):
+                break
+            ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=640, duration=1000, name="")
+            time.sleep(1)
     ctx.cultivate_detail.learn_skill_done = True
-
+    ctx.cultivate_detail.turn_info.turn_learn_skill_finish = True
 
 def script_not_found_ui(ctx: UmamusumeContext):
     ctx.ctrl.click(719, 1, "")

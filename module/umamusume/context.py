@@ -103,6 +103,7 @@ class TurnInfo:
 
     turn_operation: TurnOperation | None
     turn_info_logged: bool
+    turn_learn_skill_finish: bool
 
     def __init__(self):
         self.date = -1
@@ -116,6 +117,7 @@ class TurnInfo:
         self.race_available = False
         self.turn_operation = None
         self.turn_info_logged = False
+        self.turn_learn_skill_finish = False
 
     def log_turn_info(self):
         log.info("当前回合时间 >" + str(self.date))
@@ -152,6 +154,7 @@ class CultivateContextDetail:
     clock_used: int
     learn_skill_threshold: int
     learn_skill_only_user_provided: bool
+    learn_skill_before_race: bool
 
     def __init__(self):
         self.expect_attribute = None
@@ -195,6 +198,7 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
         detail.tactic_list = task.detail.tactic_list
         detail.clock_use_limit = task.detail.clock_use_limit
         detail.learn_skill_threshold = task.detail.learn_skill_threshold
+        detail.learn_skill_only_user_provided = task.detail.learn_skill_only_user_provided
         ctx.cultivate_detail = detail
     return ctx
 
