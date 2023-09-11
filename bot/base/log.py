@@ -19,7 +19,7 @@ def get_logger(name) -> Logger:
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
         fmt = colorlog.ColoredFormatter(
-            fmt='%(log_color)s%(asctime)s  %(levelname)-8s [%(funcName)20   s] %(filename)-20s: %(message)s',
+            fmt='%(log_color)s%(asctime)s  %(levelname)-8s [%(funcName)20s] %(filename)-20s: %(message)s',
             log_colors=log_colors_config
         )
         console_handler = logging.StreamHandler(sys.stdout)
