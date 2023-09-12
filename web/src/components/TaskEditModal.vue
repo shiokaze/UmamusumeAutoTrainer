@@ -39,7 +39,7 @@
               <div class="col">
                 <div class="form-group">
                   <label for="selectAutoRecoverTP">TP不足时自动恢复（仅使用药水）</label>
-                  <select disabled v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
+                  <select v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
                     <option :value=true>是</option>
                     <option :value=false>否</option>
                   </select>
@@ -591,7 +591,7 @@ export default {
           "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
           "clock_use_limit": this.clockUseLimit,
           "learn_skill_threshold": this.learnSkillThreshold,
-          "recover_tp": this.recoverTP,
+          "allow_recover_tp": this.recoverTP,
           "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided
         },
         cron_job_info:{},

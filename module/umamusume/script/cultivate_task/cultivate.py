@@ -25,6 +25,7 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
             ctx.cultivate_detail.turn_info_history.append(ctx.cultivate_detail.turn_info)
         ctx.cultivate_detail.turn_info = TurnInfo()
         ctx.cultivate_detail.turn_info.date = current_date
+        log.debug("进入新回合，日期：" + str(current_date))
 
     # 解析主界面
     if not ctx.cultivate_detail.turn_info.parse_main_menu_finish:

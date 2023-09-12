@@ -3,6 +3,7 @@ import time
 import cv2
 
 from bot.base.task import TaskStatus, EndTaskReason
+from module.umamusume.task import EndTaskReason as UEndTaskReason
 from bot.recog.image_matcher import image_match
 from bot.recog.ocr import ocr_line, find_similar_text
 from module.umamusume.asset.point import *
@@ -38,7 +39,9 @@ TITLE = [
     "领取成功",
     "解锁角色剧情",
     "目标达成次数不足",
-    "活动剧情解锁"
+    "活动剧情解锁",
+    "确认",
+    "回复训练值",
 ]
 
 
@@ -125,5 +128,17 @@ def script_info(ctx: UmamusumeContext):
             ctx.ctrl.click_by_point(WIN_TIMES_NOT_ENOUGH_RETURN)
         if title_text == TITLE[25]:
             ctx.ctrl.click_by_point(ACTIVITY_STORY_UNLOCK_CONFIRM)
+        if title_text == TITLE[26]:
+            if not ctx.cultivate_detail.allow_recover_tp:
+                ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, UEndTaskReason.TP_NOT_ENOUGH)
+            else:
+                ctx.ctrl.click_by_point(TO_RECOVER_TP)
+        if title_text == TITLE[27]:
+            if image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_1).find_match:
+                ctx.ctrl.click_by_point(USE_TP_DRINK)
+            elif image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_2).find_match:
+                ctx.ctrl.click_by_point(USE_TP_DRINK_CONFIRM)
+            elif image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_3).find_match:
+                ctx.ctrl.click_by_point(USE_TP_DRINK_RESULT_CLOSE)
         time.sleep(1)
 
