@@ -13,7 +13,6 @@ def load_race_data():
         RACE_LIST.append([])
     with open('resource/umamusume/data/race.csv', 'r', encoding="utf-8") as file:
         reader = csv.reader(file)
-        next(reader)
         for row in reader:
             race_id = row[1]
             path = "resource" + UMAMUSUME_RACE_TEMPLATE_PATH + "/" + str(race_id)+".png"
