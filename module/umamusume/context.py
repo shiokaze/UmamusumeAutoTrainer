@@ -103,7 +103,7 @@ class TurnInfo:
 
     turn_operation: TurnOperation | None
     turn_info_logged: bool
-    turn_learn_skill_finish: bool
+    turn_learn_skill_done: bool
 
     def __init__(self):
         self.date = -1
@@ -117,7 +117,7 @@ class TurnInfo:
         self.race_available = False
         self.turn_operation = None
         self.turn_info_logged = False
-        self.turn_learn_skill_finish = False
+        self.turn_learn_skill_done = False
 
     def log_turn_info(self):
         log.info("当前回合时间 >" + str(self.date))

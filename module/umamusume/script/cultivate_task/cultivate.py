@@ -26,6 +26,7 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
         ctx.cultivate_detail.turn_info = TurnInfo()
         ctx.cultivate_detail.turn_info.date = current_date
         log.debug("进入新回合，日期：" + str(current_date))
+        ctx.cultivate_detail.reset_skill_learn()
 
     # 解析主界面
     if not ctx.cultivate_detail.turn_info.parse_main_menu_finish:
@@ -35,8 +36,12 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
     has_extra_race = len([i for i in ctx.cultivate_detail.extra_race_list if str(i)[:2]
                             == str(ctx.cultivate_detail.turn_info.date)]) != 0
 
+    # 意外情况处理
+    if not ctx.cultivate_detail.turn_info.turn_learn_skill_done and ctx.cultivate_detail.learn_skill_done:
+        ctx.cultivate_detail.reset_skill_learn()
+
     if (ctx.cultivate_detail.turn_info.uma_attribute.skill_point > ctx.cultivate_detail.learn_skill_threshold
-            and not ctx.cultivate_detail.turn_info.turn_learn_skill_finish):
+            and not ctx.cultivate_detail.turn_info.turn_learn_skill_done):
         ctx.ctrl.click_by_point(CULTIVATE_SKILL_LEARN)
         ctx.cultivate_detail.turn_info.parse_main_menu_finish = False
         return
@@ -332,6 +337,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
         if len(ctx.cultivate_detail.learn_skill_list) == 0:
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
             ctx.cultivate_detail.learn_skill_done = True
+            ctx.cultivate_detail.turn_info.turn_learn_skill_done = True
             return
         else:
             learn_skill_list = [ctx.cultivate_detail.learn_skill_list]
@@ -362,7 +368,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=640, duration=1000, name="")
             time.sleep(1)
     ctx.cultivate_detail.learn_skill_done = True
-    ctx.cultivate_detail.turn_info.turn_learn_skill_finish = True
+    ctx.cultivate_detail.turn_info.turn_learn_skill_done = True
 
 def script_not_found_ui(ctx: UmamusumeContext):
     ctx.ctrl.click(719, 1, "")
