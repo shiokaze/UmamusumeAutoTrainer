@@ -31,7 +31,6 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
     # 解析主界面
     if not ctx.cultivate_detail.turn_info.parse_main_menu_finish:
         parse_cultivate_main_menu(ctx, img)
-        return
 
     has_extra_race = len([i for i in ctx.cultivate_detail.extra_race_list if str(i)[:2]
                             == str(ctx.cultivate_detail.turn_info.date)]) != 0
@@ -97,7 +96,7 @@ def script_cultivate_training_select(ctx: UmamusumeContext):
             return
 
     if not ctx.cultivate_detail.turn_info.parse_train_info_finish:
-        img = ctx.ctrl.get_screen()
+        img = ctx.current_screen
         train_type = parse_train_type(ctx, img)
         if train_type == TrainingType.TRAINING_TYPE_UNKNOWN:
             return
@@ -108,10 +107,12 @@ def script_cultivate_training_select(ctx: UmamusumeContext):
             if i != (viewed - 1):
                 retry = 0
                 max_retry = 3
+                ctx.ctrl.click_by_point(TRAINING_POINT_LIST[i])
                 img = ctx.ctrl.get_screen()
                 while parse_train_type(ctx, img) != TrainingType(i + 1) and retry < max_retry:
-                    ctx.ctrl.click_by_point(TRAINING_POINT_LIST[i])
-                    time.sleep(0.3)
+                    if retry > 2:
+                        ctx.ctrl.click_by_point(TRAINING_POINT_LIST[i])
+                    time.sleep(0.2)
                     img = ctx.ctrl.get_screen()
                     retry += 1
                 if retry == max_retry:
@@ -352,7 +353,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=660, duration=1000, name="")
             time.sleep(1)
         while True:
-            ctx.ctrl.swipe(x1=23, y1=620, x2=23, y2=1000, duration=200, name="")
+            ctx.ctrl.swipe(x1=23, y1=620, x2=23, y2=1000, duration=100, name="")
             img = cv2.cvtColor(ctx.ctrl.get_screen(), cv2.COLOR_BGR2RGB)
             if not compare_color_equal(img[488, 701], [211, 209, 219]):
                 time.sleep(1.5)
@@ -370,6 +371,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     ctx.cultivate_detail.learn_skill_done = True
     ctx.cultivate_detail.turn_info.turn_learn_skill_done = True
 
+
 def script_not_found_ui(ctx: UmamusumeContext):
     ctx.ctrl.click(719, 1, "")
 
@@ -383,7 +385,10 @@ def script_cultivate_level_result(ctx: UmamusumeContext):
 
 
 def script_factor_receive(ctx: UmamusumeContext):
-    ctx.ctrl.click_by_point(CULTIVATE_FACTOR_RECEIVE_CONFIRM)
+    if ctx.cultivate_detail.parse_factor_done:
+        ctx.ctrl.click_by_point(CULTIVATE_FACTOR_RECEIVE_CONFIRM)
+    else:
+        parse_factor(ctx)
 
 
 def script_historical_rating_update(ctx: UmamusumeContext):

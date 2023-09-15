@@ -129,7 +129,6 @@ class Executor:
                     if ctx.is_task_finish():
                         task.end_task(TaskStatus.TASK_STATUS_SUCCESS, EndTaskReason.COMPLETE)
                 else:
-                    log.debug("任务结束")
                     break
                 time.sleep(0.5)
         except Exception:
@@ -140,7 +139,6 @@ class Executor:
         else:
             self.active = False
         task.end_task_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        log.debug("任务结束")
         push_system_notification("任务结束", str(task.end_task_reason.value), 10)
         controller.destroy()
 

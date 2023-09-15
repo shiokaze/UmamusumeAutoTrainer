@@ -2,6 +2,7 @@ import re
 from difflib import SequenceMatcher
 
 import cv2
+import numpy
 
 from bot.recog.image_matcher import image_match, compare_color_equal
 from bot.recog.ocr import ocr_line, find_similar_text
@@ -11,7 +12,6 @@ from module.umamusume.asset import *
 from module.umamusume.define import *
 from module.umamusume.script.cultivate_task.const import DATE_YEAR, DATE_MONTH
 import bot.base.log as logger
-
 
 log = logger.get_logger(__name__)
 
@@ -50,7 +50,8 @@ def parse_date(img, ctx: UmamusumeContext) -> int:
     if month_text != DATE_MONTH[0]:
         date_id = DATE_YEAR.index(year_text) * 24 + DATE_MONTH.index(month_text)
     else:
-        sub_img_turn_to_race = cv2.copyMakeBorder(img[99:158, 13:140], 20, 20, 20, 20, cv2.BORDER_CONSTANT, None, (255, 255, 255))
+        sub_img_turn_to_race = cv2.copyMakeBorder(img[99:158, 13:140], 20, 20, 20, 20, cv2.BORDER_CONSTANT, None,
+                                                  (255, 255, 255))
         turn_to_race_text = ocr_line(sub_img_turn_to_race)
         if turn_to_race_text == "比赛日":
             log.debug("出道比赛日")
@@ -116,18 +117,24 @@ def parse_umamusume_basic_ability_value(ctx: UmamusumeContext, img):
 
     sub_img_skill = img[855:902, 602:690]
     sub_img_skill = cv2.copyMakeBorder(sub_img_skill, 20, 20, 20, 20, cv2.BORDER_CONSTANT, None,
-                                              (255, 255, 255))
+                                       (255, 255, 255))
     skill_point_text = ocr_line(sub_img_skill)
 
-    ctx.cultivate_detail.turn_info.uma_attribute.speed = trans_attribute_value(speed_text,ctx, TrainingType.TRAINING_TYPE_SPEED)
-    ctx.cultivate_detail.turn_info.uma_attribute.stamina = trans_attribute_value(stamina_text,ctx, TrainingType.TRAINING_TYPE_STAMINA)
-    ctx.cultivate_detail.turn_info.uma_attribute.power = trans_attribute_value(power_text,ctx, TrainingType.TRAINING_TYPE_POWER)
-    ctx.cultivate_detail.turn_info.uma_attribute.will = trans_attribute_value(will_text,ctx, TrainingType.TRAINING_TYPE_WILL)
-    ctx.cultivate_detail.turn_info.uma_attribute.intelligence = trans_attribute_value(intelligence_text,ctx, TrainingType.TRAINING_TYPE_INTELLIGENCE)
+    ctx.cultivate_detail.turn_info.uma_attribute.speed = trans_attribute_value(speed_text, ctx,
+                                                                               TrainingType.TRAINING_TYPE_SPEED)
+    ctx.cultivate_detail.turn_info.uma_attribute.stamina = trans_attribute_value(stamina_text, ctx,
+                                                                                 TrainingType.TRAINING_TYPE_STAMINA)
+    ctx.cultivate_detail.turn_info.uma_attribute.power = trans_attribute_value(power_text, ctx,
+                                                                               TrainingType.TRAINING_TYPE_POWER)
+    ctx.cultivate_detail.turn_info.uma_attribute.will = trans_attribute_value(will_text, ctx,
+                                                                              TrainingType.TRAINING_TYPE_WILL)
+    ctx.cultivate_detail.turn_info.uma_attribute.intelligence = trans_attribute_value(intelligence_text, ctx,
+                                                                                      TrainingType.TRAINING_TYPE_INTELLIGENCE)
     ctx.cultivate_detail.turn_info.uma_attribute.skill_point = trans_attribute_value(skill_point_text, ctx)
 
+
 def trans_attribute_value(text: str, ctx: UmamusumeContext,
-                          train_type: TrainingType=TrainingType.TRAINING_TYPE_UNKNOWN) -> int:
+                          train_type: TrainingType = TrainingType.TRAINING_TYPE_UNKNOWN) -> int:
     text = re.sub("\\D", "", text)
     if text == "":
         prev_turn_idx = len(ctx.cultivate_detail.turn_info_history)
@@ -181,7 +188,8 @@ def parse_train_main_menu_operations_availability(ctx: UmamusumeContext, img):
     rest_available = btn_rest_check_point[0] > 200
     train_available = btn_train_check_point[0] > 200
     skill_available = btn_skill_check_point[0] > 200
-    if btn_medic_room_check_point[0] > 200 and btn_medic_room_check_point[1] > 200 and btn_medic_room_check_point[2] > 200:
+    if btn_medic_room_check_point[0] > 200 and btn_medic_room_check_point[1] > 200 and btn_medic_room_check_point[
+        2] > 200:
         medic_room_available = True
     else:
         medic_room_available = False
@@ -313,14 +321,16 @@ def find_support_card(ctx: UmamusumeContext, img):
         if match_result.find_match:
             pos = match_result.matched_area
             support_card_info = img[pos[0][1] - 125:pos[1][1] + 10, pos[0][0] - 140: pos[1][0] + 380]
-            img[match_result.matched_area[0][1]:match_result.matched_area[1][1], match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+            img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
+            match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
             support_card_level_img = support_card_info[125:145, 68:111]
             support_card_name_img = support_card_info[63:94, 132:439]
 
-            support_card_level_img = cv2.copyMakeBorder(support_card_level_img, 20, 20, 20, 20, cv2.BORDER_CONSTANT, None,
-                                                      (255, 255, 255))
+            support_card_level_img = cv2.copyMakeBorder(support_card_level_img, 20, 20, 20, 20, cv2.BORDER_CONSTANT,
+                                                        None,
+                                                        (255, 255, 255))
             support_card_name_img = cv2.copyMakeBorder(support_card_name_img, 20, 20, 20, 20, cv2.BORDER_CONSTANT, None,
-                                                      (255, 255, 255))
+                                                       (255, 255, 255))
             support_card_level_text = ocr_line(support_card_level_img)
             if support_card_level_text == "":
                 continue
@@ -331,7 +341,8 @@ def find_support_card(ctx: UmamusumeContext, img):
             s = SequenceMatcher(None, support_card_text, ctx.cultivate_detail.follow_support_card_name)
             if s.ratio() > 0.7:
                 ctx.ctrl.click(match_result.center_point[0], match_result.center_point[1] - 75,
-                               "选择支援卡：" + ctx.cultivate_detail.follow_support_card_name + "<" + str(support_card_level)+">")
+                               "选择支援卡：" + ctx.cultivate_detail.follow_support_card_name + "<" + str(
+                                   support_card_level) + ">")
                 return True
         else:
             break
@@ -349,14 +360,14 @@ def parse_cultivate_event(ctx: UmamusumeContext, img) -> (str, list[int]):
         if match_result.find_match:
             event_selector_list.append(match_result.center_point)
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
-                match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+            match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
         else:
             break
     event_selector_list.sort(key=lambda x: x[1])
     return event_name, event_selector_list
 
 
-def find_race(ctx: UmamusumeContext, img,  race_id: int = 0) -> bool:
+def find_race(ctx: UmamusumeContext, img, race_id: int = 0) -> bool:
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     target_race_template = RACE_LIST[race_id][2]
     while True:
@@ -368,10 +379,11 @@ def find_race(ctx: UmamusumeContext, img,  race_id: int = 0) -> bool:
                 race_name_img = img[pos[0][1] - 60:pos[1][1] + 25, pos[0][0] - 250: pos[1][0] + 400]
                 if target_race_template is not None:
                     if image_match(race_name_img, target_race_template).find_match:
-                        ctx.ctrl.click(match_result.center_point[0], match_result.center_point[1], "选择比赛：" + str(RACE_LIST[race_id][1]))
+                        ctx.ctrl.click(match_result.center_point[0], match_result.center_point[1],
+                                       "选择比赛：" + str(RACE_LIST[race_id][1]))
                         return True
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
-                match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+            match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
         else:
             break
     return False
@@ -392,7 +404,7 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
                     skill_name_img = skill_info_img[10: 47, 100: 445]
                     text = ocr_line(skill_name_img)
                     result = find_similar_text(text, skill, 0.7)
-                    print(text + "->" + result)
+                    # print(text + "->" + result)
                     if result != "" or learn_any_skill:
                         tmp_img = ctx.ctrl.get_screen()
                         pt_text = re.sub("\\D", "", ocr_line(tmp_img[400: 440, 490: 665]))
@@ -401,17 +413,45 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
                             pt = int(pt_text)
                             skill_pt_cost = int(skill_pt_cost_text)
                             if pt >= skill_pt_cost:
-                                ctx.ctrl.click(match_result.center_point[0] + 128, match_result.center_point[1], "加点技能：" + text)
+                                ctx.ctrl.click(match_result.center_point[0] + 128, match_result.center_point[1],
+                                               "加点技能：" + text)
                                 ctx.cultivate_detail.learn_skill_selected = True
                                 find = True
 
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
-                match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+            match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
 
         else:
             break
     return find
 
 
-
-
+def parse_factor(ctx: UmamusumeContext):
+    origin_img = ctx.ctrl.get_screen()
+    img = cv2.cvtColor(origin_img, cv2.COLOR_BGR2GRAY)
+    factor_list = []
+    while True:
+        match_result = image_match(img, REF_FACTOR_DETECT_LABEL)
+        if match_result.find_match:
+            factor_info = ['unknown', 0]
+            pos = match_result.matched_area
+            factor_info_img_gray = img[pos[0][1] - 20:pos[1][1] + 25, pos[0][0] - 630: pos[1][0] - 25]
+            factor_info_img = origin_img[pos[0][1] - 20:pos[1][1] + 25, pos[0][0] - 630: pos[1][0] - 25]
+            factor_name_sub_img = factor_info_img_gray[15: 60, 45:320]
+            factor_name = ocr_line(factor_name_sub_img)
+            factor_level = 0
+            factor_level_check_point = [factor_info_img[35, 535], factor_info_img[35, 565], factor_info_img[35, 595]]
+            for i in range(len(factor_level_check_point)):
+                if not compare_color_equal(factor_level_check_point[i], [223, 227, 237]):
+                    factor_level += 1
+                else:
+                    break
+            img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
+                match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+            factor_info[0] = factor_name
+            factor_info[1] = factor_level
+            factor_list.append(factor_info)
+        else:
+            break
+    ctx.cultivate_detail.parse_factor_done = True
+    ctx.task.detail.cultivate_result['factor_list'] = factor_list

@@ -53,7 +53,7 @@ def script_info(ctx: UmamusumeContext):
         pos = result.matched_area
         title_img = img[pos[0][1] - 5:pos[1][1] + 5, pos[0][0] + 150: pos[1][0] + 405]
         title_text = ocr_line(title_img)
-        print(title_text)
+        log.debug(title_text)
         title_text = find_similar_text(title_text, TITLE, 0.8)
         if title_text == "":
             log.warning("未知的选项框")

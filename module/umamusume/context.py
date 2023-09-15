@@ -156,6 +156,7 @@ class CultivateContextDetail:
     learn_skill_only_user_provided: bool
     learn_skill_before_race: bool
     allow_recover_tp: bool
+    parse_factor_done: bool
 
     def __init__(self):
         self.expect_attribute = None
@@ -171,6 +172,7 @@ class CultivateContextDetail:
         self.clock_use_limit = 0
         self.clock_used = 0
         self.allow_recover_tp = False
+        self.parse_factor_done = False
 
     def reset_skill_learn(self):
         self.learn_skill_done = False
