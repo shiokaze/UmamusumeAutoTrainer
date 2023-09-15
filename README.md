@@ -91,7 +91,6 @@ https://github.com/shiokaze/UmamusumeAutoTrainer/issues/25
 
 ### TODO
 
-- [ ] 体力不足时自动使用体力药水
 - [ ] 定时执行任务
 - [ ] 育成中ai逻辑优化
 - [ ] 事件支持配置选项
