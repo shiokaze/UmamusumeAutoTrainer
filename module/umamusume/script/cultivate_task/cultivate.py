@@ -388,6 +388,7 @@ def script_factor_receive(ctx: UmamusumeContext):
     if ctx.cultivate_detail.parse_factor_done:
         ctx.ctrl.click_by_point(CULTIVATE_FACTOR_RECEIVE_CONFIRM)
     else:
+        time.sleep(2)
         parse_factor(ctx)
 
 
