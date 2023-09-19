@@ -157,7 +157,7 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
         date = 72
     for i in range(len(tmp_expect_attribute)):
         turn_expect_attribute = int(((tmp_expect_attribute[i] - 150)*(date/72)) + 100)
-        tmp_expect_attribute[i] = turn_expect_attribute
+        tmp_expect_attribute[i] = turn_expect_attribute if turn_expect_attribute > 0 else 1
     origin = [turn_info.uma_attribute.speed, turn_info.uma_attribute.stamina, turn_info.uma_attribute.power,
               turn_info.uma_attribute.will, turn_info.uma_attribute.intelligence]
     result = []
