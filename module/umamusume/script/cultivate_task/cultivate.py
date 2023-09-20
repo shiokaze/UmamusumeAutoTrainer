@@ -350,7 +350,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             if not compare_color_equal(img[1006, 701], [211, 209, 219]):
                 break
-            ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=660, duration=1000, name="")
+            ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=635, duration=1000, name="")
             time.sleep(1)
         while True:
             ctx.ctrl.swipe(x1=23, y1=620, x2=23, y2=1000, duration=100, name="")
