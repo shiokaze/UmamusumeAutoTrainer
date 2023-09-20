@@ -428,6 +428,35 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
     return find
 
 
+def get_skill_list(img, skill: list[str]) -> list:
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    res = []
+    while True:
+        match_result = image_match(img, REF_SKILL_LIST_DETECT_LABEL)
+        if match_result.find_match:
+            pos = match_result.matched_area
+            pos_center = match_result.center_point
+            if 460 < pos_center[0] < 560 and 450 < pos_center[1] < 1050:
+                skill_info_img = img[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
+                if not image_match(skill_info_img, REF_SKILL_LEARNED).find_match:
+                    skill_name_img = skill_info_img[10: 47, 100: 445]
+                    skill_cost_img = skill_info_img[69: 99, 525: 588]
+                    text = ocr_line(skill_name_img)
+                    cost = re.sub("\\D", "", ocr_line(skill_cost_img))
+                    flag = False
+                    for i in range(len(skill)):
+                        if text in skill[i]:
+                            res.append((text,cost,i))
+                            flag = True
+                    if flag == False:
+                        res.append((text,cost,len(skill)))
+            img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
+            match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+
+        else:
+            break
+    return res
+
 def parse_factor(ctx: UmamusumeContext):
     origin_img = ctx.ctrl.get_screen()
     img = cv2.cvtColor(origin_img, cv2.COLOR_BGR2GRAY)
