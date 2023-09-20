@@ -446,10 +446,10 @@ def get_skill_list(img, skill: list[str]) -> list:
                     flag = False
                     for i in range(len(skill)):
                         if text in skill[i]:
-                            res.append((text,cost,i))
+                            res.append((text,int(cost),i))
                             flag = True
                     if flag == False:
-                        res.append((text,cost,len(skill)))
+                        res.append((text,int(cost),len(skill)))
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
             match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
 
