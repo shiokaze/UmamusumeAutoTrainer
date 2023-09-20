@@ -342,6 +342,27 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             return
         else:
             learn_skill_list = [ctx.cultivate_detail.learn_skill_list]
+
+    #遍历整页, 找出所有可点的技能
+    skill_list = []
+    while True:
+        img = ctx.ctrl.get_screen()
+        l = get_skill_list(img,learn_skill_list)
+        #避免重复统计(会出现在页末翻页不完全的情况)
+        for i in l:
+            if i not in skill_list:
+                skill_list.append(i)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        if not compare_color_equal(img[1006, 701], [211, 209, 219]):
+            break
+        ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=635, duration=1000, name="")
+        time.sleep(1)
+    #按照优先级排列
+    skill_list = sorted(skill_list,key = lambda x: x[2])
+    #当翻页时恰巧有一个技能名的一半出现在页面内, 可能会出现ocr识别错误成一个不存在的技能名的问题;
+    #不过这个问题几乎没有影响, 因为这个错误技能必然是最后被发现的, 加之它优先级一定是最低的, 所以只要不是
+    #技能点多到能把所有技能都点上, 就不会轮到这个错误技能被点
+    
     for i in range(len(learn_skill_list)):
         log.debug("目标技能列表：%s, 优先级：%s", str(learn_skill_list[i]), str(i))
         while True:
