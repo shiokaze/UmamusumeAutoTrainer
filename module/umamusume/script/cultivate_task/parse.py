@@ -453,17 +453,25 @@ def get_skill_list(img, skill: list[str]) -> list:
                     flag = False
                     for i in range(len(skill)):
                         if text in skill[i]:
-                            res.append((text,int(cost),i,isGold,int(pos_center[1])))
+                            priority = i
                             flag = True
                     if flag == False:
-                        res.append((text,int(cost),len(skill),isGold,int(pos_center[1])))
+                        priority = len(skill)
+                    res.append({"skill_name":text,
+                                "skill_cost":int(cost),
+                                "priority":priority,
+                                "is_gold":isGold,
+                                "subsequent_skill":"",
+                                "is_available":True,
+                                "y_pos":int(pos_center[1])})
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
             match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
 
         else:
             break
+    res = sorted(res,key = lambda x : x["y_pos"])
     #没有精确计算过，但是大约y轴小于540就会导致技能名显示不全。暂时没测试出问题。
-    return [t[:-1] for t in sorted(res,key = lambda x : x[-1]) if t[-1] >= 540]
+    return [{k: v for k,v in r.items() if k != "y_pos"} for r in res if r["y_pos"] >= 540]
 
 def parse_factor(ctx: UmamusumeContext):
     origin_img = ctx.ctrl.get_screen()
