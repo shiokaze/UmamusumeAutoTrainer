@@ -402,7 +402,9 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
                 skill_info_img = img[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
                 if not image_match(skill_info_img, REF_SKILL_LEARNED).find_match:
                     skill_name_img = skill_info_img[10: 47, 100: 445]
+                    skill_cost_img = skill_info_img[65: 95, 520: 580]
                     text = ocr_line(skill_name_img)
+                    cost = ocr_line(skill_cost_img)
                     result = find_similar_text(text, skill, 0.7)
                     # print(text + "->" + result)
                     if result != "" or learn_any_skill:
@@ -425,6 +427,51 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
             break
     return find
 
+
+def get_skill_list(img, skill: list[str]) -> list:
+    imgcp = img
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    res = []
+    while True:
+        match_result = image_match(img, REF_SKILL_LIST_DETECT_LABEL)
+        if match_result.find_match:
+            pos = match_result.matched_area
+            pos_center = match_result.center_point
+            if 460 < pos_center[0] < 560 and 450 < pos_center[1] < 1050:
+                skill_info_img = img[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
+                skill_info_cp = imgcp[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
+                if not image_match(skill_info_img, REF_SKILL_LEARNED).find_match:
+                    skill_name_img = skill_info_img[10: 47, 100: 445]
+                    skill_cost_img = skill_info_img[69: 99, 525: 588]
+                    text = ocr_line(skill_name_img)
+                    cost = re.sub("\\D", "", ocr_line(skill_cost_img))
+                    
+                    #检查是不是金色技能
+                    mask = cv2.inRange(skill_info_cp,numpy.array([40,180,240]),numpy.array([100,210,255]))
+                    isGold = True if mask[120,600] == 255 else False
+
+                    flag = False
+                    for i in range(len(skill)):
+                        if text in skill[i]:
+                            priority = i
+                            flag = True
+                    if flag == False:
+                        priority = len(skill)
+                    res.append({"skill_name":text,
+                                "skill_cost":int(cost),
+                                "priority":priority,
+                                "is_gold":isGold,
+                                "subsequent_skill":"",
+                                "is_available":True,
+                                "y_pos":int(pos_center[1])})
+            img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
+            match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
+
+        else:
+            break
+    res = sorted(res,key = lambda x : x["y_pos"])
+    #没有精确计算过，但是大约y轴小于540就会导致技能名显示不全。暂时没测试出问题。
+    return [{k: v for k,v in r.items() if k != "y_pos"} for r in res if r["y_pos"] >= 540]
 
 def parse_factor(ctx: UmamusumeContext):
     origin_img = ctx.ctrl.get_screen()
