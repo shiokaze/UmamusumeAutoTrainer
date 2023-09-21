@@ -446,16 +446,17 @@ def get_skill_list(img, skill: list[str]) -> list:
                     flag = False
                     for i in range(len(skill)):
                         if text in skill[i]:
-                            res.append((text,int(cost),i))
+                            res.append((text,int(cost),i,int(pos_center[1])))
                             flag = True
                     if flag == False:
-                        res.append((text,int(cost),len(skill)))
+                        res.append((text,int(cost),len(skill),int(pos_center[1])))
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
             match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
 
         else:
             break
-    return res
+    #没有精确计算过，但是大约y轴小于540就会导致技能名显示不全。暂时没测试出问题。
+    return [t[:-1] for t in sorted(res,key = lambda x : x[3]) if t[-1] >= 540]
 
 def parse_factor(ctx: UmamusumeContext):
     origin_img = ctx.ctrl.get_screen()
