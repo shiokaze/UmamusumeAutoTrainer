@@ -429,6 +429,7 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
 
 
 def get_skill_list(img, skill: list[str]) -> list:
+    imgcp = img
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     res = []
     while True:
@@ -438,25 +439,31 @@ def get_skill_list(img, skill: list[str]) -> list:
             pos_center = match_result.center_point
             if 460 < pos_center[0] < 560 and 450 < pos_center[1] < 1050:
                 skill_info_img = img[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
+                skill_info_cp = imgcp[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
                 if not image_match(skill_info_img, REF_SKILL_LEARNED).find_match:
                     skill_name_img = skill_info_img[10: 47, 100: 445]
                     skill_cost_img = skill_info_img[69: 99, 525: 588]
                     text = ocr_line(skill_name_img)
                     cost = re.sub("\\D", "", ocr_line(skill_cost_img))
+                    
+                    #检查是不是金色技能
+                    mask = cv2.inRange(skill_info_cp,numpy.array([40,180,240]),numpy.array([100,210,255]))
+                    isGold = True if mask[120,600] == 255 else False
+
                     flag = False
                     for i in range(len(skill)):
                         if text in skill[i]:
-                            res.append((text,int(cost),i,int(pos_center[1])))
+                            res.append((text,int(cost),i,isGold,int(pos_center[1])))
                             flag = True
                     if flag == False:
-                        res.append((text,int(cost),len(skill),int(pos_center[1])))
+                        res.append((text,int(cost),len(skill),isGold,int(pos_center[1])))
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
             match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
 
         else:
             break
     #没有精确计算过，但是大约y轴小于540就会导致技能名显示不全。暂时没测试出问题。
-    return [t[:-1] for t in sorted(res,key = lambda x : x[3]) if t[-1] >= 540]
+    return [t[:-1] for t in sorted(res,key = lambda x : x[-1]) if t[-1] >= 540]
 
 def parse_factor(ctx: UmamusumeContext):
     origin_img = ctx.ctrl.get_screen()
