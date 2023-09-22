@@ -371,6 +371,8 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     target_skill_list = []
     curr_point = 0
     for i in range(len(learn_skill_list)+1):
+        if i > 0 and ctx.cultivate_detail.learn_skill_only_user_provided == True:
+            break
         for j in range(len(skill_list)):
             if skill_list[j]["priority"] != i or skill_list[j]["is_available"] == False:
                 continue
@@ -378,28 +380,25 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
                 curr_point += skill_list[j]["skill_cost"]
                 target_skill_list.append(skill_list[j]["skill_name"])
                 #如果点的是金色技能, 就将其绑定的下位技能设置为不可点
-                if skill_list[j]["is_gold"] == True:
+                if skill_list[j]["is_gold"] == True and skill_list[j]["subsequent_skill"] != '':
                     for k in range(len(skill_list)):
                         if skill_list[k]["skill_name"] == skill_list[j]["subsequent_skill"]:
                             skill_list[k]["is_available"] = False
 
-    #回到最顶部
-    while True:
-        ctx.ctrl.swipe(x1=23, y1=620, x2=23, y2=1000, duration=100, name="")
-        img = cv2.cvtColor(ctx.ctrl.get_screen(), cv2.COLOR_BGR2RGB)
-        if not compare_color_equal(img[488, 701], [211, 209, 219]):
-            time.sleep(1.5)
-            break
+    #向上移动至对齐
+    ctx.ctrl.swipe(x1=23, y1=950, x2=23, y2=968, duration=100, name="")
     time.sleep(1)
 
     #点技能
     while True:
         img = ctx.ctrl.get_screen()
         find_skill(ctx, img, target_skill_list, learn_any_skill=False)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        if not compare_color_equal(img[1006, 701], [211, 209, 219]):
+        if target_skill_list == []:
             break
-        ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=636, duration=1000, name="")
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        if not compare_color_equal(img[488, 701], [211, 209, 219]):
+            break
+        ctx.ctrl.swipe(x1=23, y1=636, x2=23, y2=1000, duration=1000, name="")
         time.sleep(1)
 
     ctx.cultivate_detail.learn_skill_done = True
