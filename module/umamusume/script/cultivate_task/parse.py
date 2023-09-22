@@ -402,9 +402,7 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
                 skill_info_img = img[pos[0][1] - 65:pos[1][1] + 75, pos[0][0] - 470: pos[1][0] + 150]
                 if not image_match(skill_info_img, REF_SKILL_LEARNED).find_match:
                     skill_name_img = skill_info_img[10: 47, 100: 445]
-                    skill_cost_img = skill_info_img[65: 95, 520: 580]
                     text = ocr_line(skill_name_img)
-                    cost = ocr_line(skill_cost_img)
                     result = find_similar_text(text, skill, 0.7)
                     # print(text + "->" + result)
                     if result != "" or learn_any_skill:
