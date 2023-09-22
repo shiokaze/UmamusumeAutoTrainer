@@ -378,7 +378,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
                 curr_point += skill_list[j]["skill_cost"]
                 target_skill_list.append(skill_list[j]["skill_name"])
                 #如果点的是金色技能, 就将其绑定的下位技能设置为不可点
-                if skill_list[j]["is_gold"] == True:
+                if skill_list[j]["is_gold"] == True and skill_list[j]["subsequent_skill"] != '':
                     for k in range(len(skill_list)):
                         if skill_list[k]["skill_name"] == skill_list[j]["subsequent_skill"]:
                             skill_list[k]["is_available"] = False
