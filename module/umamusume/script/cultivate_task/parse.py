@@ -415,6 +415,7 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
                             if pt >= skill_pt_cost:
                                 ctx.ctrl.click(match_result.center_point[0] + 128, match_result.center_point[1],
                                                "加点技能：" + text)
+                                skill.remove(text)
                                 ctx.cultivate_detail.learn_skill_selected = True
                                 find = True
 
