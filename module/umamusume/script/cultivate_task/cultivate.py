@@ -371,7 +371,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     target_skill_list = []
     curr_point = 0
     for i in range(len(learn_skill_list)+1):
-        if i > 0 and ctx.cultivate_detail.learn_skill_only_user_provided == True:
+        if i > 0 and ctx.cultivate_detail.learn_skill_only_user_provided == True and not ctx.cultivate_detail.cultivate_finish:
             break
         for j in range(len(skill_list)):
             if skill_list[j]["priority"] != i or skill_list[j]["is_available"] == False:
