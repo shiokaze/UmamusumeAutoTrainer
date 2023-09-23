@@ -182,7 +182,7 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
                     turn_info.training_info_list[i].intelligence_incr]
             rating_incr = 0
             for j in range(len(incr)):
-                if incr[j] != 0:
+                if incr[j] != 0 and turn_uma_attr[j] <= cultivate_expect_attribute[j]:
                     attr_difference = turn_expect_attribute[j] - turn_uma_attr[j]
                     # rating_incr += get_basic_status_score(incr[j] + turn_uma_attr[j]) - get_basic_status_score(turn_uma_attr[j])
                     if j == 3:
@@ -191,6 +191,8 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
                         if attr_difference >= incr[j]:
                             rating_incr += incr[j]
                         else:
+                            if attr_difference < 0:
+                                attr_difference = 0
                             rating_incr += attr_difference
                             overflow_incr = incr[j]-attr_difference
                             if cultivate_expect_attribute[j] - turn_expect_attribute[j] > overflow_incr:
