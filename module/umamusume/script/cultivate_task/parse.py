@@ -450,13 +450,13 @@ def get_skill_list(img, skill: list[str]) -> list:
                     mask = cv2.inRange(skill_info_cp,numpy.array([40,180,240]),numpy.array([100,210,255]))
                     isGold = True if mask[120,600] == 255 else False
 
-                    flag = False
+                    skill_isin_priority_list = False
                     for i in range(len(skill)):
                         if find_similar_text(text,skill[i],0.7) != "":
                             priority = i
-                            flag = True
+                            skill_isin_priority_list = True
                             break
-                    if flag == False:
+                    if skill_isin_priority_list == False:
                         priority = len(skill)
                     res.append({"skill_name":text,
                                 "skill_cost":int(cost),
