@@ -88,23 +88,20 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
             return turn_operation
 
     medic = False
-    if ctx.cultivate_detail.turn_info.medic_room_available and ctx.cultivate_detail.turn_info.remain_stamina <= 60:
+    if ctx.cultivate_detail.turn_info.medic_room_available and ctx.cultivate_detail.turn_info.remain_stamina <= 65:
         medic = True
 
     trip = False
-    if ctx.cultivate_detail.turn_info.date <= 36 and ctx.cultivate_detail.turn_info.motivation_level.value <= 3 and ctx.cultivate_detail.turn_info.remain_stamina < 90 \
+    if ctx.cultivate_detail.turn_info.date <= 36 and ctx.cultivate_detail.turn_info.motivation_level.value <= 3 and ctx.cultivate_detail.turn_info.remain_stamina < 90 and not support_card_max >= 3 \
             or 40 < ctx.cultivate_detail.turn_info.date <= 60 and ctx.cultivate_detail.turn_info.motivation_level.value <= 4 and ctx.cultivate_detail.turn_info.remain_stamina < 90 \
             or 64 < ctx.cultivate_detail.turn_info.date <= 99 and ctx.cultivate_detail.turn_info.motivation_level.value <= 4 and ctx.cultivate_detail.turn_info.remain_stamina < 90:
         trip = True
 
     rest = False
-    if ctx.cultivate_detail.turn_info.remain_stamina <= 45:
+    if ctx.cultivate_detail.turn_info.remain_stamina <= 48:
         rest = True
     elif (
             ctx.cultivate_detail.turn_info.date == 36 or ctx.cultivate_detail.turn_info.date == 60) and ctx.cultivate_detail.turn_info.remain_stamina < 65:
-        rest = True
-    elif np.max(training_score) - np.average(
-            training_score) < 0.2 and ctx.cultivate_detail.turn_info.remain_stamina < 50:
         rest = True
 
     expect_operation_type = TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN
@@ -166,29 +163,50 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
     turn_uma_attr = [turn_info.uma_attribute.speed, turn_info.uma_attribute.stamina, turn_info.uma_attribute.power,
               turn_info.uma_attribute.will, turn_info.uma_attribute.intelligence]
     result = []
-    for i in range(len(turn_info.training_info_list)):
-        incr = [turn_info.training_info_list[i].speed_incr, turn_info.training_info_list[i].stamina_incr,
-                turn_info.training_info_list[i].power_incr, turn_info.training_info_list[i].will_incr,
-                turn_info.training_info_list[i].intelligence_incr]
-        rating_incr = 0
-        for j in range(len(incr)):
-            if incr[j] != 0:
-                attr_difference = turn_expect_attribute[j] - turn_uma_attr[j]
-                # rating_incr += get_basic_status_score(incr[j] + turn_uma_attr[j]) - get_basic_status_score(turn_uma_attr[j])
-                if attr_difference >= incr[j]:
+    expect_attribute_all_complete = all(x > y for x, y in zip(turn_uma_attr, cultivate_expect_attribute))
+    if expect_attribute_all_complete:
+        log.debug("育成目标属性已达成")
+        for i in range(len(turn_info.training_info_list)):
+            incr = [turn_info.training_info_list[i].speed_incr, turn_info.training_info_list[i].stamina_incr,
+                    turn_info.training_info_list[i].power_incr, turn_info.training_info_list[i].will_incr,
+                    turn_info.training_info_list[i].intelligence_incr]
+            rating_incr = 0
+            for j in range(len(incr)):
+                if incr[j] != 0:
                     rating_incr += incr[j]
-                else:
-                    rating_incr += attr_difference + 0.2*(incr[j]-attr_difference)
-        # rating_incr += turn_info.training_info_list[i].skill_point_incr * 1.45
-        result.append(rating_incr)
-    log.debug("每个训练的原始属性增长得分：" + str(result))
-    log.debug("本回合预期属性：" + str(turn_expect_attribute))
-    target_percent = [0, 0, 0, 0, 0]
-    for i in range(len(turn_uma_attr)):
-        target_percent[i] = turn_uma_attr[i] / turn_expect_attribute[i]
-    avg = sum(target_percent) / len(target_percent)
-    for i in range(len(result)):
-        result[i] = result[i] * (1 - (target_percent[i] - avg))
+            result.append(rating_incr)
+    else:
+        for i in range(len(turn_info.training_info_list)):
+            incr = [turn_info.training_info_list[i].speed_incr, turn_info.training_info_list[i].stamina_incr,
+                    turn_info.training_info_list[i].power_incr, turn_info.training_info_list[i].will_incr,
+                    turn_info.training_info_list[i].intelligence_incr]
+            rating_incr = 0
+            for j in range(len(incr)):
+                if incr[j] != 0:
+                    attr_difference = turn_expect_attribute[j] - turn_uma_attr[j]
+                    # rating_incr += get_basic_status_score(incr[j] + turn_uma_attr[j]) - get_basic_status_score(turn_uma_attr[j])
+                    if j == 3:
+                        rating_incr += incr[j]
+                    else:
+                        if attr_difference >= incr[j]:
+                            rating_incr += incr[j]
+                        else:
+                            rating_incr += attr_difference
+                            overflow_incr = incr[j]-attr_difference
+                            if cultivate_expect_attribute[j] - turn_expect_attribute[j] > overflow_incr:
+                                rating_incr += 0.25 * overflow_incr
+                            else:
+                                rating_incr += 0.25 * (cultivate_expect_attribute[j] - turn_expect_attribute[j])
+            # rating_incr += turn_info.training_info_list[i].skill_point_incr * 1.45
+            result.append(rating_incr)
+        log.debug("每个训练的原始属性增长得分：" + str(result))
+        log.debug("本回合预期属性：" + str(turn_expect_attribute))
+        target_percent = [0, 0, 0, 0, 0]
+        for i in range(len(turn_uma_attr)):
+            target_percent[i] = turn_uma_attr[i] / turn_expect_attribute[i]
+        avg = sum(target_percent) / len(target_percent)
+        for i in range(len(result)):
+            result[i] = result[i] * (1 - (target_percent[i] - avg))
     log.debug("每个训练的属性增长得分：" + str(result))
     return result
 
