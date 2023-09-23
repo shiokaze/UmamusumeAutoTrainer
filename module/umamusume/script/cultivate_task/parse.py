@@ -415,8 +415,8 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
                             if pt >= skill_pt_cost:
                                 ctx.ctrl.click(match_result.center_point[0] + 128, match_result.center_point[1],
                                                "加点技能：" + text)
-                                if text in skill:
-                                    skill.remove(text)
+                                if result in skill:
+                                    skill.remove(result)
                                 ctx.cultivate_detail.learn_skill_selected = True
                                 find = True
 
@@ -450,12 +450,13 @@ def get_skill_list(img, skill: list[str]) -> list:
                     mask = cv2.inRange(skill_info_cp,numpy.array([40,180,240]),numpy.array([100,210,255]))
                     isGold = True if mask[120,600] == 255 else False
 
-                    flag = False
+                    skill_in_priority_list = False
                     for i in range(len(skill)):
-                        if text in skill[i]:
+                        if find_similar_text(text,skill[i],0.7) != "":
                             priority = i
-                            flag = True
-                    if flag == False:
+                            skill_in_priority_list = True
+                            break
+                    if skill_in_priority_list == False:
                         priority = len(skill)
                     res.append({"skill_name":text,
                                 "skill_cost":int(cost),
