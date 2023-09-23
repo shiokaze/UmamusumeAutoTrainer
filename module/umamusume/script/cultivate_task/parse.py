@@ -451,9 +451,10 @@ def get_skill_list(img, skill: list[str]) -> list:
 
                     flag = False
                     for i in range(len(skill)):
-                        if text in skill[i]:
+                        if find_similar_text(text,skill[i],0.7) != "":
                             priority = i
                             flag = True
+                            break
                     if flag == False:
                         priority = len(skill)
                     res.append({"skill_name":text,
