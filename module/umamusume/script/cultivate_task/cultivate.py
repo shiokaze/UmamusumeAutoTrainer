@@ -48,7 +48,7 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
         ctx.cultivate_detail.reset_skill_learn()
 
     if not ctx.cultivate_detail.turn_info.parse_train_info_finish:
-        if has_extra_race or ctx.cultivate_detail.turn_info.remain_stamina < 40:
+        if has_extra_race or ctx.cultivate_detail.turn_info.remain_stamina < 48:
             ctx.cultivate_detail.turn_info.parse_train_info_finish = True
             return
         else:
@@ -357,13 +357,13 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             break
         ctx.ctrl.swipe(x1=23, y1=1000, x2=23, y2=636, duration=1000, name="")
         time.sleep(1)
-    
+
     #将金色技能和其后面的技能绑定
     #TODO: 如果金色技能的下位技能在极端情况下被先点掉, 可能会导致技能绑定错误
     for i in range(len(skill_list)):
         if i != (len(skill_list)-1) and skill_list[i]["is_gold"] == True:
             skill_list[i]["subsequent_skill"] = skill_list[i+1]["skill_name"]
-    
+
     #按照优先级排列
     skill_list = sorted(skill_list,key = lambda x: x["priority"])
     #TODO: 暂时没办法处理一个技能可以点多次的情况
