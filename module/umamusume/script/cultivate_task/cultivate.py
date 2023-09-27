@@ -7,7 +7,7 @@ from bot.base.task import TaskStatus, EndTaskReason
 from module.umamusume.asset.point import *
 from module.umamusume.context import TurnInfo
 from module.umamusume.script.cultivate_task.const import SKILL_LEARN_PRIORITY_LIST
-from module.umamusume.script.cultivate_task.event import get_event_choice
+from module.umamusume.script.cultivate_task.event.manifest import get_event_choice
 from module.umamusume.script.cultivate_task.parse import *
 
 log = logger.get_logger(__name__)
@@ -181,8 +181,15 @@ def script_cultivate_event(ctx: UmamusumeContext):
     img = ctx.ctrl.get_screen()
     event_name, selector_list = parse_cultivate_event(ctx, img)
     log.debug("当前事件：%s", event_name)
-    if len(selector_list) != 0:
-        choice_index = get_event_choice(event_name)
+    if len(selector_list) != 0 and len(selector_list) != 1:
+        time.sleep(0.5)
+        # 避免出现选项残缺的情况，这里重新解析一次
+        img = ctx.ctrl.get_screen()
+        event_name, selector_list = parse_cultivate_event(ctx, img)
+        choice_index = get_event_choice(ctx, event_name)
+        # 意外情况容错
+        if choice_index - 1 > len(selector_list):
+            choice_index = 1
         ctx.ctrl.click(selector_list[choice_index - 1][0], selector_list[choice_index - 1][1],
                        "事件选项-" + str(choice_index))
     else:
