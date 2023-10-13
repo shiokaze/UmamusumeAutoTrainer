@@ -8,13 +8,13 @@
         <div class="modal-body">
           <form>
             <div class="form-group">
-              <label for="selectTaskType">任务选择</label>
+              <label for="selectTaskType">⭐ 任务选择</label>
               <select v-model="selectedUmamusumeTaskType" class="form-control" id="selectTaskType">
                 <option v-for="task in umamusumeTaskTypeList" :value="task">{{task.name}}</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="selectExecuteMode">执行模式选择</label>
+              <label for="selectExecuteMode">⭐ 执行模式选择</label>
               <select v-model="selectedExecuteMode" class="form-control" id="selectExecuteMode">
                 <option value=1>一次性</option>
               </select>
@@ -22,7 +22,7 @@
             <div class="row">
               <div class="col">
                 <div class="form-group">
-                  <label for="selectSernaio">剧本选择</label>
+                  <label for="selectSernaio">⭐ 剧本选择</label>
                   <select class="form-control" id="selectSernaio">
                     <option value=1>URA</option>
                   </select>
@@ -49,7 +49,7 @@
             <div class="row">
               <div class="col-8">
                 <div class="form-group">
-                  <label for="race-select">使用预设</label>
+                  <label for="race-select">⭐ 使用预设</label>
                     <div class="form-inline">
                       <select v-model="presetsUse" style="text-overflow: ellipsis;width: 40em;"  class="form-control" id="use_presets">
                         <option v-for="set in cultivatePresets" :value="set">{{set.name}}</option>
@@ -72,7 +72,7 @@
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
-                  <label>借用支援卡选择</label>
+                  <label>⭐ 借用支援卡选择</label>
                   <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
                     <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
                   </select>
@@ -92,7 +92,7 @@
               </div>
             </div>
             <div class="form-group">
-              <div>目标属性</div>
+              <div>⭐ 目标属性 （如果不知道具体填多少, 可以自己手动打一盘把最终数值填入）</div>
             </div>
             <div class="row">
               <div class="col">
@@ -126,8 +126,46 @@
                 </div>
               </div>
             </div>
+            <div>
+              <div class="form-group">
+              <span v-if="!showAdvanceOption" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchAdvanceOption">展开高级选项</span>
+              <span v-if="showAdvanceOption" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchAdvanceOption">收起高级选项</span>
+              </div>
+            </div>
+            <div v-if ="showAdvanceOption">
+              <div class="form-group">
+                <div>⭐ 额外权重</div>
+              </div>
+              <p>调整ai对训练的倾向, 不影响最终目标属性, 一般用于提前完成某一种训练的目标属性，建议权重范围 [-1.0 ~ 1.0], 0即为不使用额外权重;</p>
+              <p>支援卡或种马强度低时, 建议增加在一个属性权重的同时减少其他属性同样数值的权重</p>
+              <div style="margin-bottom: 10px;">第一年</div>
+              <div class="row">
+                <div v-for="v,i in extraWeight1" class="col">
+                  <div class="form-group">
+                      <input type="number" v-model="extraWeight1[i]" class="form-control" id="speed-value-input">
+                  </div>
+                </div>
+              </div>
+              <div style="margin-bottom: 10px;">第二年</div>
+              <div class="row">
+                <div v-for="v,i in extraWeight2" class="col">
+                  <div class="form-group">
+                      <input type="number" v-model="extraWeight2[i]" class="form-control" id="speed-value-input">
+                  </div>
+                </div>
+              </div>
+              <div style="margin-bottom: 10px;">第三年</div>
+              <div class="row">
+                <div v-for="v,i in extraWeight3" class="col">
+                  <div class="form-group">
+                      <input type="number" v-model="extraWeight3[i]" class="form-control" id="speed-value-input">
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="form-group">
-              <div>跑法选择</div>
+              <div>⭐ 跑法选择</div>
             </div>
             <div class="row">
               <div class="col">
@@ -168,7 +206,7 @@
               <div class="row">
                 <div class="col">
                   <div class="form-group">
-                    <label for="race-select">额外赛程选择</label>
+                    <label for="race-select">⭐ 额外赛程选择</label>
                     <textarea type="text" disabled v-model="extraRace" class="form-control" id="race-select"></textarea>
                   </div>
                 </div>
@@ -220,7 +258,7 @@
               <div class="row">
                 <div class="col">
                   <div class="form-group">
-                    <label for="skill-learn">技能学习</label>
+                    <label for="skill-learn">⭐ 技能学习</label>
                     <textarea type="text"  v-model="skillLearn" class="form-control" id="skill-learn" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
                   </div>
                 </div>
@@ -288,6 +326,7 @@ export default {
   name: "TaskEditModal",
   data:function () {
     return{
+      showAdvanceOption:false,
       showRaceList:false,
       dataReady:false,
       hideG2: false,
@@ -641,7 +680,7 @@ export default {
       selectedExecuteMode: 1,
       expectTimes: 0,
       cron: "* * * * *",
-
+      
       selectedUmamusumeTaskType: undefined,
       selectedSupportCard: undefined,
       extraRace: [],
@@ -656,7 +695,9 @@ export default {
       recoverTP: false,
       presetNameEdit: "",
       successToast: undefined,
-
+      extraWeight1: [0, 0, 0, 0, 0],
+      extraWeight2: [0, 0, 0, 0, 0],
+      extraWeight3: [0, 0, 0, 0, 0],
     }
   },
   mounted() {
@@ -671,6 +712,9 @@ export default {
     },
     switchRaceList: function(){
       this.showRaceList = !this.showRaceList
+    },
+    switchAdvanceOption: function(){
+      this.showAdvanceOption = !this.showAdvanceOption
     },
     addTask: function (){
       var learn_skill_list = this.skillLearn ? this.skillLearn.split(",") : []
@@ -689,7 +733,8 @@ export default {
           "clock_use_limit": this.clockUseLimit,
           "learn_skill_threshold": this.learnSkillThreshold,
           "allow_recover_tp": this.recoverTP,
-          "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided
+          "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided,
+          "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3]
         },
         cron_job_info:{},
       }

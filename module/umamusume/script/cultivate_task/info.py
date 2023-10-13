@@ -60,6 +60,7 @@ def script_info(ctx: UmamusumeContext):
             return
         if title_text == TITLE[0]:
             ctx.ctrl.click_by_point(CULTIVATE_GOAL_RACE_INTER_3)
+            time.sleep(1)
         if title_text == TITLE[1]:
             ctx.ctrl.click_by_point(INFO_SUMMER_REST_CONFIRM)
         if title_text == TITLE[2]:

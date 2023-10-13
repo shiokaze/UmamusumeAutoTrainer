@@ -10,7 +10,7 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
     if not ctx.cultivate_detail.debut_race_win:
         turn_operation.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_RACE
 
-    attribute_result = get_training_basic_attribute_score(ctx.cultivate_detail.turn_info,
+    attribute_result = get_training_basic_attribute_score(ctx, ctx.cultivate_detail.turn_info,
                                                           ctx.cultivate_detail.expect_attribute)
     support_card_result = get_training_support_card_score(ctx)
     training_level_result = get_training_level_score(ctx)
@@ -148,9 +148,18 @@ def get_training_support_card_score(ctx: UmamusumeContext) -> list[float]:
     return result
 
 
-def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: list[int]) -> list[float]:
+def get_training_basic_attribute_score(ctx: UmamusumeContext, turn_info: TurnInfo, expect_attribute: list[int]) -> list[float]:
     date = turn_info.date
     cultivate_expect_attribute = expect_attribute.copy()
+    extra_weight = [0, 0, 0, 0, 0]
+    if len(ctx.cultivate_detail.extra_weight) == 3:
+        if 0 < date <= 24:
+            extra_weight = ctx.cultivate_detail.extra_weight[0]
+        elif 24 < date <= 48:
+            extra_weight = ctx.cultivate_detail.extra_weight[1]
+        elif 48 < date:
+            extra_weight = ctx.cultivate_detail.extra_weight[2]
+    log.debug("本回合额外权重：" + str(extra_weight))
     turn_expect_attribute = [0, 0, 0, 0, 0]
     ura_extra_attr = 50
     if date > 72:
@@ -159,6 +168,9 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
     for i in range(len(cultivate_expect_attribute)):
         turn_expect_attribute_item = (int((cultivate_expect_attribute[i] - ura_extra_attr) * (date / 72))
                                       ) + 120 * (1 - date / 72)
+        turn_expect_attribute_item = (1 + extra_weight[i]) * turn_expect_attribute_item
+        if turn_expect_attribute_item > cultivate_expect_attribute[i]:
+            turn_expect_attribute_item = cultivate_expect_attribute[i]
         turn_expect_attribute[i] = turn_expect_attribute_item if turn_expect_attribute_item > 0 else 1
     turn_uma_attr = [turn_info.uma_attribute.speed, turn_info.uma_attribute.stamina, turn_info.uma_attribute.power,
               turn_info.uma_attribute.will, turn_info.uma_attribute.intelligence]
@@ -200,7 +212,7 @@ def get_training_basic_attribute_score(turn_info: TurnInfo, expect_attribute: li
                             else:
                                 rating_incr += 0.25 * (cultivate_expect_attribute[j] - turn_expect_attribute[j])
             # rating_incr += turn_info.training_info_list[i].skill_point_incr * 1.45
-            result.append(rating_incr)
+            result.append(rating_incr * (1 + extra_weight[i]))
         log.debug("每个训练的原始属性增长得分：" + str(result))
         log.debug("本回合预期属性：" + str(turn_expect_attribute))
         target_percent = [0, 0, 0, 0, 0]

@@ -68,4 +68,6 @@ class Task(metaclass=ABCMeta):
     def start_task(self) -> None:
         pass
 
+    def running(self) -> bool:
+        return self.task_status == TaskStatus.TASK_STATUS_RUNNING
 
