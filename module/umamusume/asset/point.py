@@ -103,4 +103,4 @@ TO_RECOVER_TP = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coo
 USE_TP_DRINK = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(610, 320), "使用tp饮料", None)
 USE_TP_DRINK_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(525, 920), "使用tp饮料-确认", None)
 USE_TP_DRINK_RESULT_CLOSE = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 835), "回复完成-关闭", None)
-
+SELECT_DIFFICULTY = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(517, 1176), "确认选择难度", None)
