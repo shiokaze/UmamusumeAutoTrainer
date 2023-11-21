@@ -38,7 +38,7 @@ bot:
 常见模拟器的端口：\
 （推荐使用）mumu12: 127.0.0.1:16384 \
 雷电/蓝叠模拟器: emulator-5554
-#### 蓝叠模拟器多开配置
+#### 蓝叠模拟器每次启动端口号都不一样（Hyper-V）
 在蓝叠模拟器的数据目录下找到 bluestacks.conf 这个文件
 - 国际版默认路径为 C:\ProgramData\BlueStacks_nxt\bluestacks.conf
 - 中国内地版默认路径为 C:\ProgramData\BlueStacks_nxt_cn\bluestacks.conf
