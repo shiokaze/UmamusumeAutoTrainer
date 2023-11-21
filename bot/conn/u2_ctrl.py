@@ -30,19 +30,10 @@ class U2AndroidConfig:
 
     @property
     def device_name(self) -> str:
-        return f"{self.device_host}:{self.device_port}"
-
-    @property
-    def device_host(self) -> str:
-        if self.bluestacks_port is not None:
-            return "127.0.0.1"
-        return self._device_name.split(":")[0]
-
-    @property
-    def device_port(self) -> str:
-        if self.bluestacks_port is not None:
-            return self.bluestacks_port
-        return self._device_name.split(":")[-1]
+        bluestacks_port = self.bluestacks_port
+        if bluestacks_port is not None:
+            return f"127.0.0.1:{bluestacks_port}"
+        return self._device_name
 
     @property
     def bluestacks_port(self) -> Optional[str]:
