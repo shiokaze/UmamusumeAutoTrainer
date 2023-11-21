@@ -2,8 +2,10 @@ version: 0.0.1
 bot:
   auto:
     adb:
-      device_name: "127.0.0.1:16384"
+      device_name: "127.0.0.1:9826"
       delay: 0.5
+      bluestacks_config_keyword: "bst.instance.Rvc64.status.adb_port"
+      bluestacks_config_path: "D:\\bluestack\\BlueStacks_nxt\\bluestacks.conf"
     cpu_alloc: 4
 
 

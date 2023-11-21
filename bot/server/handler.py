@@ -59,5 +59,8 @@ async def get_static_files_or_404(whatever):
     # try open file for path
     file_path = os.path.join("public", whatever)
     if os.path.isfile(file_path):
-        return FileResponse(file_path)
+        if file_path.endswith((".js", ".mjs")):
+            return FileResponse(file_path, media_type="application/javascript")
+        else:
+            return FileResponse(file_path)
     return FileResponse('public/index.html')
