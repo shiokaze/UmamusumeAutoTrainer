@@ -1,3 +1,5 @@
 venv
 .idea
 userdata
+**/__pycache__
+.vscode
