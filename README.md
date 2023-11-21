@@ -38,6 +38,20 @@ bot:
 常见模拟器的端口：\
 （推荐使用）mumu12: 127.0.0.1:16384 \
 雷电/蓝叠模拟器: emulator-5554
+#### 蓝叠模拟器每次启动端口号都不一样（Hyper-V）
+在蓝叠模拟器的数据目录下找到 bluestacks.conf 这个文件
+- 国际版默认路径为 C:\ProgramData\BlueStacks_nxt\bluestacks.conf
+- 中国内地版默认路径为 C:\ProgramData\BlueStacks_nxt_cn\bluestacks.conf
+```
+bot:
+  auto:
+    adb:
+      device_name: "127.0.0.1:16384" # 改为模拟器的adb端口
+      delay: 0
+      bluestacks_config_path: "C:\\ProgramData\\BlueStacks_nxt\\bluestacks.conf" # bluestacks.conf文件的路径
+      bluestacks_config_keyword: "bst.instance.Rvc64.status.adb_port" # 对应模拟器的端口键值, Rvc64为模拟器的名字, 可能会不同（如Rvc64_1，Pie64），在bluestacks.conf文件中搜索adb_port即可找到
+    cpu_alloc: 4 # 分配的cpu数量
+```
 
 ### 3. 模拟器设置
 
