@@ -226,6 +226,39 @@
                 </div>
               </div>
             </div>
+            <template>
+              <div>
+                <!-- 初始文本框 -->
+                <div v-for="(text, index) in textFields" :key="index">
+                  <input v-model="text" type="text" placeholder="文本框内容">
+                  <button @click="removeTextField(index)" v-if="textFields.length > 1">删除</button>
+                </div>
+
+                <!-- 新增按钮 -->
+                <button @click="addTextField" v-if="textFields.length < 10">新增文本框</button>
+              </div>
+            </template>
+            <script>
+            export default {
+              data() {
+                return {
+                  textFields: [''] // 初始文本框
+                };
+              },
+              methods: {
+                addTextField() {
+                  if (this.textFields.length < 10) {
+                    this.textFields.push('');
+                  }
+                },
+                removeTextField(index) {
+                  if (this.textFields.length > 1) {
+                    this.textFields.splice(index, 1);
+                  }
+                }
+              }
+            };
+            </script>
             <div class="form-group">
               <div class="row">
                 <div class="col-3">
