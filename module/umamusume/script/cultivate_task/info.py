@@ -42,6 +42,7 @@ TITLE = [
     "活动剧情解锁",
     "确认",
     "回复训练值",
+    "选择养成难度"
 ]
 
 
@@ -60,6 +61,7 @@ def script_info(ctx: UmamusumeContext):
             return
         if title_text == TITLE[0]:
             ctx.ctrl.click_by_point(CULTIVATE_GOAL_RACE_INTER_3)
+            time.sleep(1)
         if title_text == TITLE[1]:
             ctx.ctrl.click_by_point(INFO_SUMMER_REST_CONFIRM)
         if title_text == TITLE[2]:
@@ -140,5 +142,7 @@ def script_info(ctx: UmamusumeContext):
                 ctx.ctrl.click_by_point(USE_TP_DRINK_CONFIRM)
             elif image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_3).find_match:
                 ctx.ctrl.click_by_point(USE_TP_DRINK_RESULT_CLOSE)
+        if title_text == TITLE[28]:
+            ctx.ctrl.click_by_point(SELECT_DIFFICULTY)
         time.sleep(1)
 
