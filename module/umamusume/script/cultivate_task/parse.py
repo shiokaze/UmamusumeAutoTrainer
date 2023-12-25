@@ -427,7 +427,7 @@ def find_skill(ctx: UmamusumeContext, img, skill: list[str], learn_any_skill: bo
     return find
 
 
-def get_skill_list(img, skill: list[str]) -> list:
+def get_skill_list(img, skill: list[str], skill_blacklist: list[str]) -> list:
     origin_img = img
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     res = []
@@ -452,10 +452,19 @@ def get_skill_list(img, skill: list[str]) -> list:
                 is_gold = True if mask[120, 600] == 255 else False
 
                 skill_in_priority_list = False
+                skill_name_raw = "" #保存原始技能名字, 以防ocr产生偏差
                 priority = 99
                 for i in range(len(skill)):
-                    if find_similar_text(text, skill[i], 0.7) != "":
+                    found_similar_blacklist = find_similar_text(text, skill_blacklist, 0.7)
+                    found_similar_prioritylist = find_similar_text(text, skill[i], 0.7)
+                    if found_similar_blacklist != "": # 排除出现在黑名单中的技能
+                        priority = -1
+                        skill_name_raw = found_similar_blacklist
+                        skill_in_priority_list = True
+                        break
+                    elif found_similar_prioritylist != "":
                         priority = i
+                        skill_name_raw = found_similar_prioritylist
                         skill_in_priority_list = True
                         break
                 if not skill_in_priority_list:
@@ -463,13 +472,15 @@ def get_skill_list(img, skill: list[str]) -> list:
 
                 available = not image_match(skill_info_img, REF_SKILL_LEARNED).find_match
 
-                res.append({"skill_name": text,
-                            "skill_cost": int(cost),
-                            "priority": priority,
-                            "gold": is_gold,
-                            "subsequent_skill": "",
-                            "available": available,
-                            "y_pos": int(pos_center[1])})
+                if priority != -1: # 排除出现在黑名单中的技能
+                    res.append({"skill_name": text,
+                                "skill_name_raw": skill_name_raw,
+                                "skill_cost": int(cost),
+                                "priority": priority,
+                                "gold": is_gold,
+                                "subsequent_skill": "",
+                                "available": available,
+                                "y_pos": int(pos_center[1])})
             img[match_result.matched_area[0][1]:match_result.matched_area[1][1],
                 match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
 
@@ -489,6 +500,7 @@ def get_skill_list(img, skill: list[str]) -> list:
                 skill_name_img = skill_info_img[10: 47, 100: 445]
                 text = ocr_line(skill_name_img)
                 res.append({"skill_name": text,
+                            "skill_name_raw": text,
                             "skill_cost": 0,
                             "priority": -1,
                             "gold": is_gold,

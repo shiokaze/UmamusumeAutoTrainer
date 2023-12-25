@@ -8,7 +8,8 @@ class TaskDetail:
     follow_support_card_name: str
     follow_support_card_level: int
     extra_race_list: list[int]
-    learn_skill_list: list[str]
+    learn_skill_list: list[list[str]]
+    learn_skill_blacklist: list[str]
     tactic_list: list[int]
     clock_use_limit: int
     learn_skill_threshold: int
@@ -48,6 +49,7 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.follow_support_card_name = attachment_data['follow_support_card_name']
     td.extra_race_list = attachment_data['extra_race_list']
     td.learn_skill_list = attachment_data['learn_skill_list']
+    td.learn_skill_blacklist = attachment_data['learn_skill_blacklist']
     td.tactic_list = attachment_data['tactic_list']
     td.clock_use_limit = attachment_data['clock_use_limit']
     td.learn_skill_threshold = attachment_data['learn_skill_threshold']
