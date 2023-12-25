@@ -344,12 +344,14 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
         else:
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
         return
-    learn_skill_list: list
+    learn_skill_list: list[list[str]]
+    learn_skill_blacklist: list[str] = ctx.cultivate_detail.learn_skill_blacklist
     if ctx.cultivate_detail.cultivate_finish or not ctx.cultivate_detail.learn_skill_only_user_provided:
         if len(ctx.cultivate_detail.learn_skill_list) == 0:
             learn_skill_list = SKILL_LEARN_PRIORITY_LIST
         else:
-            learn_skill_list = [ctx.cultivate_detail.learn_skill_list] + SKILL_LEARN_PRIORITY_LIST
+            #如果用户自定义了技能优先级，那么不再采用预设的优先级
+            learn_skill_list = ctx.cultivate_detail.learn_skill_list
     else:
         if len(ctx.cultivate_detail.learn_skill_list) == 0:
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
@@ -357,13 +359,13 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             ctx.cultivate_detail.turn_info.turn_learn_skill_done = True
             return
         else:
-            learn_skill_list = [ctx.cultivate_detail.learn_skill_list]
+            learn_skill_list = ctx.cultivate_detail.learn_skill_list
 
     # 遍历整页, 找出所有可点的技能
     skill_list = []
     while ctx.task.running():
         img = ctx.ctrl.get_screen()
-        current_screen_skill_list = get_skill_list(img, learn_skill_list)
+        current_screen_skill_list = get_skill_list(img, learn_skill_list,learn_skill_blacklist)
         # 避免重复统计(会出现在页末翻页不完全的情况)
         for i in current_screen_skill_list:
             if i not in skill_list:
@@ -391,6 +393,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     else:
         total_skill_point = int(total_skill_point_text)
     target_skill_list = []
+    target_skill_list_raw = []
     curr_point = 0
     for i in range(len(learn_skill_list) + 1):
         if (i > 0 and ctx.cultivate_detail.learn_skill_only_user_provided is True and
@@ -402,6 +405,7 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
             if curr_point + skill_list[j]["skill_cost"] <= total_skill_point:
                 curr_point += skill_list[j]["skill_cost"]
                 target_skill_list.append(skill_list[j]["skill_name"])
+                target_skill_list_raw.append(skill_list[j]["skill_name_raw"])
                 # 如果点的是金色技能, 就将其绑定的下位技能设置为不可点
                 if skill_list[j]["gold"] is True and skill_list[j]["subsequent_skill"] != '':
                     for k in range(len(skill_list)):
@@ -413,12 +417,16 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     time.sleep(1)
 
     # 删除已经学会的技能
-    for skill in target_skill_list:
-        if ctx.cultivate_detail.learn_skill_list.__contains__(skill):
-            ctx.cultivate_detail.learn_skill_list.remove(skill)
+    for skill in target_skill_list_raw:
+        for prioritylist in ctx.cultivate_detail.learn_skill_list:
+            if prioritylist.__contains__(skill):
+                prioritylist.remove(skill)
     for skill in skill_list:
-        if skill['available'] is False and ctx.cultivate_detail.learn_skill_list.__contains__(skill['skill_name']):
-            ctx.cultivate_detail.learn_skill_list.remove(skill['skill_name'])
+        for prioritylist in ctx.cultivate_detail.learn_skill_list:
+            if skill['available'] is False and prioritylist.__contains__(skill['skill_name_raw']):
+                prioritylist.remove(skill['skill_name_raw'])
+    #如果一个优先级全为空，则直接将其删除
+    ctx.cultivate_detail.learn_skill_list = [x for x in ctx.cultivate_detail.learn_skill_list if x != []]
 
     # 点技能
     while True:

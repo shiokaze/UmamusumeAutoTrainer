@@ -144,7 +144,8 @@ class CultivateContextDetail:
     follow_support_card_name: str
     follow_support_card_level: int
     extra_race_list: list[int]
-    learn_skill_list: list[str]
+    learn_skill_list: list[list[str]]
+    learn_skill_blacklist: list[str]
     learn_skill_done: bool
     learn_skill_selected: bool
     cultivate_finish: bool
@@ -165,6 +166,7 @@ class CultivateContextDetail:
         self.turn_info_history = []
         self.extra_race_list = []
         self.learn_skill_list = []
+        self.learn_skill_blacklist = []
         self.learn_skill_done = False
         self.learn_skill_selected = False
         self.cultivate_finish = False
@@ -201,6 +203,7 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
         detail.follow_support_card_level = task.detail.follow_support_card_level
         detail.extra_race_list = task.detail.extra_race_list
         detail.learn_skill_list = task.detail.learn_skill_list
+        detail.learn_skill_blacklist = task.detail.learn_skill_blacklist
         detail.tactic_list = task.detail.tactic_list
         detail.clock_use_limit = task.detail.clock_use_limit
         detail.learn_skill_threshold = task.detail.learn_skill_threshold

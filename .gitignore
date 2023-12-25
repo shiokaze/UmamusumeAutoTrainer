@@ -1,6 +1,6 @@
+*.pyc
 venv
 .idea
 userdata
-.pyc
 **/__pycache__
 .vscode
