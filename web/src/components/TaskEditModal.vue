@@ -291,7 +291,7 @@
                 <div class="col">
                   <div class="form-group">
                     <label for="skill-learn-blacklist">⛔ 黑名单(任何情况下都不学习这些技能)</label>
-                    <textarea type="text"  v-model="skillLearnBlacklist" class="form-control" id="skill-learn-blacklist" placeholder="钢铁意志,迅疾如风,...(狗都不点)"></textarea>
+                    <textarea type="text"  v-model="skillLearnBlacklist" class="form-control" id="skill-learn-blacklist" placeholder="钢铁意志,迅疾如风,...(真不会有人点这些吧)"></textarea>
                   </div>
                 </div>
               </div>
@@ -784,13 +784,16 @@ export default {
       this.showAdvanceOption = !this.showAdvanceOption
     },
     addTask: function (){
-      //var learn_skill_list = this.skillLearn ? this.skillLearn.split(",") : []
       var learn_skill_list = []
       for (let i = 0; i < this.skillPriorityNum; i++)
       {
-        learn_skill_list.push((this.skillLearnPriorityList[i].skills)[0].split(","))
+        if((this.skillLearnPriorityList[i].skills)[0] != "")
+        {
+          learn_skill_list.push((this.skillLearnPriorityList[i].skills)[0].split(",").map(item => item.trim()))
+        }
       }
-      var learn_skill_blacklist = this.skillLearnBlacklist ? this.skillLearnBlacklist.split(",") : []
+      console.log(learn_skill_list)
+      var learn_skill_blacklist = this.skillLearnBlacklist ? this.skillLearnBlacklist.split(",").map(item => item.trim()) : []
       let payload = {
         app_name: "umamusume",
         task_execute_mode: this.selectedExecuteMode,
@@ -903,7 +906,10 @@ export default {
       }
       for(let i = 0; i < this.skillPriorityNum; i++)
       {
-        preset.skill_priority_list.push([this.skillLearnPriorityList[i].skills])
+        if(this.skillLearnPriorityList[i].skills != "")
+        {
+          preset.skill_priority_list.push([this.skillLearnPriorityList[i].skills])
+        }
       }
       let payload = {
         "preset": JSON.stringify(preset)
