@@ -711,6 +711,7 @@ export default {
           race_tactic_1: 4,
           race_tactic_2: 4,
           race_tactic_3: 4,
+          extraWeight:[],
         },
       // ===  已选择  ===
       selectedExecuteMode: 1,
@@ -838,7 +839,17 @@ export default {
       this.selectedRaceTactic2 = this.presetsUse.race_tactic_2,
       this.selectedRaceTactic3 = this.presetsUse.race_tactic_3,
       this.skillLearnBlacklist = this.presetsUse.skill_blacklist
-      // this.skillLearn = this.presetsUse.skill
+
+      if ('extraWeight' in this.presetsUse && this.presetsUse.extraWeight != [])
+      {
+        this.extraWeight1 =  this.presetsUse.extraWeight[0]
+        this.extraWeight2 =  this.presetsUse.extraWeight[1]
+        this.extraWeight3 =  this.presetsUse.extraWeight[2]
+      }
+      else
+      {
+        this.extraWeight1 = this.extraWeight2 = this.extraWeight3 = [0,0,0,0,0]
+      }
       if ('skill' in this.presetsUse && this.presetsUse.skill != "")
       {
         this.skillLearnPriorityList[0].skills = this.presetsUse.skill
@@ -878,7 +889,6 @@ export default {
       let preset = {
         name: this.presetNameEdit,
         race_list: this.extraRace,
-        // skill: this.skillLearn,
         skill_priority_list: [],
         skill_blacklist: this.skillLearnBlacklist,
         expect_attribute:[this.expectSpeedValue, this.expectStaminaValue, this.expectPowerValue, this.expectWillValue, this.expectIntelligenceValue],
@@ -889,6 +899,7 @@ export default {
         race_tactic_1: this.selectedRaceTactic1,
         race_tactic_2: this.selectedRaceTactic2,
         race_tactic_3: this.selectedRaceTactic3,
+        extraWeight: [this.extraWeight1,this.extraWeight2,this.extraWeight3]
       }
       for(let i = 0; i < this.skillPriorityNum; i++)
       {
