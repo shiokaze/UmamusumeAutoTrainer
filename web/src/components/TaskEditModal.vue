@@ -259,44 +259,45 @@
                 <div class="col">
                   <div class="form-group">
                     <label for="skill-learn">⭐ 技能学习</label>
-                    <textarea type="text"  v-model="skillLearn" class="form-control" id="skill-learn" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
                   </div>
                 </div>
               </div>
             </div>
-            <template>
-              <div>
-                <!-- 初始文本框 -->
-                <div v-for="(text, index) in textFields" :key="index">
-                  <input v-model="text" type="text" placeholder="文本框内容">
-                  <button @click="removeTextField(index)" v-if="textFields.length > 1">删除</button>
+            <div v-for="(item,index) in skillLearnPriorityList" :key="item.priority">
+              <div class="form-group row">
+                <label class="col-sm-3" for="'skill-learn-' + item.id">❗ 学习优先级 {{ item.priority+1 }}</label>
+                <div class="col-sm-6">
+                  <textarea type="text"  v-model="item.skills" class="form-control" id="skill-learn-priority" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
                 </div>
-
-                <!-- 新增按钮 -->
-                <button @click="addTextField" v-if="textFields.length < 10">新增文本框</button>
+                <div class="col-sm-3">
+                  <span class="red-button auto-btn ml-2" v-on:click="deleteBox(item,index)">删除当前优先级</span>
+                </div>
               </div>
-            </template>
-            <script>
-            export default {
-              data() {
-                return {
-                  textFields: [''] // 初始文本框
-                };
-              },
-              methods: {
-                addTextField() {
-                  if (this.textFields.length < 10) {
-                    this.textFields.push('');
-                  }
-                },
-                removeTextField(index) {
-                  if (this.textFields.length > 1) {
-                    this.textFields.splice(index, 1);
-                  }
-                }
-              }
-            };
-            </script>
+            </div>
+            <span class="btn auto-btn ml-2" v-on:click="addBox(item)">新增优先级</span>
+            <div class="form-group mb-0">
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <br>
+                    <label for="skill-learn-default">✅ (其余未列出技能均在此优先级)</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-0">
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="skill-learn-blacklist">⛔ 黑名单(任何情况下都不学习这些技能)</label>
+                    <textarea type="text"  v-model="skillLearnBlacklist" class="form-control" id="skill-learn-blacklist" placeholder="钢铁意志,迅疾如风,...(狗都不点)"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
             <div class="form-group">
               <div class="row">
                 <div class="col-3">
@@ -700,6 +701,8 @@ export default {
           name: "默认",
           race_list: [],
           skill: "",
+          skill_priority_list:[],
+          skill_blacklist: "",
           expect_attribute:[650, 800, 650, 400, 400],
           follow_support_card: {id:1, name:'在耀眼景色的前方'},
           follow_support_card_level: 50,
@@ -717,7 +720,14 @@ export default {
       selectedUmamusumeTaskType: undefined,
       selectedSupportCard: undefined,
       extraRace: [],
-      skillLearn: "",
+      skillLearnPriorityList:[
+					{
+						priority:0,
+						skills:""
+					}
+				],
+      skillPriorityNum:1,
+      skillLearnBlacklist:"",
       learnSkillOnlyUserProvided: false,
       learnSkillBeforeRace: false,
       selectedRaceTactic1: 4,
@@ -739,6 +749,29 @@ export default {
     this.successToast = $('.toast').toast({})
   },
   methods:{
+    deleteBox(item,index){
+        if(this.skillLearnPriorityList.length<=1){
+          return false
+        }
+        this.skillLearnPriorityList.splice(index,1)
+        this.skillPriorityNum--
+        for(let i = index; i < this.skillPriorityNum; i++)
+        {
+          this.skillLearnPriorityList[i].priority--
+        }
+      },
+    addBox(item){
+        if(this.skillLearnPriorityList.length>=5)
+        {
+          return false
+        }
+        this.skillLearnPriorityList.push(
+          {
+            priority:this.skillPriorityNum++,
+            skills:''
+          }
+        )
+    },
     initSelect: function (){
       this.selectedSupportCard = this.umausumeSupportCardList[0]
       this.selectedUmamusumeTaskType = this.umamusumeTaskTypeList[0]
@@ -750,7 +783,13 @@ export default {
       this.showAdvanceOption = !this.showAdvanceOption
     },
     addTask: function (){
-      var learn_skill_list = this.skillLearn ? this.skillLearn.split(",") : []
+      //var learn_skill_list = this.skillLearn ? this.skillLearn.split(",") : []
+      var learn_skill_list = []
+      for (let i = 0; i < this.skillPriorityNum; i++)
+      {
+        learn_skill_list.push((this.skillLearnPriorityList[i].skills)[0].split(","))
+      }
+      var learn_skill_blacklist = this.skillLearnBlacklist ? this.skillLearnBlacklist.split(",") : []
       let payload = {
         app_name: "umamusume",
         task_execute_mode: this.selectedExecuteMode,
@@ -762,6 +801,7 @@ export default {
           "follow_support_card_level": this.supportCardLevel,
           "extra_race_list": this.extraRace,
           "learn_skill_list": learn_skill_list,
+          "learn_skill_blacklist": learn_skill_blacklist,
           "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
           "clock_use_limit": this.clockUseLimit,
           "learn_skill_threshold": this.learnSkillThreshold,
@@ -796,8 +836,33 @@ export default {
       this.learnSkillThreshold = this.presetsUse.learn_skill_threshold,
       this.selectedRaceTactic1 = this.presetsUse.race_tactic_1,
       this.selectedRaceTactic2 = this.presetsUse.race_tactic_2,
-      this.selectedRaceTactic3 = this.presetsUse.race_tactic_3
-      this.skillLearn = this.presetsUse.skill
+      this.selectedRaceTactic3 = this.presetsUse.race_tactic_3,
+      this.skillLearnBlacklist = this.presetsUse.skill_blacklist
+      // this.skillLearn = this.presetsUse.skill
+      if ('skill' in this.presetsUse && this.presetsUse.skill != "")
+      {
+        this.skillLearnPriorityList[0].skills = this.presetsUse.skill
+        while(this.skillPriorityNum > 1)
+        {
+          this.deleteBox(0,this.skillPriorityNum-1)
+        }
+      }
+      else
+      {
+        for (let i = 0; i < this.presetsUse.skill_priority_list.length; i++)
+        {
+          if (i >= this.skillPriorityNum)
+          {
+            this.addBox()
+          }
+          this.skillLearnPriorityList[i].skills = this.presetsUse.skill_priority_list[i]
+        }
+        while(this.skillPriorityNum > this.presetsUse.skill_priority_list.length)
+        {
+          this.deleteBox(0,this.skillPriorityNum-1)
+        }
+      }
+      
     },
     getPresets: function(){
       this.axios.post("/umamusume/get-presets", "").then(
@@ -813,7 +878,9 @@ export default {
       let preset = {
         name: this.presetNameEdit,
         race_list: this.extraRace,
-        skill: this.skillLearn,
+        // skill: this.skillLearn,
+        skill_priority_list: [],
+        skill_blacklist: this.skillLearnBlacklist,
         expect_attribute:[this.expectSpeedValue, this.expectStaminaValue, this.expectPowerValue, this.expectWillValue, this.expectIntelligenceValue],
         follow_support_card: this.selectedSupportCard,
         follow_support_card_level: this.supportCardLevel,
@@ -822,6 +889,10 @@ export default {
         race_tactic_1: this.selectedRaceTactic1,
         race_tactic_2: this.selectedRaceTactic2,
         race_tactic_3: this.selectedRaceTactic3,
+      }
+      for(let i = 0; i < this.skillPriorityNum; i++)
+      {
+        preset.skill_priority_list.push([this.skillLearnPriorityList[i].skills])
       }
       let payload = {
         "preset": JSON.stringify(preset)
@@ -846,6 +917,13 @@ export default {
 .btn{
   padding: 0.4rem 0.8rem !important;
   font-size: 1rem !important;
+}
+
+.red-button {
+  background-color: red !important;
+  padding: 0.4rem 0.8rem !important;
+  font-size: 1rem !important;
+  border-radius: 0.25rem;
 }
 
 </style>
