@@ -851,7 +851,9 @@ export default {
       }
       else
       {
-        this.extraWeight1 = this.extraWeight2 = this.extraWeight3 = [0,0,0,0,0]
+        this.extraWeight1 = [0,0,0,0,0]
+        this.extraWeight2 = [0,0,0,0,0]
+        this.extraWeight3 = [0,0,0,0,0]
       }
       if ('skill' in this.presetsUse && this.presetsUse.skill != "")
       {
