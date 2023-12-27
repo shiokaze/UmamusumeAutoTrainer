@@ -787,9 +787,9 @@ export default {
       var learn_skill_list = []
       for (let i = 0; i < this.skillPriorityNum; i++)
       {
-        if((this.skillLearnPriorityList[i].skills)[0] != "")
+        if(String(this.skillLearnPriorityList[i].skills) != "")
         {
-          learn_skill_list.push((this.skillLearnPriorityList[i].skills)[0].split(",").map(item => item.trim()))
+          learn_skill_list.push(String(this.skillLearnPriorityList[i].skills).split(",").map(item => item.trim()))
         }
       }
       console.log(learn_skill_list)
