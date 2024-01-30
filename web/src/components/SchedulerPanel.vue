@@ -12,9 +12,9 @@
       <waiting-task-list v-bind:waiting-task-list="waitingTaskList"></waiting-task-list>
     </div>
     <!--  定时队列  -->
-    <!-- <div class="part">
+    <div class="part">
       <cron-job-list v-bind:cron-job-list="cronJobList"></cron-job-list>
-    </div> -->
+    </div>
     <!--  历史队列  -->
     <div class="part">
       <history-task-list v-bind:history-task-list="historyTaskList"></history-task-list>

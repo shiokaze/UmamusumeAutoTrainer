@@ -16,205 +16,208 @@
             <div class="form-group">
               <label for="selectExecuteMode">⭐ 执行模式选择</label>
               <select v-model="selectedExecuteMode" class="form-control" id="selectExecuteMode">
-                <option value=1>一次性</option>
+                <option :value=1>一次性</option>
+                <option :value=2>定时</option>
               </select>
             </div>
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="selectSernaio">⭐ 剧本选择</label>
-                  <select class="form-control" id="selectSernaio">
-                    <option value=1>URA</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="selectUmamusume">赛马娘选择</label>
-                  <select disabled class="form-control" id="selectUmamusume">
-                    <option value=1>使用上次选择</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="selectAutoRecoverTP">TP不足时自动恢复（仅使用药水）</label>
-                  <select v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
-                    <option :value=true>是</option>
-                    <option :value=false>否</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-8">
-                <div class="form-group">
-                  <label for="race-select">⭐ 使用预设</label>
-                    <div class="form-inline">
-                      <select v-model="presetsUse" style="text-overflow: ellipsis;width: 40em;"  class="form-control" id="use_presets">
-                        <option v-for="set in cultivatePresets" :value="set">{{set.name}}</option>
-                      </select>
-                      <span class="btn auto-btn ml-2" v-on:click="applyPresetRace">应用</span>
-                    </div>
-                </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label for="presetNameEditInput">保存为预设</label>
-                  <div class="form-inline">
-                    <input v-model="presetNameEdit" type="text" class="form-control" id="presetNameEditInput" placeholder="预设名称">
-                    <span class="btn auto-btn ml-2" v-on:click="addPresets">保存</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label>⭐ 借用支援卡选择</label>
-                  <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
-                    <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-2">
-                <div class="form-group">
-                  <label for="selectSupportCardLevel">支援卡等级(≥)</label>
-                  <input v-model="supportCardLevel" type="number" class="form-control" id="selectSupportCardLevel" placeholder="">
-                </div>
-              </div>
-              <div class="col-3">
-                <div class="form-group">
-                  <label for="inputClockUseLimit">使用闹钟数量限制</label>
-                  <input v-model="clockUseLimit" type="number" class="form-control" id="inputClockUseLimit" placeholder="">
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div>⭐ 目标属性 （如果不知道具体填多少, 可以自己手动打一盘把最终数值填入）</div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                    <label for="speed-value-input">速度</label>
-                    <input type="number" v-model="expectSpeedValue" class="form-control" id="speed-value-input">
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="stamina-value-input">耐力</label>
-                  <input type="number" v-model="expectStaminaValue" class="form-control" id="stamina-value-input">
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="power-value-input">力量</label>
-                  <input type="number" v-model="expectPowerValue" class="form-control" id="power-value-input">
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="will-value-input">毅力</label>
-                  <input type="number" v-model="expectWillValue" class="form-control" id="will-value-input">
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="intelligence-value-input">智力</label>
-                  <input type="number" v-model="expectIntelligenceValue" class="form-control" id="intelligence-value-input">
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="form-group">
-              <span v-if="!showAdvanceOption" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchAdvanceOption">展开高级选项</span>
-              <span v-if="showAdvanceOption" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchAdvanceOption">收起高级选项</span>
-              </div>
-            </div>
-            <div v-if ="showAdvanceOption">
-              <div class="form-group">
-                <div>⭐ 额外权重</div>
-              </div>
-              <p>调整ai对训练的倾向, 不影响最终目标属性, 一般用于提前完成某一种训练的目标属性，建议权重范围 [-1.0 ~ 1.0], 0即为不使用额外权重;</p>
-              <p>支援卡或种马强度低时, 建议增加在一个属性权重的同时减少其他属性同样数值的权重</p>
-              <div style="margin-bottom: 10px;">第一年</div>
-              <div class="row">
-                <div v-for="v,i in extraWeight1" class="col">
-                  <div class="form-group">
-                      <input type="number" v-model="extraWeight1[i]" class="form-control" id="speed-value-input">
-                  </div>
-                </div>
-              </div>
-              <div style="margin-bottom: 10px;">第二年</div>
-              <div class="row">
-                <div v-for="v,i in extraWeight2" class="col">
-                  <div class="form-group">
-                      <input type="number" v-model="extraWeight2[i]" class="form-control" id="speed-value-input">
-                  </div>
-                </div>
-              </div>
-              <div style="margin-bottom: 10px;">第三年</div>
-              <div class="row">
-                <div v-for="v,i in extraWeight3" class="col">
-                  <div class="form-group">
-                      <input type="number" v-model="extraWeight3[i]" class="form-control" id="speed-value-input">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div>⭐ 跑法选择</div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="selectTactic1">第一年</label>
-                  <select v-model="selectedRaceTactic1" class="form-control" id="selectTactic1">
-                    <option :value=1>后追（追）</option>
-                    <option :value=2>居中（差）</option>
-                    <option :value=3>前列（先）</option>
-                    <option :value=4>领头（逃）</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="selectTactic2">第二年</label>
-                  <select v-model="selectedRaceTactic2" class="form-control" id="selectTactic2">
-                    <option :value=1>后追（追）</option>
-                    <option :value=2>居中（差）</option>
-                    <option :value=3>前列（先）</option>
-                    <option :value=4>领头（逃）</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="selectTactic3">第三年</label>
-                  <select v-model="selectedRaceTactic3" class="form-control" id="selectTactic3">
-                    <option :value=1>后追（追）</option>
-                    <option :value=2>居中（差）</option>
-                    <option :value=3>前列（先）</option>
-                    <option :value=4>领头（逃）</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
+            <!--育成-->
+            <div v-if="selectedUmamusumeTaskType?.id === 1">
               <div class="row">
                 <div class="col">
                   <div class="form-group">
-                    <label for="race-select">⭐ 额外赛程选择</label>
-                    <textarea type="text" disabled v-model="extraRace" class="form-control" id="race-select"></textarea>
+                    <label for="selectSernaio">⭐ 剧本选择</label>
+                    <select class="form-control" id="selectSernaio">
+                      <option :value=1>URA</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="selectUmamusume">赛马娘选择</label>
+                    <select disabled class="form-control" id="selectUmamusume">
+                      <option :value=1>使用上次选择</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="selectAutoRecoverTP">TP不足时自动恢复（仅使用药水）</label>
+                    <select v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
+                      <option :value=true>是</option>
+                      <option :value=false>否</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-8">
+                  <div class="form-group">
+                    <label for="race-select">⭐ 使用预设</label>
+                      <div class="form-inline">
+                        <select v-model="presetsUse" style="text-overflow: ellipsis;width: 40em;"  class="form-control" id="use_presets">
+                          <option v-for="set in cultivatePresets" :value="set">{{set.name}}</option>
+                        </select>
+                        <span class="btn auto-btn ml-2" v-on:click="applyPresetRace">应用</span>
+                      </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label for="presetNameEditInput">保存为预设</label>
+                    <div class="form-inline">
+                      <input v-model="presetNameEdit" type="text" class="form-control" id="presetNameEditInput" placeholder="预设名称">
+                      <span class="btn auto-btn ml-2" v-on:click="addPresets">保存</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-4">
+                  <div class="form-group">
+                    <label>⭐ 借用支援卡选择</label>
+                    <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
+                      <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-2">
+                  <div class="form-group">
+                    <label for="selectSupportCardLevel">支援卡等级(≥)</label>
+                    <input v-model="supportCardLevel" type="number" class="form-control" id="selectSupportCardLevel" placeholder="">
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="form-group">
+                    <label for="inputClockUseLimit">使用闹钟数量限制</label>
+                    <input v-model="clockUseLimit" type="number" class="form-control" id="inputClockUseLimit" placeholder="">
                   </div>
                 </div>
               </div>
               <div class="form-group">
-              <span v-if="!showRaceList" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchRaceList">展开赛程选项</span>
-              <span v-if="showRaceList" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchRaceList">收起赛程选项</span>
+                <div>⭐ 目标属性 （如果不知道具体填多少, 可以自己手动打一盘把最终数值填入）</div>
               </div>
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                      <label for="speed-value-input">速度</label>
+                      <input type="number" v-model="expectSpeedValue" class="form-control" id="speed-value-input">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="stamina-value-input">耐力</label>
+                    <input type="number" v-model="expectStaminaValue" class="form-control" id="stamina-value-input">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="power-value-input">力量</label>
+                    <input type="number" v-model="expectPowerValue" class="form-control" id="power-value-input">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="will-value-input">毅力</label>
+                    <input type="number" v-model="expectWillValue" class="form-control" id="will-value-input">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="intelligence-value-input">智力</label>
+                    <input type="number" v-model="expectIntelligenceValue" class="form-control" id="intelligence-value-input">
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                <span v-if="!showAdvanceOption" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchAdvanceOption">展开高级选项</span>
+                <span v-if="showAdvanceOption" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchAdvanceOption">收起高级选项</span>
+                </div>
+              </div>
+              <div v-if ="showAdvanceOption">
+                <div class="form-group">
+                  <div>⭐ 额外权重</div>
+                </div>
+                <p>调整ai对训练的倾向, 不影响最终目标属性, 一般用于提前完成某一种训练的目标属性，建议权重范围 [-1.0 ~ 1.0], 0即为不使用额外权重;</p>
+                <p>支援卡或种马强度低时, 建议增加在一个属性权重的同时减少其他属性同样数值的权重</p>
+                <div style="margin-bottom: 10px;">第一年</div>
+                <div class="row">
+                  <div v-for="v,i in extraWeight1" class="col">
+                    <div class="form-group">
+                        <input type="number" v-model="extraWeight1[i]" class="form-control" id="speed-value-input">
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-bottom: 10px;">第二年</div>
+                <div class="row">
+                  <div v-for="v,i in extraWeight2" class="col">
+                    <div class="form-group">
+                        <input type="number" v-model="extraWeight2[i]" class="form-control" id="speed-value-input">
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-bottom: 10px;">第三年</div>
+                <div class="row">
+                  <div v-for="v,i in extraWeight3" class="col">
+                    <div class="form-group">
+                        <input type="number" v-model="extraWeight3[i]" class="form-control" id="speed-value-input">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div>⭐ 跑法选择</div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="selectTactic1">第一年</label>
+                    <select v-model="selectedRaceTactic1" class="form-control" id="selectTactic1">
+                      <option :value=1>后追（追）</option>
+                      <option :value=2>居中（差）</option>
+                      <option :value=3>前列（先）</option>
+                      <option :value=4>领头（逃）</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="selectTactic2">第二年</label>
+                    <select v-model="selectedRaceTactic2" class="form-control" id="selectTactic2">
+                      <option :value=1>后追（追）</option>
+                      <option :value=2>居中（差）</option>
+                      <option :value=3>前列（先）</option>
+                      <option :value=4>领头（逃）</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="selectTactic3">第三年</label>
+                    <select v-model="selectedRaceTactic3" class="form-control" id="selectTactic3">
+                      <option :value=1>后追（追）</option>
+                      <option :value=2>居中（差）</option>
+                      <option :value=3>前列（先）</option>
+                      <option :value=4>领头（逃）</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="race-select">⭐ 额外赛程选择</label>
+                      <textarea type="text" disabled v-model="extraRace" class="form-control" id="race-select"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                <span v-if="!showRaceList" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchRaceList">展开赛程选项</span>
+                <span v-if="showRaceList" class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="switchRaceList">收起赛程选项</span>
+                </div>
               <div class="row" v-if="showRaceList"> 
                 <div class="col">
                   <div>第一年</div>
@@ -254,80 +257,137 @@
                 </div>
               </div>
             </div>
-            <div class="form-group mb-0">
-              <div class="row">
-                <div class="col">
-                  <div class="form-group">
-                    <label for="skill-learn">⭐ 技能学习</label>
+              <div class="form-group mb-0">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="skill-learn">⭐ 技能学习</label>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div v-for="(item,index) in skillLearnPriorityList" :key="item.priority">
-              <div class="form-group row">
-                <label class="col-sm-3" for="'skill-learn-' + item.id">❗ 学习优先级 {{ item.priority+1 }}</label>
-                <div class="col-sm-6">
-                  <textarea type="text"  v-model="item.skills" class="form-control" id="skill-learn-priority" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
-                </div>
-                <div class="col-sm-3">
-                  <span class="red-button auto-btn ml-2" v-on:click="deleteBox(item,index)">删除当前优先级</span>
-                </div>
-              </div>
-            </div>
-            <span class="btn auto-btn ml-2" v-on:click="addBox(item)">新增优先级</span>
-            <div class="form-group mb-0">
-              <div class="row">
-                <div class="col">
-                  <div class="form-group">
-                    <br>
-                    <label for="skill-learn-default">✅ (其余未列出技能均在此优先级)</label>
+              <div v-for="(item,index) in skillLearnPriorityList" :key="item.priority">
+                <div class="form-group row">
+                  <label class="col-sm-3" for="'skill-learn-' + item.id">❗ 学习优先级 {{ item.priority+1 }}</label>
+                  <div class="col-sm-6">
+                    <textarea type="text"  v-model="item.skills" class="form-control" id="skill-learn-priority" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
+                  </div>
+                  <div class="col-sm-3">
+                    <span class="red-button auto-btn ml-2" v-on:click="deleteBox(item,index)">删除当前优先级</span>
                   </div>
                 </div>
               </div>
-            </div>
+              <span class="btn auto-btn ml-2" v-on:click="addBox(item)">新增优先级</span>
+              <div class="form-group mb-0">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <br>
+                      <label for="skill-learn-default">✅ (其余未列出技能均在此优先级)</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            <div class="form-group mb-0">
-              <div class="row">
-                <div class="col">
-                  <div class="form-group">
-                    <label for="skill-learn-blacklist">⛔ 黑名单(任何情况下都不学习这些技能)</label>
-                    <textarea type="text"  v-model="skillLearnBlacklist" class="form-control" id="skill-learn-blacklist" placeholder="钢铁意志,迅疾如风,...(真不会有人点这些吧)"></textarea>
+              <div class="form-group mb-0">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="skill-learn-blacklist">⛔ 黑名单(任何情况下都不学习这些技能)</label>
+                      <textarea type="text"  v-model="skillLearnBlacklist" class="form-control" id="skill-learn-blacklist" placeholder="钢铁意志,迅疾如风,...(真不会有人点这些吧)"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3">
+                    <div class="form-group">
+                      <label for="learnSkillOnlyUserProvidedSelector">育成中仅允许学习上面的技能</label>
+                      <select v-model="learnSkillOnlyUserProvided" class="form-control" id="learnSkillOnlyUserProvidedSelector">
+                        <option :value=true>是</option>
+                        <option :value=false>否</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="form-group">
+                      <label for="learnSkillBeforeRaceSelector">在参赛前学习技能</label>
+                      <select disabled v-model="learnSkillBeforeRace" class="form-control" id="learnSkillBeforeRace">
+                        <option :value=true>是</option>
+                        <option :value=false>否</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="form-group">
+                      <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
+                      <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            
-
-            <div class="form-group">
+            <!--竞技场-->
+            <div v-if="selectedUmamusumeTaskType?.id === 2">
               <div class="row">
-                <div class="col-3">
+                <div class="col">
                   <div class="form-group">
-                    <label for="learnSkillOnlyUserProvidedSelector">育成中仅允许学习上面的技能</label>
-                    <select v-model="learnSkillOnlyUserProvided" class="form-control" id="learnSkillOnlyUserProvidedSelector">
-                      <option :value=true>是</option>
-                      <option :value=false>否</option>
+                    <label for="selectOpponent">⭐ 对手选择</label>
+                    <select v-model="selectedOpponent" class="form-control" id="selectOpponent">
+                      <option :value=1>上</option>
+                      <option :value=2>中</option>
+                      <option :value=3>下</option>
+                      <option :value=0>无所谓</option>
                     </select>
                   </div>
                 </div>
-                <div class="col-3">
+                <div class="col">
                   <div class="form-group">
-                    <label for="learnSkillBeforeRaceSelector">在参赛前学习技能</label>
-                    <select disabled v-model="learnSkillBeforeRace" class="form-control" id="learnSkillBeforeRace">
-                      <option :value=true>是</option>
-                      <option :value=false>否</option>
-                    </select>
+                    <label for="opponentStaminaInput">耐力阈值</label>
+                    <input type="number" v-model="opponentStamina" class="form-control" id="opponentStaminaInput">
                   </div>
                 </div>
-                <div class="col-3">
+              </div>
+              <div class="form-group">
+                <div>⭐ 限时特卖购买 </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="form-check" v-for="item in timeSaleItemList1">
+                    <input class="form-check-input" v-model="timeSale" type="checkbox" :id="item.id" :value="item.id">
+                    <span>{{item.name}}</span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-check" v-for="item in timeSaleItemList2">
+                    <input class="form-check-input" v-model="timeSale" type="checkbox" :id="item.id" :value="item.id">
+                    <span>{{item.name}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--捐鞋-->
+            <div v-if="selectedUmamusumeTaskType?.id === 3">
+              <div class="row">
+                <div class="col">
                   <div class="form-group">
-                    <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
-                    <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
+                    <label for="selectShoe">⭐ 要鞋</label>
+                    <select v-model="askShoeType" class="form-control" id="selectShoe">
+                      <option :value=1>短</option>
+                      <option :value=2>英</option>
+                      <option :value=3>中</option>
+                      <option :value=4>长</option>
+                      <option :value=0>无所谓</option>
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
           </form>
-          <!-- <div class="part">
+          <div class="part" v-if="selectedExecuteMode === 2">
             <br>
             <h6>定时设置</h6>
             <hr />
@@ -337,7 +397,20 @@
                 <input v-model="cron"  class="form-control" id="cronInput">
               </div>
             </div>
-          </div> -->
+          </div>
+          <br>
+          <h6>📱设备信息</h6>
+          <hr />
+          <div class="part">
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="deviceName">设备名称</label>
+                  <textarea type="text"  v-model="device_name" class="form-control" id="deviceName" placeholder="设备名，如127.0.0.1:16384 如为空则使用config.yaml中的设置"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <span class="btn auto-btn" v-on:click="addTask">确定</span>
@@ -370,6 +443,14 @@ export default {
         {
           id: 1,
           name: "育成",
+        },
+        {
+          id: 2,
+          name: "竞技场",
+        },
+        {
+          id: 3,
+          name: "捐鞋",
         }
       ],
       umamusumeList:[
@@ -713,6 +794,20 @@ export default {
           race_tactic_3: 4,
           extraWeight:[],
         },
+        timeSaleItemList1:[
+          {id:0, name:"碎片一"},
+          {id:1, name:"碎片二"},
+          {id:2, name:"闹钟"},
+          {id:3, name:"甜点"},
+          {id:4, name:"协助积分"},
+        ],
+        timeSaleItemList2:[
+          {id:5, name:"短距离跑鞋"},
+          {id:6, name:"英里跑鞋"},
+          {id:7, name:"中距离跑鞋"},
+          {id:8, name:"长距离跑鞋"},
+          {id:9, name:"泥地跑鞋"},
+        ],
       // ===  已选择  ===
       selectedExecuteMode: 1,
       expectTimes: 0,
@@ -742,6 +837,11 @@ export default {
       extraWeight1: [0, 0, 0, 0, 0],
       extraWeight2: [0, 0, 0, 0, 0],
       extraWeight3: [0, 0, 0, 0, 0],
+      selectedOpponent: 1,
+      opponentStamina: 600,
+      timeSale: [0, 1, 2],
+      askShoeType: 1,
+      device_name:"",
     }
   },
   mounted() {
@@ -784,22 +884,26 @@ export default {
       this.showAdvanceOption = !this.showAdvanceOption
     },
     addTask: function (){
-      var learn_skill_list = []
-      for (let i = 0; i < this.skillPriorityNum; i++)
-      {
-        if(String(this.skillLearnPriorityList[i].skills) != "")
-        {
-          learn_skill_list.push(String(this.skillLearnPriorityList[i].skills).split(",").map(item => item.trim()))
-        }
-      }
-      console.log(learn_skill_list)
-      var learn_skill_blacklist = this.skillLearnBlacklist ? this.skillLearnBlacklist.split(",").map(item => item.trim()) : []
       let payload = {
         app_name: "umamusume",
         task_execute_mode: this.selectedExecuteMode,
         task_type: this.selectedUmamusumeTaskType.id,
         task_desc: this.selectedUmamusumeTaskType.name,
-        attachment_data: {
+        attachment_data: {},
+        cron_job_config: {},
+      }
+      if (this.selectedUmamusumeTaskType.id === 1) {
+        var learn_skill_list = []
+        for (let i = 0; i < this.skillPriorityNum; i++)
+        {
+          if(String(this.skillLearnPriorityList[i].skills) != "")
+          {
+            learn_skill_list.push(String(this.skillLearnPriorityList[i].skills).split(",").map(item => item.trim()))
+          }
+        }
+        console.log(learn_skill_list)
+        var learn_skill_blacklist = this.skillLearnBlacklist ? this.skillLearnBlacklist.split(",").map(item => item.trim()) : []
+        payload.attachment_data = {
           "expect_attribute": [this.expectSpeedValue, this.expectStaminaValue, this.expectPowerValue, this.expectWillValue, this.expectIntelligenceValue],
           "follow_support_card_name": this.selectedSupportCard.name,
           "follow_support_card_level": this.supportCardLevel,
@@ -812,14 +916,26 @@ export default {
           "allow_recover_tp": this.recoverTP,
           "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided,
           "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3]
-        },
-        cron_job_info:{},
+        }
+      }
+      else if (this.selectedUmamusumeTaskType.id === 2) {
+        payload.attachment_data = {
+          "opponent_index": this.selectedOpponent,
+          "opponent_stamina": this.opponentStamina,
+          "time_sale": this.timeSale
+        }
+      }
+      else if (this.selectedUmamusumeTaskType.id === 3) {
+        payload.attachment_data = {
+          "ask_shoe_type": this.askShoeType
+        }
       }
       if(this.selectedExecuteMode === 2){
-        payload.cron_job_info = {
+        payload.cron_job_config = {
           cron: this.cron
         }
       }
+      payload.attachment_data.device_name = this.device_name
       console.log(JSON.stringify(payload))
       this.axios.post("/task", JSON.stringify(payload)).then(
           ()=>{

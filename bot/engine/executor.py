@@ -100,6 +100,13 @@ class Executor:
         controller = get_controller()
         try:
             # 初始化
+            if hasattr(task, 'device_name') and task.device_name:
+                from bot.conn.u2_ctrl import U2AndroidConfig
+                controller.config = U2AndroidConfig(_device_name=task.device_name,
+                                                    delay=controller.config.delay,
+                                                    bluestacks_config_path=controller.config.bluestacks_config_path,
+                                                    bluestacks_config_keyword=
+                                                    controller.config.bluestacks_config_keyword)
             controller.init_env()
             ctx = manifest.build_context(task, controller)
             ctx.ctrl = controller

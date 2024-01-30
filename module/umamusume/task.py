@@ -1,5 +1,6 @@
 from enum import Enum
 from bot.base.task import Task, TaskExecuteMode
+from bot.base.common import CronJobConfig
 
 
 class TaskDetail:
@@ -18,13 +19,33 @@ class TaskDetail:
     cultivate_progress_info: dict
     extra_weight: list
 
+    opponent_index: int
+    opponent_stamina: int
+    time_sale: list[int]
+    buy_piece1: bool
+    buy_piece2: bool
+    buy_clock: bool
+    buy_dessert: bool
+    buy_exp: bool
+    buy_shoes_short: bool
+    buy_shoes_mile: bool
+    buy_shoes_middle: bool
+    buy_shoes_long: bool
+    buy_shoes_dirt: bool
+
+    ask_shoe_type: int
+    donate_done_timestamp: float
+
 
 class EndTaskReason(Enum):
     TP_NOT_ENOUGH = "训练值不足"
+    RP_NOT_ENOUGH = "竞赛值不足"
+    DONATED = "今日捐献次数已满"
 
 
 class UmamusumeTask(Task):
     detail: TaskDetail
+    device_name: str | None
 
     def end_task(self, status, reason) -> None:
         super().end_task(status, reason)
@@ -36,6 +57,8 @@ class UmamusumeTask(Task):
 class UmamusumeTaskType(Enum):
     UMAMUSUME_TASK_TYPE_UNKNOWN = 0
     UMAMUSUME_TASK_TYPE_CULTIVATE = 1
+    UMAMUSUME_TASK_TYPE_TEAM_STADIUM = 2
+    UMAMUSUME_TASK_TYPE_DONATE = 3
 
 
 def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
@@ -43,23 +66,34 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td = TaskDetail()
     ut = UmamusumeTask(task_execute_mode=task_execute_mode,
                        task_type=UmamusumeTaskType(task_type), task_desc=task_desc, app_name="umamusume")
-    ut.cron_job_config = cron_job_config
-    td.expect_attribute = attachment_data['expect_attribute']
-    td.follow_support_card_level = int(attachment_data['follow_support_card_level'])
-    td.follow_support_card_name = attachment_data['follow_support_card_name']
-    td.extra_race_list = attachment_data['extra_race_list']
-    td.learn_skill_list = attachment_data['learn_skill_list']
-    td.learn_skill_blacklist = attachment_data['learn_skill_blacklist']
-    td.tactic_list = attachment_data['tactic_list']
-    td.clock_use_limit = attachment_data['clock_use_limit']
-    td.learn_skill_threshold = attachment_data['learn_skill_threshold']
-    td.learn_skill_only_user_provided = attachment_data['learn_skill_only_user_provided']
-    td.allow_recover_tp = attachment_data['allow_recover_tp']
-    td.extra_weight = attachment_data['extra_weight']
-    td.cultivate_result = {}
-    # td.scenario_name = attachment_data['scenario_name']
+    ut.cron_job_config = CronJobConfig()
+    if cron_job_config:
+        ut.cron_job_config.cron = cron_job_config['cron']
+    ut.device_name = attachment_data.get('device_name')
+    if task_type == 1:
+        td.expect_attribute = attachment_data['expect_attribute']
+        td.follow_support_card_level = int(attachment_data['follow_support_card_level'])
+        td.follow_support_card_name = attachment_data['follow_support_card_name']
+        td.extra_race_list = attachment_data['extra_race_list']
+        td.learn_skill_list = attachment_data['learn_skill_list']
+        td.learn_skill_blacklist = attachment_data['learn_skill_blacklist']
+        td.tactic_list = attachment_data['tactic_list']
+        td.clock_use_limit = attachment_data['clock_use_limit']
+        td.learn_skill_threshold = attachment_data['learn_skill_threshold']
+        td.learn_skill_only_user_provided = attachment_data['learn_skill_only_user_provided']
+        td.allow_recover_tp = attachment_data['allow_recover_tp']
+        td.extra_weight = attachment_data['extra_weight']
+        td.cultivate_result = {}
+        # td.scenario_name = attachment_data['scenario_name']
+    elif task_type == 2:
+        td.opponent_index = attachment_data['opponent_index']
+        td.opponent_stamina = attachment_data['opponent_stamina']
+        td.time_sale = attachment_data['time_sale']
+        (td.buy_piece1, td.buy_piece2, td.buy_clock, td.buy_dessert,
+         td.buy_exp, td.buy_shoes_short, td.buy_shoes_mile,
+         td.buy_shoes_middle, td.buy_shoes_long, td.buy_shoes_dirt) = (x in td.time_sale for x in range(10))
+        
+    elif task_type == 3:
+        td.ask_shoe_type = attachment_data['ask_shoe_type']
     ut.detail = td
     return ut
-
-
-
