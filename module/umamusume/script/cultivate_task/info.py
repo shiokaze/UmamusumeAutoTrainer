@@ -42,7 +42,10 @@ TITLE = [
     "活动剧情解锁",
     "确认",
     "回复训练值",
-    "选择养成难度"
+    "选择养成难度",
+    "公告",
+    "继续养成",
+    "关注训练员",
 ]
 
 
@@ -130,6 +133,7 @@ def script_info(ctx: UmamusumeContext):
             ctx.ctrl.click_by_point(WIN_TIMES_NOT_ENOUGH_RETURN)
         if title_text == TITLE[25]:
             ctx.ctrl.click_by_point(ACTIVITY_STORY_UNLOCK_CONFIRM)
+            ctx.ctrl.click_by_point(ACTIVITY_STORY_UNLOCK_CONFIRM2)
         if title_text == TITLE[26]:
             if not ctx.cultivate_detail.allow_recover_tp:
                 ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, UEndTaskReason.TP_NOT_ENOUGH)
@@ -144,5 +148,11 @@ def script_info(ctx: UmamusumeContext):
                 ctx.ctrl.click_by_point(USE_TP_DRINK_RESULT_CLOSE)
         if title_text == TITLE[28]:
             ctx.ctrl.click_by_point(SELECT_DIFFICULTY)
+        if title_text == TITLE[29]:
+            ctx.ctrl.click_by_point(CLOSE_NEWS)
+        if title_text == TITLE[30]:
+            ctx.ctrl.click_by_point(CULTIVATE_CONTINUE)
+        if title_text == TITLE[31]:
+            ctx.ctrl.click_by_point(FOLLOW_CANCEL)
         time.sleep(1)
 

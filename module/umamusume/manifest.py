@@ -16,6 +16,7 @@ script_dicts: Dict[UmamusumeTaskType, dict] = {
     UmamusumeTaskType.UMAMUSUME_TASK_TYPE_CULTIVATE: {
         INFO: script_info,
         MAIN_MENU: script_main_menu,
+        MAIN_MENU_CONTINUE: script_main_menu,
         CULTIVATE_SCENARIO_SELECT: script_scenario_select,
         CULTIVATE_UMAMUSUME_SELECT: script_umamusume_select,
         CULTIVATE_EXTEND_UMAMUSUME_SELECT: script_extend_umamusume_select,
