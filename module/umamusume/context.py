@@ -160,6 +160,8 @@ class CultivateContextDetail:
     allow_recover_tp_diamond: bool
     parse_factor_done: bool
     extra_weight: list
+    catch_doll: int
+    sasami: bool
 
     def __init__(self):
         self.expect_attribute = None
@@ -179,6 +181,8 @@ class CultivateContextDetail:
         self.allow_recover_tp_diamond = False
         self.parse_factor_done = False
         self.extra_weight = []
+        self.catch_doll = 0
+        self.sasami = False
 
     def reset_skill_learn(self):
         self.learn_skill_done = False

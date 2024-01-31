@@ -192,7 +192,7 @@ def script_cultivate_event(ctx: UmamusumeContext):
         event_name, selector_list = parse_cultivate_event(ctx, img)
         choice_index = get_event_choice(ctx, event_name)
         # 意外情况容错
-        if choice_index - 1 > len(selector_list):
+        if choice_index > len(selector_list):
             choice_index = 1
         ctx.ctrl.click(selector_list[choice_index - 1][0], selector_list[choice_index - 1][1],
                        "事件选项-" + str(choice_index))
@@ -322,7 +322,16 @@ def script_cultivate_result(ctx: UmamusumeContext):
 
 # 1.878s 2s 0.649s
 def script_cultivate_catch_doll(ctx: UmamusumeContext):
-    ctx.ctrl.click_by_point(CULTIVATE_CATCH_DOLL_START)
+    match ctx.cultivate_detail.catch_doll:
+        case 0:
+            ctx.ctrl.swipe(x1=365, y1=1117, x2=370, y2=1110, duration=1878, name="抓娃娃第一次")
+        case 1:
+            ctx.ctrl.swipe(x1=365, y1=1117, x2=370, y2=1110, duration=2000, name="抓娃娃第二次")
+        case 2:
+            ctx.ctrl.swipe(x1=365, y1=1117, x2=370, y2=1110, duration=649, name="抓娃娃第三次")
+        case _:
+            ctx.ctrl.click_by_point(CULTIVATE_CATCH_DOLL_START)
+    ctx.cultivate_detail.catch_doll += 1
 
 
 def script_cultivate_catch_doll_result(ctx: UmamusumeContext):
