@@ -36,10 +36,15 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
     else:
         normalized_training_level_result = [1, 1, 1, 1, 1]
 
-    # 第一年至第二年合宿前
-    if ctx.cultivate_detail.turn_info.date <= 36:
+    # 第一年
+    if ctx.cultivate_detail.turn_info.date <= 24:
         attr_weight = 0.2
         support_card_weight = 0.6
+        training_level_weight = 0.2
+    # 第二年合宿前
+    elif 25 < ctx.cultivate_detail.turn_info.date <= 36:
+        attr_weight = 0.6
+        support_card_weight = 0.2
         training_level_weight = 0.2
     # 第二年合宿期间
     elif 36 < ctx.cultivate_detail.turn_info.date <= 40:

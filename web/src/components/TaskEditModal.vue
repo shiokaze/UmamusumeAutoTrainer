@@ -41,8 +41,17 @@
                 </div>
                 <div class="col">
                   <div class="form-group">
-                    <label for="selectAutoRecoverTP">TP不足时自动恢复（仅使用药水）</label>
-                    <select v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
+                    <label for="selectAutoRecoverTPDrink">TP不足时自动恢复（仅使用药水）</label>
+                    <select v-model="recoverTPDrink" class="form-control" id="selectAutoRecoverTPDrink">
+                      <option :value=true>是</option>
+                      <option :value=false>否</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="selectAutoRecoverTPDiamond">TP不足时自动恢复（仅使用钻石）</label>
+                    <select v-model="recoverTPDiamond" class="form-control" id="selectAutoRecoverTPDiamond">
                       <option :value=true>是</option>
                       <option :value=false>否</option>
                     </select>
@@ -831,7 +840,8 @@ export default {
       selectedRaceTactic3: 4,
       clockUseLimit: 99,
       learnSkillThreshold: 9999,
-      recoverTP: false,
+      recoverTPDrink: false,
+      recoverTPDiamond: false,
       presetNameEdit: "",
       successToast: undefined,
       extraWeight1: [0, 0, 0, 0, 0],
@@ -913,7 +923,8 @@ export default {
           "tactic_list": [this.selectedRaceTactic1, this.selectedRaceTactic2, this.selectedRaceTactic3],
           "clock_use_limit": this.clockUseLimit,
           "learn_skill_threshold": this.learnSkillThreshold,
-          "allow_recover_tp": this.recoverTP,
+          "allow_recover_tp_drink": this.recoverTPDrink,
+          "allow_recover_tp_diamond": this.recoverTPDiamond,
           "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided,
           "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3]
         }

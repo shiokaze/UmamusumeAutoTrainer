@@ -108,3 +108,7 @@ SELECT_DIFFICULTY = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None,
 CLOSE_NEWS = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(365, 1185), "关闭公告", None)
 CULTIVATE_CONTINUE = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(520, 920), "继续养成确认", None)
 FOLLOW_CANCEL = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(200, 830), "关注训练员-取消", None)
+USE_DIAMOND = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(610, 180), "使用宝石", None)
+USE_DIAMOND_PLUS_MARK = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(520, 670), "使用宝石-加号", None)
+DATE_CHANGE_CONFIRM = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 840), "日期变化", None)
+CONNECTION_LOST_RESUME = ClickPoint(ClickPointType.CLICK_POINT_TYPE_COORDINATE, None, Coordinate(360, 840), "返回标题页面", None)
