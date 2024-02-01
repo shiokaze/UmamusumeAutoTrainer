@@ -24,7 +24,14 @@
         耐力阈值: <span>{{task.detail.opponent_stamina}}</span>
       </div>
       <div>
-        <span>限时特卖: <span v-for="item in task.detail.time_sale">{{time_sale_item[item]}}{{ "  " }} </span></span>
+        <span>限时特卖: <span v-for="item in task.detail.time_sale" style="background-color: #49BFF7;" class="badge badge-pill badge-secondary">{{time_sale_item[item]}}</span></span>
+      </div>
+      <div v-if="task.detail.time_sale_bought !== undefined && task.detail.time_sale_bought.length !== 0">
+        已购买：<br/>
+        <span class="mr-1" v-for="bought in task.detail.time_sale_bought">
+          <span v-for="item in bought" style="background-color: #E0E0E0; color: #794016;" class="badge badge-pill badge-secondary">{{time_sale_item[item]}}</span>
+          <br/>
+        </span>
       </div>
     </div>
     <div v-if="task.task_type === 3">
