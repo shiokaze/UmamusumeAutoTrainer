@@ -428,6 +428,11 @@ export default {
         {id:25, name:'身后迫近的热浪是动力', desc: '速北黑'},
         {id:26, name:'超越那前方的背影', desc: '耐光钻'},
         {id:27, name:'身为新娘！', desc: '速川上公主'},
+        {id:28, name:'独享冰凉？', desc: '速东商变革'},
+        {id:29, name:'心中的烈火无法抑制', desc: '力八重'},
+        {id:30, name:'即使满身泥土，也要追逐梦想', desc: '智内恰'},
+        {id:31, name:'Two Pieces', desc: '速成田白仁'},
+        {id:32, name:'见习魔女与漫漫长夜', desc: '速东商变革'},
       ],
       umamusumeRaceList_1:[
         {id:1401, name:'函馆初级锦标赛',date: '7月后', type: 'GIII'},
