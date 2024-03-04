@@ -878,7 +878,8 @@ export default {
           }
           this.skillLearnPriorityList[i].skills = this.presetsUse.skill_priority_list[i]
         }
-        while(this.skillPriorityNum > this.presetsUse.skill_priority_list.length)
+        while(this.presetsUse.skill_priority_list.length != 0 &&
+              this.skillPriorityNum > this.presetsUse.skill_priority_list.length)
         {
           this.deleteBox(0,this.skillPriorityNum-1)
         }
