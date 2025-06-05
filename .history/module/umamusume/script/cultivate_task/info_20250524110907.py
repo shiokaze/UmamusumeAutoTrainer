@@ -42,8 +42,7 @@ TITLE = [
     "活动剧情解锁",
     "确认",
     "回复训练值",
-    "选择养成难度",
-    "确定因子确认"
+    "选择养成难度"
 ]
 
 
@@ -145,7 +144,5 @@ def script_info(ctx: UmamusumeContext):
                 ctx.ctrl.click_by_point(USE_TP_DRINK_RESULT_CLOSE)
         if title_text == TITLE[28]:
             ctx.ctrl.click_by_point(SELECT_DIFFICULTY)
-        if title_text == TITLE[29]:
-            ctx.ctrl.click_by_point(CULTIVATE_RESULT_DIVISOR_CONFIRM)
         time.sleep(1)
 
