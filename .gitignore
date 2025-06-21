@@ -4,3 +4,4 @@ venv
 userdata
 **/__pycache__
 .vscode
+.history
