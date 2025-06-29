@@ -29,9 +29,7 @@ if (!(Test-Path -Path "venv")) {
 .\venv\Scripts\activate
 Check "activate venv failed"
 
-pip install pyelftools==0.29 -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install pdf2docx==0.5.6 -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install --upgrade -r requirements.txt -i https://mirror.baidu.com/pypi/simple
+pip install --upgrade -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 Write-Output "install complete"
 Read-Host | Out-Null ;
