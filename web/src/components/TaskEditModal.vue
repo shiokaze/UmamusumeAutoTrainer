@@ -22,9 +22,10 @@
             <div class="row">
               <div class="col">
                 <div class="form-group">
-                  <label for="selectSernaio">⭐ 剧本选择</label>
-                  <select class="form-control" id="selectSernaio">
-                    <option value=1>URA</option>
+                  <label for="selectScenario">⭐ 剧本选择</label>
+                  <select v-model="selectedScenario" class="form-control" id="selectScenario">
+                    <option :value="1">URA</option>
+                    <option :value="2">青春杯</option>
                   </select>
                 </div>
               </div>
@@ -482,7 +483,7 @@ export default {
         {id:3608, name:'函馆短途锦标赛', date: '6月后', type: 'GIII'},
         {id:3601, name:'独角兽锦标赛', date: '6月后', type: 'GIII'},
         {id:3607, name:'宝冢纪念', date: '6月后', type: 'GI'},
-        {id:3701, name:'南河三锦标赛', date: '7月前', type: 'GIII'},		
+        {id:3701, name:'南河三锦标赛', date: '7月前', type: 'GIII'},
         {id:3708, name:'函馆纪念', date: '7月前', type: 'GIII'},
         {id:3706, name:'中部广播奖', date: '7月前', type: 'GIII'},
         {id:3707, name:'七夕奖', date: '7月前', type: 'GIII'},
@@ -723,6 +724,7 @@ export default {
       expectTimes: 0,
       cron: "* * * * *",
       
+      selectedScenario: 1,
       selectedUmamusumeTaskType: undefined,
       selectedSupportCard: undefined,
       extraRace: [],
@@ -805,6 +807,7 @@ export default {
         task_type: this.selectedUmamusumeTaskType.id,
         task_desc: this.selectedUmamusumeTaskType.name,
         attachment_data: {
+          "scenario": this.selectedScenario,
           "expect_attribute": [this.expectSpeedValue, this.expectStaminaValue, this.expectPowerValue, this.expectWillValue, this.expectIntelligenceValue],
           "follow_support_card_name": this.selectedSupportCard.name,
           "follow_support_card_level": this.supportCardLevel,
@@ -833,6 +836,7 @@ export default {
       )
     },
     applyPresetRace: function(){
+      this.selectedScenario = this.presetsUse.scenario || 1
       this.extraRace = this.presetsUse.race_list
       this.expectSpeedValue = this.presetsUse.expect_attribute[0]
       this.expectStaminaValue = this.presetsUse.expect_attribute[1]
@@ -899,6 +903,7 @@ export default {
     addPresets: function(){
       let preset = {
         name: this.presetNameEdit,
+        scenario: this.selectedScenario,
         race_list: this.extraRace,
         skill_priority_list: [],
         skill_blacklist: this.skillLearnBlacklist,

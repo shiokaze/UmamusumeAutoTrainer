@@ -31,6 +31,7 @@ class EndTaskReason(Enum):
     COMPLETE = "任务已完成"
     MANUAL_ABORTED = "任务被手动中止"
     SYSTEM_ERROR = "系统异常"
+    SCENARIO_NOT_FOUND = "找不到育成剧本"
 
 
 class Task(metaclass=ABCMeta):

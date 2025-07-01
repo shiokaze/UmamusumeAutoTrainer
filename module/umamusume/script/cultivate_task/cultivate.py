@@ -137,7 +137,23 @@ def script_main_menu(ctx: UmamusumeContext):
 
 
 def script_scenario_select(ctx: UmamusumeContext):
-    ctx.ctrl.click_by_point(TO_CULTIVATE_PREPARE_NEXT)
+    target_scenario = ctx.cultivate_detail.scenario
+    time.sleep(3) #如果网络非常差，这里可能会来不及等
+
+    for i in range(1, len(ScenarioType)):
+        img = ctx.ctrl.get_screen(to_gray=True)
+
+        if image_match(img, UI_SCENARIO[target_scenario]).find_match:
+            log.info(f"找到目标育成剧本{ScenarioName[target_scenario]}")
+            ctx.ctrl.click_by_point(TO_CULTIVATE_PREPARE_NEXT)
+            return
+
+        log.debug(f"剧本不匹配, 查看下一个剧本")
+        ctx.ctrl.swipe(x1=400, y1=600, x2=500, y2=600, duration=300, name="swipe right")
+        time.sleep(1)
+
+    log.error(f"找不到指定的剧本")
+    ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, EndTaskReason.SCENARIO_NOT_FOUND)
 
 
 def script_umamusume_select(ctx: UmamusumeContext):

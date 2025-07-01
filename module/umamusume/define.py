@@ -4,6 +4,13 @@ from enum import Enum
 class ScenarioType(Enum):
     SCENARIO_TYPE_UNKNOWN = 0
     SCENARIO_TYPE_URA = 1
+    SCENARIO_TYPE_AOHARUHAI = 2
+
+ScenarioName : list[str] = [
+    "未知剧本",
+    "URA",
+    "青春杯"
+]
 
 
 class SupportCardType(Enum):

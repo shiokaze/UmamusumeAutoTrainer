@@ -140,6 +140,7 @@ class TurnInfo:
 class CultivateContextDetail:
     turn_info: TurnInfo | None
     turn_info_history: list[TurnInfo]
+    scenario : int
     expect_attribute: list[int] | None
     follow_support_card_name: str
     follow_support_card_level: int
@@ -198,6 +199,7 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
     ctx = UmamusumeContext(task, ctrl)
     if task.task_type == UmamusumeTaskType.UMAMUSUME_TASK_TYPE_CULTIVATE:
         detail = CultivateContextDetail()
+        detail.scenario = task.detail.scenario
         detail.expect_attribute = task.detail.expect_attribute
         detail.follow_support_card_name = task.detail.follow_support_card_name
         detail.follow_support_card_level = task.detail.follow_support_card_level
