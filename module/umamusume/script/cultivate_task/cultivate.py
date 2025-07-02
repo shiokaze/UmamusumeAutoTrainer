@@ -1,5 +1,6 @@
 import json
 import time
+import threading
 
 import numpy as np
 
@@ -107,6 +108,14 @@ def script_cultivate_training_select(ctx: UmamusumeContext):
         parse_training_result(ctx, img, train_type)
         parse_training_support_card(ctx, img, train_type)
         viewed = train_type.value
+
+        def _parse_training_in_thread(ctx, img, train_type):
+            """Helper function to run parsing in a separate thread."""
+            parse_training_result(ctx, img, train_type)
+            parse_training_support_card(ctx, img, train_type)
+        
+        threads :list[threading.Thread] = []
+
         for i in range(5):
             if i != (viewed - 1):
                 retry = 0
@@ -121,8 +130,15 @@ def script_cultivate_training_select(ctx: UmamusumeContext):
                     retry += 1
                 if retry == max_retry:
                     return
-                parse_training_result(ctx, img, TrainingType(i + 1))
-                parse_training_support_card(ctx, img, TrainingType(i + 1))
+                
+                thread = threading.Thread(target=_parse_training_in_thread,
+                                          args=(ctx, img, TrainingType(i + 1)))
+                threads.append(thread)
+                thread.start()
+
+        for thread in threads:
+            thread.join()
+
         ctx.cultivate_detail.turn_info.parse_train_info_finish = True
     if not ctx.cultivate_detail.turn_info.parse_main_menu_finish:
         ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_MAIN_MENU)
@@ -319,6 +335,12 @@ def script_cultivate_extend(ctx: UmamusumeContext):
 def script_cultivate_result(ctx: UmamusumeContext):
     ctx.ctrl.click_by_point(CULTIVATE_RESULT_CONFIRM)
 
+# 限时: 富士奇石的表演秀
+def script_fujikiseki_show_result_1(ctx: UmamusumeContext):
+    ctx.ctrl.click(360, 1180, "确认富士奇石表演秀模式结果")
+
+def script_fujikiseki_show_result_2(ctx: UmamusumeContext):
+    ctx.ctrl.click(360, 1120, "确认富士奇石表演秀模式结果")
 
 # 1.878s 2s 0.649s
 def script_cultivate_catch_doll(ctx: UmamusumeContext):

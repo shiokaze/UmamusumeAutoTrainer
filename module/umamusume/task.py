@@ -17,10 +17,14 @@ class TaskDetail:
     allow_recover_tp: bool
     cultivate_progress_info: dict
     extra_weight: list
+    # 限时: 富士奇石的表演秀
+    fujikiseki_show_mode: bool
+    fujikiseki_show_difficulty: int
 
 
 class EndTaskReason(Enum):
     TP_NOT_ENOUGH = "训练值不足"
+    DIFFICULTY_LOCKED = "难度未解锁"
 
 
 class UmamusumeTask(Task):
@@ -58,6 +62,9 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.extra_weight = attachment_data['extra_weight']
     td.cultivate_result = {}
     # td.scenario_name = attachment_data['scenario_name']
+    # 限时: 富士奇石的表演秀
+    td.fujikiseki_show_mode = attachment_data['fujikiseki_show_mode']
+    td.fujikiseki_show_difficulty = attachment_data['fujikiseki_show_difficulty']
     ut.detail = td
     return ut
 
