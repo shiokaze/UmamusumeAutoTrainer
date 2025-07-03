@@ -1,4 +1,6 @@
 import time
+from datetime import datetime
+import pytz
 
 import cv2
 
@@ -44,6 +46,8 @@ TITLE = [
     "回复训练值",
     "选择养成难度",
     "确定因子确认",
+    # 限时: 富士奇石的表演秀
+    "解锁新难度"
 ]
 
 
@@ -143,7 +147,39 @@ def script_info(ctx: UmamusumeContext):
                 ctx.ctrl.click_by_point(USE_TP_DRINK_CONFIRM)
             elif image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_3).find_match:
                 ctx.ctrl.click_by_point(USE_TP_DRINK_RESULT_CLOSE)
+        if title_text == TITLE[28]:
+            # 限时: 富士奇石的表演秀
+            # 目前似乎只有这里用到了 "选择养成难度，如果以后有别的的话需要调整代码结构"
+            beijing_tz = pytz.timezone('Asia/Shanghai')
+            cutoff_time = beijing_tz.localize(datetime(2025, 7, 13, 11, 59))
+            current_time_beijing = datetime.now(beijing_tz)
+
+            if current_time_beijing <= cutoff_time:
+                if ctx.task.detail.fujikiseki_show_mode == False:
+                    ctx.ctrl.click(360, 300, "选择普通模式")
+                else :
+                    ctx.ctrl.click(360, 500, "选择富士奇石的表演秀模式")
+                    match = False
+                    for i in range(5):
+                        screen = ctx.ctrl.get_screen(to_gray=True)
+                        if ((not image_match(screen, FUJIKISEKI_SHOW_DIFFICULTY_LOCKED).find_match) 
+                            and image_match(screen, FUJIKISEKI_SHOW_DIFFICULTY[ctx.task.detail.fujikiseki_show_difficulty-1]).find_match):
+                            log.info(f"选择难度{ctx.task.detail.fujikiseki_show_difficulty}")
+                            match = True
+                            break
+                        ctx.ctrl.click(675, 800, "切换至下一个难度")
+                        time.sleep(1)
+                    if not match:
+                        log.error(f"选择的难度{ctx.task.detail.fujikiseki_show_difficulty}尚未解锁, 请先游玩低难度模式!")
+                        ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, UEndTaskReason.DIFFICULTY_LOCKED)
+                        return
+                        
+                ctx.ctrl.click(520, 1180, "")
+            
         if title_text == TITLE[29]:
             ctx.ctrl.click_by_point(CULTIVATE_RESULT_DIVISOR_CONFIRM)
+        if title_text == TITLE[30]:
+            # 限时: 富士奇石的表演秀
+            ctx.ctrl.click(360, 850, "确认解锁新难度")
         time.sleep(1)
 

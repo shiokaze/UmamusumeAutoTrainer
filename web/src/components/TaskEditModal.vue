@@ -46,6 +46,26 @@
                 </div>
               </div>
             </div>
+            <!-- 限时模块: 富士奇石的表演秀模式 -->
+            <div class="row">
+              <div class="col-3">
+                <div class="form-group">
+                  <label>⏰ 富士奇石的表演秀模式</label>
+                  <select v-model="fujikisekiShowMode" class="form-control">
+                    <option :value=true>是</option>
+                    <option :value=false>否</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-group">
+                  <label :style="{ color: fujikisekiShowMode ? '' : 'lightgrey' }">选择难度</label>
+                  <select v-model="fujikisekiShowDifficulty" class="form-control" :disabled="!fujikisekiShowMode">
+                    <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="col-8">
                 <div class="form-group">
@@ -365,6 +385,8 @@ export default {
       dataReady:false,
       hideG2: false,
       hideG3: false,
+      fujikisekiShowMode: false,
+      fujikisekiShowDifficulty: 1,
       levelDataList:[],
       umamusumeTaskTypeList:[
         {
@@ -816,7 +838,10 @@ export default {
           "learn_skill_threshold": this.learnSkillThreshold,
           "allow_recover_tp": this.recoverTP,
           "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided,
-          "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3]
+          "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3],
+          // 限时: 富士奇石的表演秀
+          "fujikiseki_show_mode": this.fujikisekiShowMode,
+          "fujikiseki_show_difficulty": this.fujikisekiShowDifficulty
         },
         cron_job_info:{},
       }
