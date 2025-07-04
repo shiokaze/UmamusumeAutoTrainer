@@ -38,12 +38,12 @@ jobs:
     - name: Prepare artifact
       shell: pwsh
       run: |
-        ls -F
+        ls -Force
         copy ${env:RUNNER_TOOL_CACHE}\python\3.10.9\x64\lib\site-packages\paddle\libs\mklml.dll dist/
         copy config.yaml dist/
         copy resource dist/resource
         copy public dist/public
-        ls -F dist
+        ls -Force dist
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
