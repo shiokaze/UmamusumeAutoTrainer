@@ -41,9 +41,11 @@ jobs:
         ls -Force
         copy ${env:RUNNER_TOOL_CACHE}\python\3.10.9\x64\lib\site-packages\paddle\libs\mklml.dll dist/
         copy config.yaml dist/
-        copy resource dist/resource
-        copy public dist/public
+        copy -Recurse resource dist/resource
+        copy -Recurse public dist/public
         ls -Force dist
+        ls -Force dist/resource
+        ls -Force dist/public
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
