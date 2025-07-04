@@ -51,7 +51,11 @@ def stop_bot():
 
 @server.get("/")
 async def get_index():
-    return FileResponse('public/index.html')
+    return FileResponse('public/index.html', headers={
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+    })
 
 
 @server.get("/{whatever:path}")
