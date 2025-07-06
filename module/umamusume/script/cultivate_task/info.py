@@ -47,7 +47,10 @@ TITLE = [
     "选择养成难度",
     "确定因子确认",
     # 限时: 富士奇石的表演秀
-    "解锁新难度"
+    "解锁新难度",
+    # 青春杯
+    "自动编成",
+    "对战确认",
 ]
 
 
@@ -181,5 +184,11 @@ def script_info(ctx: UmamusumeContext):
         if title_text == TITLE[30]:
             # 限时: 富士奇石的表演秀
             ctx.ctrl.click(360, 850, "确认解锁新难度")
+        if title_text == TITLE[31]:
+            # 青春杯自动编成队伍
+            ctx.ctrl.click(200, 830, "关闭青春杯编成界面")
+        if title_text == TITLE[32]:
+            # 确认青春杯对手
+            ctx.ctrl.click(520, 920, "确认对战")
         time.sleep(1)
 

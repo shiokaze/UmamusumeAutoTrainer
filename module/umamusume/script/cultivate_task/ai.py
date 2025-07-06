@@ -1,4 +1,5 @@
 from module.umamusume.context import *
+from module.umamusume.types import TurnOperation
 from module.umamusume.script.cultivate_task.support_card import get_support_card_score
 import numpy as np
 

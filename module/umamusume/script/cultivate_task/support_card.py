@@ -1,4 +1,5 @@
-from module.umamusume.context import SupportCardInfo, TurnInfo, UmamusumeContext
+from module.umamusume.context import UmamusumeContext
+from module.umamusume.types import SupportCardInfo, TurnInfo
 from module.umamusume.define import TrainingType, SupportCardType, SupportCardFavorLevel
 
 DEFAULT = 0

@@ -6,7 +6,7 @@ import numpy as np
 
 from bot.base.task import TaskStatus, EndTaskReason
 from module.umamusume.asset.point import *
-from module.umamusume.context import TurnInfo
+from module.umamusume.types import TurnInfo
 from module.umamusume.script.cultivate_task.const import SKILL_LEARN_PRIORITY_LIST
 from module.umamusume.script.cultivate_task.event.manifest import get_event_choice
 from module.umamusume.script.cultivate_task.parse import *
@@ -101,20 +101,22 @@ def script_cultivate_training_select(ctx: UmamusumeContext):
             return
 
     if not ctx.cultivate_detail.turn_info.parse_train_info_finish:
+        def _parse_training_in_thread(ctx, img, train_type):
+                    """Helper function to run parsing in a separate thread."""
+                    parse_training_result(ctx, img, train_type)
+                    parse_training_support_card(ctx, img, train_type)
+        
+        threads :list[threading.Thread] = []
+
         img = ctx.current_screen
         train_type = parse_train_type(ctx, img)
         if train_type == TrainingType.TRAINING_TYPE_UNKNOWN:
             return
-        parse_training_result(ctx, img, train_type)
-        parse_training_support_card(ctx, img, train_type)
         viewed = train_type.value
-
-        def _parse_training_in_thread(ctx, img, train_type):
-            """Helper function to run parsing in a separate thread."""
-            parse_training_result(ctx, img, train_type)
-            parse_training_support_card(ctx, img, train_type)
-        
-        threads :list[threading.Thread] = []
+        thread = threading.Thread(target=_parse_training_in_thread,
+                                          args=(ctx, img, train_type))
+        threads.append(thread)
+        thread.start()
 
         for i in range(5):
             if i != (viewed - 1):
@@ -153,14 +155,14 @@ def script_main_menu(ctx: UmamusumeContext):
 
 
 def script_scenario_select(ctx: UmamusumeContext):
-    target_scenario = ctx.cultivate_detail.scenario
+    target_scenario = ctx.cultivate_detail.scenario.scenario_type()
     time.sleep(3) #如果网络非常差，这里可能会来不及等
 
     for i in range(1, len(ScenarioType)):
         img = ctx.ctrl.get_screen(to_gray=True)
 
         if image_match(img, UI_SCENARIO[target_scenario]).find_match:
-            log.info(f"找到目标育成剧本{ScenarioName[target_scenario]}")
+            log.info(f"找到目标育成剧本{ctx.cultivate_detail.scenario.scenario_name()}")
             ctx.ctrl.click_by_point(TO_CULTIVATE_PREPARE_NEXT)
             return
 
@@ -231,6 +233,67 @@ def script_cultivate_event(ctx: UmamusumeContext):
     else:
         log.debug("未出现选项")
 
+def script_aoharuhai_race(ctx: UmamusumeContext):
+    opponent_choice: dict[int, int] = {
+        1: 2,
+        2: 1,
+        3: 1,
+        4: 1
+    }
+    def select_opponent (race_index: int):
+        match race_index:
+            case 1:
+                ctx.ctrl.click(360, 290, "选择第一个对手")
+            case 2:
+                ctx.ctrl.click(360, 560, "选择第二个对手")
+            case 3:
+                ctx.ctrl.click(360, 830, "选择第三个对手")
+        time.sleep(2)
+        ctx.ctrl.click(360, 1080, "开始对战")
+
+    img = ctx.ctrl.get_screen(to_gray=True)
+    if image_match(img, UI_AOHARUHAI_RACE_1).find_match:
+        race_index = 1
+    elif image_match(img, UI_AOHARUHAI_RACE_2).find_match:
+        race_index = 2
+    elif image_match(img, UI_AOHARUHAI_RACE_3).find_match:
+        race_index = 3
+    elif image_match(img, UI_AOHARUHAI_RACE_4).find_match:
+        race_index = 4
+    elif image_match(img, UI_AOHARUHAI_RACE_5).find_match:
+        race_index = 5
+    else:
+        ctx.ctrl.click(360, 1180, "确认比赛结果")
+        return
+    
+    ctx.ctrl.click(360, 1080, "开始青春杯对战")
+
+    if race_index == 5:
+        while True:
+            time.sleep(1)
+            img = ctx.ctrl.get_screen(to_gray=True)
+            if image_match(img, UI_AOHARUHAI_RACE_FINAL_START).find_match:
+                break
+        ctx.ctrl.click(360, 980, "确认决赛对手")
+    else:
+        while True:
+            time.sleep(1)
+            img = ctx.ctrl.get_screen(to_gray=True)
+            if image_match(img, UI_AOHARUHAI_RACE_SELECT_OPPONENT).find_match:
+                break
+        select_opponent(opponent_choice[race_index])
+
+def script_aoharuhai_race_confirm(ctx: UmamusumeContext):
+    ctx.ctrl.click(520, 920, "确认对战")
+
+def script_aoharuhai_race_inrace(ctx: UmamusumeContext):
+    ctx.ctrl.click(520, 1180, "查看对战结果")
+
+def script_aoharuhai_race_end(ctx: UmamusumeContext):
+    ctx.ctrl.click(350, 1110, "确认比赛结束")
+
+def script_aoharuhai_race_schedule(ctx: UmamusumeContext):
+    ctx.ctrl.click(360, 1100, "结束青春杯比赛")
 
 def script_cultivate_goal_race(ctx: UmamusumeContext):
     img = ctx.current_screen

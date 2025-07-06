@@ -6,13 +6,6 @@ class ScenarioType(Enum):
     SCENARIO_TYPE_URA = 1
     SCENARIO_TYPE_AOHARUHAI = 2
 
-ScenarioName : list[str] = [
-    "未知剧本",
-    "URA",
-    "青春杯"
-]
-
-
 class SupportCardType(Enum):
     SUPPORT_CARD_TYPE_UNKNOWN = 0
     SUPPORT_CARD_TYPE_SPEED = 1

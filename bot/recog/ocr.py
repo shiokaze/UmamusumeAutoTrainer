@@ -1,12 +1,14 @@
+import cv2
 import paddleocr
 from difflib import SequenceMatcher
 import bot.base.log as logger
+import time
 
 log = logger.get_logger(__name__)
 
 OCR_JP = paddleocr.PaddleOCR(lang="japan", show_log=False, use_angle_cls=False)
 OCR_CH = paddleocr.PaddleOCR(lang="ch", show_log=False, use_angle_cls=False)
-
+OCR_EN = paddleocr.PaddleOCR(lang="en", show_log=False, use_angle_cls=False)
 
 # ocr 文字识别图片
 def ocr(img, lang="ch"):
@@ -26,6 +28,16 @@ def ocr_line(img, lang="ch"):
             text += text_info[1][0]
     return text
 
+# ocr_digits 限制只识别数字，可以提升数字识别的准确度
+def ocr_digits(img):
+    res = OCR_EN.ocr(img, cls=False)[0]
+    # 提取所有识别结果，按置信度从高到低排序
+    digits = [(info[1][0], info[1][1]) for info in res]
+    if not digits:
+        return ""
+    # 选置信度最高的那一项
+    best, _ = max(digits, key=lambda x: x[1])
+    return best
 
 # find_text_pos 查找目标文字在图片中的位置
 def find_text_pos(ocr_result, target):

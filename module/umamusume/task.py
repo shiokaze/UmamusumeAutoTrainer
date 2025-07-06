@@ -1,9 +1,10 @@
 from enum import Enum
+from module.umamusume.define import ScenarioType
 from bot.base.task import Task, TaskExecuteMode
 
 
 class TaskDetail:
-    scenario: int
+    scenario: ScenarioType
     expect_attribute: list[int]
     follow_support_card_name: str
     follow_support_card_level: int
@@ -48,7 +49,7 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     ut = UmamusumeTask(task_execute_mode=task_execute_mode,
                        task_type=UmamusumeTaskType(task_type), task_desc=task_desc, app_name="umamusume")
     ut.cron_job_config = cron_job_config
-    td.scenario = attachment_data['scenario']
+    td.scenario = ScenarioType(attachment_data['scenario'])
     td.expect_attribute = attachment_data['expect_attribute']
     td.follow_support_card_level = int(attachment_data['follow_support_card_level'])
     td.follow_support_card_name = attachment_data['follow_support_card_name']

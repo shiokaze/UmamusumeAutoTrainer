@@ -1,146 +1,15 @@
 from bot.base.context import BotContext
+from module.umamusume.scenario import base_scenario, ura_scenario, aoharuhai_scenario
 from module.umamusume.task import UmamusumeTask, UmamusumeTaskType
 from module.umamusume.define import *
+from module.umamusume.types import TurnInfo
 import bot.base.log as logger
 
 log = logger.get_logger(__name__)
-
-
-class SupportCardInfo:
-    name: str
-    card_type: SupportCardType
-    favor: SupportCardFavorLevel
-    has_event: bool
-
-    def __init__(self,
-                 name: str = "support_card",
-                 card_type: SupportCardType = SupportCardType.SUPPORT_CARD_TYPE_UNKNOWN,
-                 favor: SupportCardFavorLevel = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN,
-                 has_event: bool = False):
-        self.name = name
-        self.card_type = card_type
-        self.favor = favor
-        self.has_event = has_event
-
-
-class TrainingInfo:
-    support_card_info_list: list[SupportCardInfo]
-    speed_incr: int
-    stamina_incr: int
-    power_incr: int
-    will_incr: int
-    intelligence_incr: int
-    skill_point_incr: int
-
-    def __init__(self):
-        self.speed_incr = 0
-        self.stamina_incr = 0
-        self.power_incr = 0
-        self.will_incr = 0
-        self.intelligence_incr = 0
-        self.skill_point_incr = 0
-        self.support_card_info_list = []
-
-    def log_training_info(self):
-        log.info("训练结果：速度：%s, 耐力：%s, 力量：%s, 毅力：%s, 智力：%s, 技能点：%s", self.speed_incr,
-                 self.stamina_incr, self.power_incr, self.will_incr,
-                 self.intelligence_incr, self.skill_point_incr)
-        text = "此训练附带支援卡列表：["
-        for c in self.support_card_info_list:
-            if c.favor != SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN:
-                text += "[支援卡名称：" + str(c.name) + "支援卡类型：" + str(c.card_type.name) + ", 支援卡羁绊阶段：" + str(c.favor.name) + "] "
-        text += "]"
-        log.info(text)
-
-
-class UmaAttribute:
-    speed: int
-    stamina: int
-    power: int
-    will: int
-    intelligence: int
-    skill_point: int
-
-    def __init__(self):
-        self.speed = 0
-        self.stamina = 0
-        self.power = 0
-        self.will = 0
-        self.intelligence = 0
-        self.skill_point = 0
-
-
-class TurnOperation:
-    turn_operation_type: TurnOperationType
-    turn_operation_type_replace: TurnOperationType
-    training_type: TrainingType
-    race_id: int
-
-    def __init__(self):
-        self.turn_operation_type = TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN
-        self.turn_operation_type_replace = TurnOperationType.TURN_OPERATION_TYPE_UNKNOWN
-        self.training_type = TrainingType.TRAINING_TYPE_UNKNOWN
-        self.race_id = 0
-
-    def log_turn_operation(self):
-        log.info("本回合执行操作：%s", self.turn_operation_type.name)
-        log.info("本回合备选操作：%s", self.turn_operation_type_replace.name)
-        if self.turn_operation_type == TurnOperationType.TURN_OPERATION_TYPE_TRAINING:
-            log.info("训练类型：%s", self.training_type.name)
-
-
-class TurnInfo:
-    date: int
-
-    parse_train_info_finish: bool
-    training_info_list: list[TrainingInfo]
-    parse_main_menu_finish: bool
-    uma_attribute: UmaAttribute
-    remain_stamina: int
-    motivation_level: MotivationLevel
-    medic_room_available: bool
-    race_available: bool
-
-    turn_operation: TurnOperation | None
-    turn_info_logged: bool
-    turn_learn_skill_done: bool
-
-    def __init__(self):
-        self.date = -1
-        self.parse_train_info_finish = False
-        self.training_info_list = [TrainingInfo(), TrainingInfo(), TrainingInfo(), TrainingInfo(), TrainingInfo()]
-        self.parse_main_menu_finish = False
-        self.uma_attribute = UmaAttribute()
-        self.remain_stamina = -1
-        self.motivation_level = MotivationLevel.MOTIVATION_LEVEL_UNKNOWN
-        self.medic_room_available = False
-        self.race_available = False
-        self.turn_operation = None
-        self.turn_info_logged = False
-        self.turn_learn_skill_done = False
-
-    def log_turn_info(self):
-        log.info("当前回合时间 >" + str(self.date))
-        log.info("干劲状态 " + str(self.motivation_level.name))
-        log.info("体力剩余" + str(self.remain_stamina))
-        log.info("当前属性值 速度：%s, 耐力：%s, 力量：%s, 毅力：%s, 智力：%s, 技能点：%s", self.uma_attribute.speed,
-                 self.uma_attribute.stamina, self.uma_attribute.power, self.uma_attribute.will, self.uma_attribute.intelligence, self.uma_attribute.skill_point)
-        log.info("速度训练结果：")
-        self.training_info_list[0].log_training_info()
-        log.info("耐力训练结果：")
-        self.training_info_list[1].log_training_info()
-        log.info("力量训练结果：")
-        self.training_info_list[2].log_training_info()
-        log.info("毅力训练结果：")
-        self.training_info_list[3].log_training_info()
-        log.info("智力训练结果：")
-        self.training_info_list[4].log_training_info()
-
-
 class CultivateContextDetail:
     turn_info: TurnInfo | None
     turn_info_history: list[TurnInfo]
-    scenario : int
+    scenario : base_scenario.BaseScenario
     expect_attribute: list[int] | None
     follow_support_card_name: str
     follow_support_card_level: int
@@ -199,7 +68,15 @@ def build_context(task: UmamusumeTask, ctrl) -> UmamusumeContext:
     ctx = UmamusumeContext(task, ctrl)
     if task.task_type == UmamusumeTaskType.UMAMUSUME_TASK_TYPE_CULTIVATE:
         detail = CultivateContextDetail()
-        detail.scenario = task.detail.scenario
+        # 根据剧本类型初始化对应的继承类
+        match task.detail.scenario:
+            case ScenarioType.SCENARIO_TYPE_URA:
+                detail.scenario = ura_scenario.URAScenario()
+            case ScenarioType.SCENARIO_TYPE_AOHARUHAI:
+                detail.scenario = aoharuhai_scenario.AoharuHaiScenario()
+            case _: # 占位, 实际上不可能到达这里
+                log.error("未知的场景")
+                detail.scenario = None
         detail.expect_attribute = task.detail.expect_attribute
         detail.follow_support_card_name = task.detail.follow_support_card_name
         detail.follow_support_card_level = task.detail.follow_support_card_level
