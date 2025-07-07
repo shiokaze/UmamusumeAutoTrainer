@@ -62,9 +62,16 @@ async def get_index():
 async def get_static_files_or_404(whatever):
     # try open file for path
     file_path = os.path.join("public", whatever)
+    # 设置防缓存头
+    no_cache_headers = {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+    }
+    
     if os.path.isfile(file_path):
         if file_path.endswith((".js", ".mjs")):
-            return FileResponse(file_path, media_type="application/javascript")
+            return FileResponse(file_path, media_type="application/javascript", headers=no_cache_headers)
         else:
-            return FileResponse(file_path)
-    return FileResponse('public/index.html')
+            return FileResponse(file_path, headers=no_cache_headers)
+    return FileResponse('public/index.html', headers=no_cache_headers)
