@@ -47,6 +47,14 @@
                 </div>
               </div>
             </div>
+            <!-- 青春杯额外配置 -->
+            <div class="row" v-if="selectedScenario === 2">
+              <div class="col-4">
+                <div class="form-group">
+                  <span class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="openAoharuConfigModal">青春杯配置</span>
+                </div>
+              </div>
+            </div>
             <!-- 限时模块: 富士奇石的表演秀模式 -->
             <div class="row">
               <div class="col-3">
@@ -364,6 +372,16 @@
           <span class="btn auto-btn" v-on:click="addTask">确定</span>
         </div>
       </div>
+      <!-- 青春杯配置弹窗 -->
+      <AoharuConfigModal
+        v-model:show="showAoharuConfigModal"
+        :preliminaryRound1Selection="preliminaryRound1Selection"
+        :preliminaryRound2Selection="preliminaryRound2Selection"
+        :preliminaryRound3Selection="preliminaryRound3Selection"
+        :preliminaryRound4Selection="preliminaryRound4Selection"
+        :aoharuTeamSelection="aoharuTeamSelection"
+        @confirm="handleAoharuConfigConfirm"
+      ></AoharuConfigModal>
       <!-- 通知 -->
       <div class="position-fixed" style="z-index: 5; right: 40%; width: 300px;">
         <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
@@ -377,8 +395,15 @@
 </template>
 
 <script>
+import SkillIcon from './SkillIcon.vue';
+import AoharuConfigModal from './AoharuConfigModal.vue';
+
 export default {
   name: "TaskEditModal",
+  components: {
+    SkillIcon,
+    AoharuConfigModal
+  },
   data:function () {
     return{
       showAdvanceOption:false,
@@ -771,6 +796,14 @@ export default {
       extraWeight1: [0, 0, 0, 0, 0],
       extraWeight2: [0, 0, 0, 0, 0],
       extraWeight3: [0, 0, 0, 0, 0],
+
+      // 青春杯配置
+      preliminaryRound1Selection: 2,
+      preliminaryRound2Selection: 1,
+      preliminaryRound3Selection: 1,
+      preliminaryRound4Selection: 1,
+      aoharuTeamSelection: 5,
+      showAoharuConfigModal: false,
     }
   },
   mounted() {
@@ -811,6 +844,20 @@ export default {
     },
     switchAdvanceOption: function(){
       this.showAdvanceOption = !this.showAdvanceOption
+    },
+    openAoharuConfigModal: function(){
+      this.showAoharuConfigModal = true;
+    },
+    closeAoharuConfigModal: function(){
+      this.showAoharuConfigModal = false;
+    },
+    handleAoharuConfigConfirm: function(data) {
+      this.preliminaryRound1Selection = data.preliminaryRound1Selection;
+      this.preliminaryRound2Selection = data.preliminaryRound2Selection;
+      this.preliminaryRound3Selection = data.preliminaryRound3Selection;
+      this.preliminaryRound4Selection = data.preliminaryRound4Selection;
+      this.aoharuTeamSelection = data.aoharuTeamSelection;
+      this.showAoharuConfigModal = false;
     },
     addTask: function (){
       var learn_skill_list = []
