@@ -1,7 +1,7 @@
 <template>
-  <div id="create-task-list-modal" class="modal fade">
+  <div id="create-task-list-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
     <div  class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
+      <div class="modal-content" :class="{ 'dimmed': showAoharuConfigModal }">
         <h5 class="modal-header">
           新建任务
         </h5>
@@ -369,6 +369,7 @@
           </div> -->
         </div>
         <div class="modal-footer">
+          <span class="btn cancel-btn" v-on:click="cancelTask">取消</span>
           <span class="btn auto-btn" v-on:click="addTask">确定</span>
         </div>
       </div>
@@ -382,6 +383,8 @@
         :aoharuTeamSelection="aoharuTeamSelection"
         @confirm="handleAoharuConfigConfirm"
       ></AoharuConfigModal>
+      <!-- 遮罩层 -->
+      <div v-if="showAoharuConfigModal" class="modal-backdrop-overlay" @click.stop></div>
       <!-- 通知 -->
       <div class="position-fixed" style="z-index: 5; right: 40%; width: 300px;">
         <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
@@ -859,6 +862,9 @@ export default {
       this.aoharuTeamSelection = data.aoharuTeamSelection;
       this.showAoharuConfigModal = false;
     },
+    cancelTask: function(){
+      $('#create-task-list-modal').modal('hide');
+    },
     addTask: function (){
       var learn_skill_list = []
       for (let i = 0; i < this.skillPriorityNum; i++)
@@ -891,7 +897,13 @@ export default {
           "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3],
           // 限时: 富士奇石的表演秀
           "fujikiseki_show_mode": this.fujikisekiShowMode,
-          "fujikiseki_show_difficulty": this.fujikisekiShowDifficulty
+          "fujikiseki_show_difficulty": this.fujikisekiShowDifficulty,
+          // 青春杯配置
+          "aoharu_preliminary_round_1": this.preliminaryRound1Selection,
+          "aoharu_preliminary_round_2": this.preliminaryRound2Selection,
+          "aoharu_preliminary_round_3": this.preliminaryRound3Selection,
+          "aoharu_preliminary_round_4": this.preliminaryRound4Selection,
+          "aoharu_team_selection": this.aoharuTeamSelection
         },
         cron_job_info:{},
       }
@@ -1026,6 +1038,49 @@ export default {
   padding: 0.4rem 0.8rem !important;
   font-size: 1rem !important;
   border-radius: 0.25rem;
+}
+
+/* 取消按钮样式 */
+.cancel-btn {
+  background-color: #dc3545 !important; /* Bootstrap的danger红色 */
+  color: white !important;
+  padding: 0.4rem 0.8rem !important;
+  font-size: 1rem !important;
+  border-radius: 0.25rem;
+  margin-right: 10px; /* 与确认按钮间距 */
+  border: none;
+}
+
+.cancel-btn:hover {
+  background-color: #c82333 !important; /* 悬停时更深的红色 */
+  color: white !important;
+}
+
+/* 确保modal body可以正确滚动 */
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* 遮罩层样式 - 让TaskEditModal背景变暗并阻止交互 */
+.modal-backdrop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1055; /* 确保在TaskEditModal之上，但在AoharuConfigModal之下 */
+  pointer-events: auto; /* 阻止与背景元素的交互 */
+}
+
+/* 当显示青春杯配置时，让TaskEditModal的内容稍微变暗 */
+#create-task-list-modal.modal.show .modal-content {
+  transition: opacity 0.3s ease;
+}
+
+#create-task-list-modal.modal.show .modal-content.dimmed {
+  opacity: 0.6;
 }
 
 </style>

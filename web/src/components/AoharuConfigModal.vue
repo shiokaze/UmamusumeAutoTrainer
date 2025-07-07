@@ -1,7 +1,7 @@
 <template>
-  <div id="aoharu-config-modal" class="modal fade">
+  <div id="aoharu-config-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
+      <div class="modal-content" @click.stop>
         <h5 class="modal-header">青春杯配置</h5>
         <div class="modal-body">
           <div class="row">
@@ -96,7 +96,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <span class="btn auto-btn" v-on:click="confirm">确定</span>
+          <span class="btn auto-btn confirm-btn-large" v-on:click="confirm">确定</span>
         </div>
       </div>
     </div>
@@ -134,7 +134,11 @@ export default {
     show(newVal) {
       if (newVal) {
         // When show becomes true, display the modal
-        $('#aoharu-config-modal').modal('show');
+        $('#aoharu-config-modal').modal({
+          backdrop: 'static',
+          keyboard: false,
+          show: true
+        });
       } else {
         // When show becomes false, hide the modal
         $('#aoharu-config-modal').modal('hide');
@@ -158,17 +162,97 @@ export default {
         aoharuTeamSelection: this.internalAoharuTeamSelection,
       });
       this.$emit('update:show', false); // Close the modal
+      
+      // 确保父modal的滚动功能在关闭时得到恢复
+      this.$nextTick(() => {
+        this.restoreParentModalScrolling();
+      });
+    },
+    restoreParentModalScrolling() {
+      // 恢复父modal的滚动功能
+      setTimeout(() => {
+        if ($('.modal-open').length > 0) {
+          $('body').addClass('modal-open');
+          const parentModal = $('#create-task-list-modal');
+          if (parentModal.hasClass('show')) {
+            const modalBody = parentModal.find('.modal-body');
+            if (modalBody.length > 0) {
+              modalBody.css('overflow-y', 'auto');
+              // 强制触发重新渲染
+              modalBody[0].offsetHeight;
+            }
+          }
+        }
+      }, 100);
     },
   },
   mounted() {
     // Initialize Bootstrap modal behavior
     $('#aoharu-config-modal').on('hidden.bs.modal', () => {
       this.$emit('update:show', false);
+      // 确保父modal保持滚动功能
+      this.$nextTick(() => {
+        this.restoreParentModalScrolling();
+      });
     });
   }
 };
 </script>
 
 <style scoped>
-/* Add any specific styles for this modal here */
+/* 确保青春杯配置modal在最顶层 */
+#aoharu-config-modal.modal {
+  z-index: 1060; /* 比TaskEditModal和遮罩层更高 */
+}
+
+#aoharu-config-modal .modal-dialog {
+  z-index: 1061;
+}
+
+/* 放大确认按钮 */
+.confirm-btn-large {
+  padding: 0.5rem 1rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  min-width: 60px;
+  min-height: 40px;
+}
+
+/* 修复单选框和文字对齐问题 */
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+/* 左侧预赛选手 - 保持inline布局 */
+.form-check-inline {
+  display: inline-flex !important;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+/* 右侧队名选择 - 每个选项占一行 */
+.form-check.mb-3 {
+  display: flex !important;
+  align-items: center;
+  margin-bottom: 1rem !important;
+}
+
+.form-check-input {
+  margin-top: 0 !important;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.form-check-label {
+  margin-bottom: 0;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+}
+
+/* 确保技能图标也垂直居中 */
+.form-check-label > * {
+  vertical-align: middle;
+}
 </style>
