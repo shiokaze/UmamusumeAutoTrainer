@@ -44,6 +44,7 @@ jobs:
         copy config.yaml dist/
         copy -Recurse resource dist/resource
         copy -Recurse public dist/public
+        copy -Recurse deps dist/deps
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
