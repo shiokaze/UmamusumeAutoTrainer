@@ -2,7 +2,7 @@ from typing import Union
 
 from bot.recog.ocr import find_similar_text
 from module.umamusume.context import UmamusumeContext
-from module.umamusume.script.cultivate_task.event.scenario_event import scenario_event_1, scenario_event_2
+from module.umamusume.script.cultivate_task.event.scenario_event import *
 import bot.base.log as logger
 
 log = logger.get_logger(__name__)
@@ -15,6 +15,7 @@ event_map: dict[str, Union[callable, int]] = {
 
     # 青春杯事件
     "新手教程": 2,
+    "团队成员终于集结完毕!": aoharuhai_team_name_event
 }
 
 event_name_list: list[str] = [*event_map]

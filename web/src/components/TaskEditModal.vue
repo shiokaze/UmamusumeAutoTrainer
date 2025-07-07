@@ -376,11 +376,8 @@
       <!-- 青春杯配置弹窗 -->
       <AoharuConfigModal
         v-model:show="showAoharuConfigModal"
-        :preliminaryRound1Selection="preliminaryRound1Selection"
-        :preliminaryRound2Selection="preliminaryRound2Selection"
-        :preliminaryRound3Selection="preliminaryRound3Selection"
-        :preliminaryRound4Selection="preliminaryRound4Selection"
-        :aoharuTeamSelection="aoharuTeamSelection"
+        :preliminaryRoundSelections="preliminaryRoundSelections"
+        :aoharuTeamNameSelection="aoharuTeamNameSelection"
         @confirm="handleAoharuConfigConfirm"
       ></AoharuConfigModal>
       <!-- 遮罩层 -->
@@ -801,11 +798,8 @@ export default {
       extraWeight3: [0, 0, 0, 0, 0],
 
       // 青春杯配置
-      preliminaryRound1Selection: 2,
-      preliminaryRound2Selection: 1,
-      preliminaryRound3Selection: 1,
-      preliminaryRound4Selection: 1,
-      aoharuTeamSelection: 5,
+      preliminaryRoundSelections: [2, 1, 1, 1],
+      aoharuTeamNameSelection: 5,
       showAoharuConfigModal: false,
     }
   },
@@ -855,11 +849,8 @@ export default {
       this.showAoharuConfigModal = false;
     },
     handleAoharuConfigConfirm: function(data) {
-      this.preliminaryRound1Selection = data.preliminaryRound1Selection;
-      this.preliminaryRound2Selection = data.preliminaryRound2Selection;
-      this.preliminaryRound3Selection = data.preliminaryRound3Selection;
-      this.preliminaryRound4Selection = data.preliminaryRound4Selection;
-      this.aoharuTeamSelection = data.aoharuTeamSelection;
+      this.preliminaryRoundSelections = [...data.preliminaryRoundSelections];
+      this.aoharuTeamNameSelection = data.aoharuTeamNameSelection;
       this.showAoharuConfigModal = false;
     },
     cancelTask: function(){
@@ -899,11 +890,10 @@ export default {
           "fujikiseki_show_mode": this.fujikisekiShowMode,
           "fujikiseki_show_difficulty": this.fujikisekiShowDifficulty,
           // 青春杯配置
-          "aoharu_preliminary_round_1": this.preliminaryRound1Selection,
-          "aoharu_preliminary_round_2": this.preliminaryRound2Selection,
-          "aoharu_preliminary_round_3": this.preliminaryRound3Selection,
-          "aoharu_preliminary_round_4": this.preliminaryRound4Selection,
-          "aoharu_team_selection": this.aoharuTeamSelection
+          "aoharu_config": this.selectedScenario === 2 ? {
+            "preliminaryRoundSelections": [...this.preliminaryRoundSelections],
+            "aoharuTeamNameSelection": this.aoharuTeamNameSelection
+          } : null
         },
         cron_job_info:{},
       }
@@ -973,6 +963,12 @@ export default {
         }
       }
       
+      // 读取青春杯配置（如果存在）
+      if ('auharuhai_config' in this.presetsUse) {
+        this.preliminaryRoundSelections = [...this.presetsUse.auharuhai_config.preliminaryRoundSelections];
+        this.aoharuTeamNameSelection = this.presetsUse.auharuhai_config.aoharuTeamNameSelection;
+      }
+      
     },
     getPresets: function(){
       this.axios.post("/umamusume/get-presets", "").then(
@@ -1000,6 +996,14 @@ export default {
         race_tactic_2: this.selectedRaceTactic2,
         race_tactic_3: this.selectedRaceTactic3,
         extraWeight: [this.extraWeight1,this.extraWeight2,this.extraWeight3]
+      }
+      
+      // 仅当选择青春杯剧本时，才保存青春杯配置
+      if (this.selectedScenario === 2) {
+        preset.auharuhai_config = {
+          preliminaryRoundSelections: [...this.preliminaryRoundSelections],
+          aoharuTeamNameSelection: this.aoharuTeamNameSelection
+        };
       }
       for(let i = 0; i < this.skillPriorityNum; i++)
       {

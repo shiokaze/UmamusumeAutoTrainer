@@ -234,12 +234,6 @@ def script_cultivate_event(ctx: UmamusumeContext):
         log.debug("未出现选项")
 
 def script_aoharuhai_race(ctx: UmamusumeContext):
-    opponent_choice: dict[int, int] = {
-        1: 2,
-        2: 1,
-        3: 1,
-        4: 1
-    }
     def select_opponent (race_index: int):
         match race_index:
             case 1:
@@ -253,22 +247,22 @@ def script_aoharuhai_race(ctx: UmamusumeContext):
 
     img = ctx.ctrl.get_screen(to_gray=True)
     if image_match(img, UI_AOHARUHAI_RACE_1).find_match:
-        race_index = 1
+        race_index = 0
     elif image_match(img, UI_AOHARUHAI_RACE_2).find_match:
-        race_index = 2
+        race_index = 1
     elif image_match(img, UI_AOHARUHAI_RACE_3).find_match:
-        race_index = 3
+        race_index = 2
     elif image_match(img, UI_AOHARUHAI_RACE_4).find_match:
-        race_index = 4
+        race_index = 3
     elif image_match(img, UI_AOHARUHAI_RACE_5).find_match:
-        race_index = 5
+        race_index = 4
     else:
         ctx.ctrl.click(360, 1180, "确认比赛结果")
         return
     
     ctx.ctrl.click(360, 1080, "开始青春杯对战")
 
-    if race_index == 5:
+    if race_index == 4:
         while True:
             time.sleep(1)
             img = ctx.ctrl.get_screen(to_gray=True)
@@ -281,7 +275,7 @@ def script_aoharuhai_race(ctx: UmamusumeContext):
             img = ctx.ctrl.get_screen(to_gray=True)
             if image_match(img, UI_AOHARUHAI_RACE_SELECT_OPPONENT).find_match:
                 break
-        select_opponent(opponent_choice[race_index])
+        select_opponent(ctx.task.detail.scenario_config.aoharu_config.get_opponent(race_index))
 
 def script_aoharuhai_race_confirm(ctx: UmamusumeContext):
     ctx.ctrl.click(520, 920, "确认对战")

@@ -1,6 +1,7 @@
 from enum import Enum
 from module.umamusume.define import ScenarioType
 from bot.base.task import Task, TaskExecuteMode
+from module.umamusume.scenario.configs import *
 
 
 class TaskDetail:
@@ -18,6 +19,8 @@ class TaskDetail:
     allow_recover_tp: bool
     cultivate_progress_info: dict
     extra_weight: list
+    # 剧本相关配置
+    scenario_config: ScenarioConfig
     # 限时: 富士奇石的表演秀
     fujikiseki_show_mode: bool
     fujikiseki_show_difficulty: int
@@ -63,7 +66,9 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.allow_recover_tp = attachment_data['allow_recover_tp']
     td.extra_weight = attachment_data['extra_weight']
     td.cultivate_result = {}
-    # td.scenario_name = attachment_data['scenario_name']
+    # 剧本相关设置
+    td.scenario_config = ScenarioConfig(
+        aoharu_config=None if 'aoharu_config' not in attachment_data else AoharuConfig(attachment_data['aoharu_config']))
     # 限时: 富士奇石的表演秀
     td.fujikiseki_show_mode = attachment_data['fujikiseki_show_mode']
     td.fujikiseki_show_difficulty = attachment_data['fujikiseki_show_difficulty']
