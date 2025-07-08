@@ -117,7 +117,10 @@ export default {
       type: Array,
       default: () => [2, 1, 1, 1]
     },
-    aoharuTeamNameSelection: Number,
+    aoharuTeamNameSelection: {
+      type: Number,
+      default: 4
+    },
   },
   emits: ['update:show', 'confirm'],
   data() {

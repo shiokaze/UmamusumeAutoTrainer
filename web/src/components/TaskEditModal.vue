@@ -799,7 +799,7 @@ export default {
 
       // 青春杯配置
       preliminaryRoundSelections: [2, 1, 1, 1],
-      aoharuTeamNameSelection: 5,
+      aoharuTeamNameSelection: 4,
       showAoharuConfigModal: false,
     }
   },
