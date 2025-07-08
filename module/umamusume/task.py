@@ -38,7 +38,7 @@ class UmamusumeTask(Task):
         super().end_task(status, reason)
 
     def start_task(self) -> None:
-        pass
+        super().start_task()
 
 
 class UmamusumeTaskType(Enum):

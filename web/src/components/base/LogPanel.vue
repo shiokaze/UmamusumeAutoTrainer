@@ -11,7 +11,7 @@
         </div>
         <div>
           <div class="input-group">
-            <textarea id="scroll_text" disabled v-bind:placeholder="logContent" class="form-control" aria-label="With textarea">{{logContent}}</textarea>
+            <textarea id="scroll_text" disabled v-bind:placeholder="logContent" class="form-control" aria-label="With textarea">{{logContent.join('\n')}}</textarea>
           </div>
         </div>
       </div>

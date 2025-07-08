@@ -23,7 +23,7 @@ export default {
   components: { LogPanel, SchedulerPanel},
   data() {
     return {
-      logId:'0',
+      taskId:'0',
       runningTask: undefined,
       waitingTaskList:[],
       historyTaskList:[],
@@ -71,16 +71,16 @@ export default {
             this.runningTask = runningTask
             this.cronJobList = cronJobList
             if(this.runningTask === undefined){
-              this.logId = '0'
+              this.taskId = '0'
             }else{
-              this.logId = runningTask['task_id']
+              this.taskId = runningTask['task_id']
             }
           }
       );
     },
     getTaskLog:function (){
-      if(this.logId !== '0'){
-        this.axios.get("/log/"+this.logId).then(
+      if(this.taskId !== '0'){
+        this.axios.get("/log/"+this.taskId).then(
             res=>{
               this.logContent = res.data.data;
             }
