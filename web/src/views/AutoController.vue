@@ -10,7 +10,10 @@
       </div>
     </div>
     <div class="col-8">
-      <log-panel v-bind:log-content="logContent"></log-panel>
+      <log-panel v-bind:log-content="logContent"
+                 v-bind:auto-log="autoLog"
+                 v-bind:toggle-auto-log="toggleAutoLog"
+      ></log-panel>
     </div>
   </div>
 </template>
@@ -30,12 +33,17 @@ export default {
       cronJobList:[],
       taskList:[],
       logContent:"",
+      autoLog: true,
+      taskLogTimer: undefined
     }
   },
   mounted:function() {
     let vue = this;
     setInterval(function () {
       vue.getTaskList();
+    },1000)
+
+    this.taskLogTimer = setInterval(function () {
       vue.getTaskLog()
     },1000)
   },
@@ -78,13 +86,26 @@ export default {
           }
       );
     },
-    getTaskLog:function (){
-      if(this.taskId !== '0'){
-        this.axios.get("/log/"+this.taskId).then(
-            res=>{
-              this.logContent = res.data.data;
+    getTaskLog:function () {
+      if (this.taskId !== '0') {
+        this.axios.get("/log/" + this.taskId).then(
+            res => {
+              this.logContent = res.data.join('\n')
             }
         );
+      }
+    },
+    toggleAutoLog:function () {
+      this.autoLog = !this.autoLog;
+      if (this.autoLog) {
+        if (this.taskLogTimer === undefined) {
+          this.taskLogTimer = setInterval(this.getTaskLog,1000)
+        }
+      } else {
+        if (this.taskLogTimer) {
+          clearInterval(this.taskLogTimer)
+          this.taskLogTimer = undefined
+        }
       }
     }
   }
