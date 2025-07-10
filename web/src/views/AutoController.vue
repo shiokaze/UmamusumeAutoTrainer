@@ -82,7 +82,7 @@ export default {
       if(this.taskId !== '0'){
         this.axios.get("/log/"+this.taskId).then(
             res=>{
-              this.logContent = res.data.data;
+              this.logContent = res.data.join('\n')
             }
         );
       }
