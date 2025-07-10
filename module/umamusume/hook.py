@@ -24,7 +24,7 @@ def after_hook(ctx: UmamusumeContext):
     if ctx.cultivate_detail and ctx.cultivate_detail.turn_info is not None:
         if ctx.cultivate_detail.turn_info.parse_train_info_finish and ctx.cultivate_detail.turn_info.parse_main_menu_finish:
             if not ctx.cultivate_detail.turn_info.turn_info_logged:
-                ctx.cultivate_detail.turn_info.log_turn_info()
+                ctx.cultivate_detail.turn_info.log_turn_info(ctx.task.detail.scenario)
                 ctx.cultivate_detail.turn_info.turn_info_logged = True
             if ctx.cultivate_detail.turn_info.turn_operation is None:
                 ctx.cultivate_detail.turn_info.turn_operation = get_operation(ctx)

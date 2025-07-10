@@ -98,18 +98,21 @@ class AoharuHaiScenario(BaseScenario):
         skill_point_incr = (0 if skill_point_incr_text == "" else int(skill_point_incr_text)) + (0 if skill_point_incr_extra_text == "" else int(skill_point_incr_extra_text))
 
         return [speed_icr, stamina_incr, power_incr, will_incr, intelligence_incr, skill_point_incr]
-    
-    def parse_training_support_cord(self, img: any) -> list[SupportCardInfo]:
-        # TODO: 目前没有识别青春杯参数和青春杯友情条, 也没有将其作为训练权重的一部分,
-        base_x = 590
+
+    def parse_training_support_card(self, img: any) -> list[SupportCardInfo]:
+        base_x = 550
         base_y = 177
         inc = 115
         support_card_list_info_result: list[SupportCardInfo] = []
         for i in range(5):
-            support_card_icon = img[base_y:base_y + inc, base_x: base_x + 105]
+            support_card_icon = img[base_y:base_y + inc, base_x: base_x + 145]
+            
+            # 有青春杯训练, 且青春杯友情未满
+            can_incr_aoharu_train = detect_aoharu_train_arrow(support_card_icon) and aoharu_train_not_full(support_card_icon)
+            
             # 判断好感度
             support_card_icon = cv2.cvtColor(support_card_icon, cv2.COLOR_BGR2RGB)
-            favor_process_check_list = [support_card_icon[106, 16], support_card_icon[106, 20]]
+            favor_process_check_list = [support_card_icon[106, 56], support_card_icon[106, 60]]
             support_card_favor_process = SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN
             for support_card_favor_process_pos in favor_process_check_list:
                 if compare_color_equal(support_card_favor_process_pos, [255, 235, 120]):
@@ -124,13 +127,6 @@ class AoharuHaiScenario(BaseScenario):
                 if support_card_favor_process != SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN:
                     break
 
-            # 判断是否有事件
-            support_card_event_pos = support_card_icon[5, 83]
-            support_card_event_available = False
-            if (support_card_event_pos[0] >= 250
-                    and 55 <= support_card_event_pos[1] <= 90
-                    and 115 <= support_card_event_pos[2] <= 150):
-                support_card_event_available = True
             # 判断支援卡类型
             support_card_type = SupportCardType.SUPPORT_CARD_TYPE_UNKNOWN
             support_card_icon = cv2.cvtColor(support_card_icon, cv2.COLOR_RGB2GRAY)
@@ -146,11 +142,107 @@ class AoharuHaiScenario(BaseScenario):
                 support_card_type = SupportCardType.SUPPORT_CARD_TYPE_INTELLIGENCE
             elif image_match(support_card_icon, REF_SUPPORT_CARD_TYPE_FRIEND).find_match:
                 support_card_type = SupportCardType.SUPPORT_CARD_TYPE_FRIEND
-            if support_card_favor_process is not SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN:
+            if (can_incr_aoharu_train) or \
+               (support_card_favor_process is not SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN):
                 info = SupportCardInfo(card_type=support_card_type,
-                                    favor=support_card_favor_process,
-                                    has_event=support_card_event_available)
+                                       favor=support_card_favor_process,
+                                       can_incr_aoharu_train=can_incr_aoharu_train)
                 support_card_list_info_result.append(info)
             base_y += inc
 
         return support_card_list_info_result
+    
+# 检测支援卡右上角是否有箭头图标, 同时排除感叹号防止false positive
+# 输入的图片必须是彩色的
+def detect_aoharu_train_arrow(support_card_icon):
+    support_card_icon = cv2.cvtColor(support_card_icon, cv2.COLOR_BGR2RGB)
+    # 定义右上角检测区域
+    arrow_region_x_start = 110
+    arrow_region_x_end = 145  
+    arrow_region_y_start = 0
+    arrow_region_y_end = 40
+    
+    arrow_region = support_card_icon[arrow_region_y_start:arrow_region_y_end, 
+                                     arrow_region_x_start:arrow_region_x_end]
+    
+    # 定义箭头可能的颜色范围 (检查橙色)
+    orange_lower = [240, 100, 50]
+    orange_upper = [255, 180, 100]
+    
+    # 定义红色像素范围（用于检测感叹号）
+    red_lower = [180, 30,50]
+    red_upper = [255, 100, 150]
+    
+    # 计算橙色像素和红色像素的数量
+    orange_pixels = 0
+    red_pixels = 0
+    total_pixels = arrow_region.shape[0] * arrow_region.shape[1]
+    
+    for y in range(arrow_region.shape[0]):
+        for x in range(arrow_region.shape[1]):
+            pixel = arrow_region[y, x]
+            
+            # 检测橙色像素
+            if (orange_lower[0] <= pixel[0] <= orange_upper[0] and
+                orange_lower[1] <= pixel[1] <= orange_upper[1] and
+                orange_lower[2] <= pixel[2] <= orange_upper[2]):
+                orange_pixels += 1
+            # 检测红色像素
+            elif (red_lower[0] <= pixel[0] <= red_upper[0] and
+                  red_lower[1] <= pixel[1] <= red_upper[1] and
+                  red_lower[2] <= pixel[2] <= red_upper[2]):
+                red_pixels += 1
+    
+    orange_ratio = orange_pixels / total_pixels if total_pixels > 0 else 0
+    red_ratio = red_pixels / total_pixels if total_pixels > 0 else 0
+    
+    has_arrow = False
+    
+    # 首先排除感叹号：如果红色像素比例过高，判断为感叹号
+    if red_ratio > 0.2:
+        has_arrow = False
+    # 如果橙色像素比例超过阈值
+    elif (orange_ratio > 0.05):
+        has_arrow = True
+ 
+    return has_arrow
+
+
+# 检测左下角青春杯训练值是否未满
+# 如果已满或者不存在UI(比如已经触发了魂爆, 则返回false)
+# 否则返回true
+def aoharu_train_not_full(support_card_icon) -> bool:
+    support_card_icon = cv2.cvtColor(support_card_icon, cv2.COLOR_BGR2RGB)
+    avatar_region_x_start = 5
+    avatar_region_x_end = 45
+    avatar_region_y_start = 70  
+    avatar_region_y_end = 110
+    
+    avatar_region = support_card_icon[avatar_region_y_start:avatar_region_y_end,
+                                      avatar_region_x_start:avatar_region_x_end]
+    
+    total_pixels = avatar_region.shape[0] * avatar_region.shape[1]
+    if total_pixels == 0:
+        return False
+    
+    # 检测灰色
+    grey_lower = [100, 100, 100]
+    grey_upper = [150, 150, 150]
+    grey_pixels = 0
+
+    for y in range(avatar_region.shape[0]):
+        for x in range(avatar_region.shape[1]):
+            pixel = avatar_region[y, x]
+            if (grey_lower[0] <= pixel[0] <= grey_upper[0] and
+                grey_lower[1] <= pixel[1] <= grey_upper[1] and
+                grey_lower[2] <= pixel[2] <= grey_upper[2]):
+                grey_pixels += 1
+    
+    grey_ratio = grey_pixels / total_pixels
+    
+    if grey_ratio > 0.05:
+        status = True
+    else:
+        status = False
+    
+    return status

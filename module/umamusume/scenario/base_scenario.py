@@ -32,6 +32,6 @@ class BaseScenario(ABC):
         pass
 
     @abstractmethod
-    def parse_training_support_cord(self, img: any) -> list[SupportCardInfo]:
+    def parse_training_support_card(self, img: any) -> list[SupportCardInfo]:
         """从屏幕上获取每一张支援卡的信息"""
         pass

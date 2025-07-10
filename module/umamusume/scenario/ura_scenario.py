@@ -63,7 +63,7 @@ class URAScenario(BaseScenario):
 
         return [speed_icr, stamina_incr, power_incr, will_incr, intelligence_incr, skill_point_incr]
     
-    def parse_training_support_cord(self, img: any) -> list[SupportCardInfo]:
+    def parse_training_support_card(self, img: any) -> list[SupportCardInfo]:
         base_x = 590
         base_y = 190
         inc = 120

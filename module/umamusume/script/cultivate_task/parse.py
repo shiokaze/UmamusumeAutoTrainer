@@ -206,7 +206,7 @@ def parse_train_main_menu_operations_availability(ctx: UmamusumeContext, img):
 
 
 def parse_training_support_card(ctx: UmamusumeContext, img, train_type: TrainingType):
-    support_card_info_list = ctx.cultivate_detail.scenario.parse_training_support_cord(img)
+    support_card_info_list = ctx.cultivate_detail.scenario.parse_training_support_card(img)
     ctx.cultivate_detail.turn_info.training_info_list[train_type.value - 1].support_card_info_list = support_card_info_list
 
 def parse_train_type(ctx: UmamusumeContext, img) -> TrainingType:
