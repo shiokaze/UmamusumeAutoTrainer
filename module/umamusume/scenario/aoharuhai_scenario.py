@@ -23,7 +23,7 @@ class AoharuHaiScenario(BaseScenario):
         return "青春杯"
     
     def get_date_img(self, img: any) -> any:
-        return img[40:70, 160:280]
+        return img[40:70, 160:370]
     
     def get_turn_to_race_img(self, img) -> any:
         return img[70:120, 30:90]
