@@ -37,6 +37,11 @@ def aoharuhai_team_name_event(ctx: UmamusumeContext) -> int:
             match_result.matched_area[0][0]:match_result.matched_area[1][0]] = 0
         else:
             break
+
+    if ctx.task.detail.scenario_config.aoharu_config.aoharu_team_name_selection == 4:
+        log.debug("使用选项<胡萝卜>队")
+        return len(event_selector_list)
+
     event_selector_list.sort(key=lambda x: x.center_point[1])
     for i in range(len(event_selector_list)):
         event = event_selector_list[i]
