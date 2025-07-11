@@ -234,17 +234,6 @@ def script_cultivate_event(ctx: UmamusumeContext):
         log.debug("未出现选项")
 
 def script_aoharuhai_race(ctx: UmamusumeContext):
-    def select_opponent (race_index: int):
-        match race_index:
-            case 1:
-                ctx.ctrl.click(360, 290, "选择第一个对手")
-            case 2:
-                ctx.ctrl.click(360, 560, "选择第二个对手")
-            case 3:
-                ctx.ctrl.click(360, 830, "选择第三个对手")
-        time.sleep(2)
-        ctx.ctrl.click(360, 1080, "开始对战")
-
     img = ctx.ctrl.get_screen(to_gray=True)
     if image_match(img, UI_AOHARUHAI_RACE_1).find_match:
         race_index = 0
@@ -260,22 +249,24 @@ def script_aoharuhai_race(ctx: UmamusumeContext):
         ctx.ctrl.click(360, 1180, "确认比赛结果")
         return
     
+    ctx.cultivate_detail.turn_info.aoharu_race_index = race_index
     ctx.ctrl.click(360, 1080, "开始青春杯对战")
 
-    if race_index == 4:
-        while True:
-            time.sleep(1)
-            img = ctx.ctrl.get_screen(to_gray=True)
-            if image_match(img, UI_AOHARUHAI_RACE_FINAL_START).find_match:
-                break
-        ctx.ctrl.click(360, 980, "确认决赛对手")
-    else:
-        while True:
-            time.sleep(1)
-            img = ctx.ctrl.get_screen(to_gray=True)
-            if image_match(img, UI_AOHARUHAI_RACE_SELECT_OPPONENT).find_match:
-                break
-        select_opponent(ctx.task.detail.scenario_config.aoharu_config.get_opponent(race_index))
+def script_aoharuhai_race_final_start(ctx: UmamusumeContext):
+    ctx.ctrl.click(360, 980, "确认决赛对手")
+
+def script_aoharuhai_race_select_oponent(ctx: UmamusumeContext):
+    def select_opponent (race_index: int):
+        match race_index:
+            case 1:
+                ctx.ctrl.click(360, 290, "选择第一个对手")
+            case 2:
+                ctx.ctrl.click(360, 560, "选择第二个对手")
+            case 3:
+                ctx.ctrl.click(360, 830, "选择第三个对手")
+        time.sleep(2)
+        ctx.ctrl.click(360, 1080, "开始对战")
+    select_opponent(ctx.task.detail.scenario_config.aoharu_config.get_opponent(ctx.cultivate_detail.turn_info.aoharu_race_index))
 
 def script_aoharuhai_race_confirm(ctx: UmamusumeContext):
     ctx.ctrl.click(520, 920, "确认对战")

@@ -27,6 +27,8 @@ script_dicts: Dict[UmamusumeTaskType, dict] = {
         CULTIVATE_EVENT_UMAMUSUME: script_cultivate_event,
         CULTIVATE_EVENT_SUPPORT_CARD: script_cultivate_event,
         CULTIVATE_EVENT_SCENARIO: script_cultivate_event,
+        AOHARUHAI_RACE_FINAL_START: script_aoharuhai_race_final_start,
+        AOHARUHAI_RACE_SELECT_OPPONENT: script_aoharuhai_race_select_oponent,
         AOHARUHAI_RACE: script_aoharuhai_race,
         AOHARUHAI_RACE_INRACE: script_aoharuhai_race_inrace,
         AOHARUHAI_RACE_END: script_aoharuhai_race_end,
