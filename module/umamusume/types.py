@@ -136,7 +136,7 @@ class TurnInfo:
         self.aoharu_race_index = 0
 
     def log_turn_info(self, scenario_type : ScenarioType):
-        log.info("当前回合时间 >" + str(self.date))
+        log.info("当前回合时间 " + str(self.date))
         log.info("干劲状态 " + str(self.motivation_level.name))
         log.info("体力剩余 " + str(self.remain_stamina))
         log.info("当前属性值 速度：%s, 耐力：%s, 力量：%s, 毅力：%s, 智力：%s, 技能点：%s", self.uma_attribute.speed,

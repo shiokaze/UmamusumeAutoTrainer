@@ -40,7 +40,10 @@ class TaskLogHandler(logging.Handler):
 
     def get_task_log(self, task_id):
         with self.lock:
-            logs = list(self.buffer[task_id])
+            if task_id in self.buffer:
+                logs = list(self.buffer[task_id])
+            else:
+                logs = []
         return logs
 
 task_log_handler = TaskLogHandler()
