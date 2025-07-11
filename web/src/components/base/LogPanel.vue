@@ -3,7 +3,11 @@
     <div class="card">
       <div class="card-body">
         <div class="d-flex bd-highlight mb-3">
-          <h5 class="card-title">建设中</h5>
+          <h5 class="card-title">运行日志</h5>
+          <span v-on:click="toggleAutoLog" class="ml-auto btn auto-btn">
+            <span v-if="autoLog"><font-awesome-icon   icon="fa-regular fa-circle-play" /> 刷新日志：开</span>
+            <span v-if="!autoLog"><font-awesome-icon  icon="fa-regular fa-circle-pause" /> 刷新日志：关</span>
+           </span>
           <!-- <span v-on:click="autoScroll = !autoScroll" class="ml-auto btn auto-btn"> -->
             <!-- <span v-if="autoScroll"><font-awesome-icon   icon="fa-regular fa-circle-play" /> 自动滚动：开</span>
             <span v-if="!autoScroll"><font-awesome-icon  icon="fa-regular fa-circle-pause" /> 自动滚动：关</span> -->
@@ -22,7 +26,7 @@
 <script>
 export default {
   name: "LogPanel",
-  props: ['logContent'],
+  props: ['logContent', 'autoLog', 'toggleAutoLog'],
   data:function (){
     return{
       autoScroll: true

@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI, Path
 from fastapi.middleware.cors import CORSMiddleware
 
+from bot.base.log import task_log_handler
 from bot.engine import ctrl as bot_ctrl
 from bot.server.protocol.task import *
 from starlette.responses import FileResponse
@@ -32,6 +33,10 @@ def delete_task(req: DeleteTaskRequest):
 @server.get("/task")
 def get_task():
     return bot_ctrl.get_task_list()
+
+@server.get("/log/{task_id}")
+def get_task_log(task_id):
+    return task_log_handler.get_task_log(task_id)
 
 
 @server.post("/action/bot/reset-task")

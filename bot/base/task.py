@@ -67,7 +67,7 @@ class Task(metaclass=ABCMeta):
 
     @abstractmethod
     def start_task(self) -> None:
-        pass
+        log.info("任务开始", extra={"task_id": self.task_id})
 
     def running(self) -> bool:
         return self.task_status == TaskStatus.TASK_STATUS_RUNNING

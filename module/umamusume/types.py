@@ -56,11 +56,11 @@ class TrainingInfo:
         text = "此训练附带支援卡列表：["
         if scenario_type == ScenarioType.SCENARIO_TYPE_AOHARUHAI:       
             for c in self.support_card_info_list:
-                text += "[支援卡名称：" + str(c.name) + "支援卡类型：" + str(c.card_type.name) + ", 支援卡羁绊阶段：" + str(c.favor.name) + ", 可提升青春杯友情: " + str(c.can_incr_aoharu_train) + "] "
+                text += "[支援卡名称：" + str(c.name) + ", 支援卡类型：" + str(c.card_type.name) + ", 支援卡羁绊阶段：" + str(c.favor.name) + ", 可提升青春杯友情: " + str(c.can_incr_aoharu_train) + "] "
         else:
             for c in self.support_card_info_list:
                 if c.favor != SupportCardFavorLevel.SUPPORT_CARD_FAVOR_LEVEL_UNKNOWN:
-                    text += "[支援卡名称：" + str(c.name) + "支援卡类型：" + str(c.card_type.name) + ", 支援卡羁绊阶段：" + str(c.favor.name) + "] "
+                    text += "[支援卡名称：" + str(c.name) + ", 支援卡类型：" + str(c.card_type.name) + ", 支援卡羁绊阶段：" + str(c.favor.name) + "] "
         text += "]"
         log.info(text)
 
@@ -138,7 +138,7 @@ class TurnInfo:
     def log_turn_info(self, scenario_type : ScenarioType):
         log.info("当前回合时间 >" + str(self.date))
         log.info("干劲状态 " + str(self.motivation_level.name))
-        log.info("体力剩余" + str(self.remain_stamina))
+        log.info("体力剩余 " + str(self.remain_stamina))
         log.info("当前属性值 速度：%s, 耐力：%s, 力量：%s, 毅力：%s, 智力：%s, 技能点：%s", self.uma_attribute.speed,
                  self.uma_attribute.stamina, self.uma_attribute.power, self.uma_attribute.will, self.uma_attribute.intelligence, self.uma_attribute.skill_point)
         log.info("速度训练结果：")

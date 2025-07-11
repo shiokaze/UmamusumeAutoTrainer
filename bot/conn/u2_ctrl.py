@@ -138,7 +138,7 @@ class U2AndroidController(AndroidController):
 
     def start_app(self, name):
         self.u2client.app_start(name)
-        log.info("starting app <" + name + ">")
+        log.debug("starting app <" + name + ">")
 
     # get_front_activity 获取前台正在运行的应用
     def get_front_activity(self):
