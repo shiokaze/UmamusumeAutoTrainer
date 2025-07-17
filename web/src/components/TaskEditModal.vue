@@ -481,6 +481,9 @@ export default {
         {id:30, name:'即使满身泥土，也要追逐梦想', desc: '智内恰'},
         {id:31, name:'Two Pieces', desc: '速成田白仁'},
         {id:32, name:'见习魔女与漫漫长夜', desc: '速东商变革'},
+        {id:33, name:'彻底管理主义', desc: '理子'},
+        {id:34, name:'幸福就在转角后', desc: '力米浴'},
+        {id:35, name:'可爱的你，美丽的你', desc: '智卡莲'},
       ],
       umamusumeRaceList_1:[
         {id:1401, name:'函馆初级锦标赛',date: '7月后', type: 'GIII'},
