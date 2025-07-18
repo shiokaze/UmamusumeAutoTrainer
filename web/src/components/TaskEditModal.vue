@@ -1,7 +1,10 @@
 <template>
   <div id="create-task-list-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
     <div  class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content" :class="{ 'dimmed': showAoharuConfigModal }">
+      <div
+        class="modal-content"
+        :class="{ 'dimmed': showAoharuConfigModal || showSupportCardSelectModal }"
+      >
         <h5 class="modal-header">
           新建任务
         </h5>
@@ -102,9 +105,12 @@
               <div class="col-4">
                 <div class="form-group">
                   <label>⭐ 借用支援卡选择</label>
-                  <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
-                    <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
-                  </select>
+                  <div style="display: flex; align-items: center;">
+                    <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
+                      <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
+                    </select>
+                    <span class="btn auto-btn ml-2" style="white-space:nowrap;" v-on:click="openSupportCardSelectModal">更改</span>
+                  </div>
                 </div>
               </div>
               <div class="col-2">
@@ -394,8 +400,13 @@
         :aoharuTeamNameSelection="aoharuTeamNameSelection"
         @confirm="handleAoharuConfigConfirm"
       ></AoharuConfigModal>
-      <!-- 遮罩层 -->
-      <div v-if="showAoharuConfigModal" class="modal-backdrop-overlay" @click.stop></div>
+      <!-- 支援卡选择弹窗 -->
+      <SupportCardSelectModal
+        v-model:show="showSupportCardSelectModal"
+        @cancel="closeSupportCardSelectModal"
+      ></SupportCardSelectModal>
+      <!-- 遮罩层，支持两种弹窗 -->
+      <div v-if="showAoharuConfigModal || showSupportCardSelectModal" class="modal-backdrop-overlay" @click.stop></div>
       <!-- 通知 -->
       <div class="position-fixed" style="z-index: 5; right: 40%; width: 300px;">
         <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
@@ -419,12 +430,14 @@
 <script>
 import SkillIcon from './SkillIcon.vue';
 import AoharuConfigModal from './AoharuConfigModal.vue';
+import SupportCardSelectModal from './SupportCardSelectModal.vue';
 
 export default {
   name: "TaskEditModal",
   components: {
     SkillIcon,
-    AoharuConfigModal
+    AoharuConfigModal,
+    SupportCardSelectModal
   },
   data:function () {
     return{
@@ -823,6 +836,7 @@ export default {
       preliminaryRoundSelections: [2, 1, 1, 1],
       aoharuTeamNameSelection: 4,
       showAoharuConfigModal: false,
+      showSupportCardSelectModal: false,
     }
   },
   mounted() {
@@ -1072,6 +1086,12 @@ export default {
         }, 2000);
       }
     },
+    openSupportCardSelectModal: function() {
+      this.showSupportCardSelectModal = true;
+    },
+    closeSupportCardSelectModal: function() {
+      this.showSupportCardSelectModal = false;
+    },
   },
   watch:{
 
@@ -1102,6 +1122,7 @@ export default {
   border-radius: 0.25rem;
   margin-right: 10px; /* 与确认按钮间距 */
   border: none;
+  cursor: pointer;
 }
 
 .cancel-btn:hover {
@@ -1127,7 +1148,7 @@ export default {
   pointer-events: auto; /* 阻止与背景元素的交互 */
 }
 
-/* 当显示青春杯配置时，让TaskEditModal的内容稍微变暗 */
+/* 只有青春杯配置弹窗时让TaskEditModal变暗 */
 #create-task-list-modal.modal.show .modal-content {
   transition: opacity 0.3s ease;
 }
