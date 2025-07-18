@@ -102,13 +102,17 @@
             </div>
             
             <div class="row">
-              <div class="col-4">
+              <div class="col-5">
                 <div class="form-group">
                   <label>⭐ 借用支援卡选择</label>
                   <div style="display: flex; align-items: center;">
-                    <select v-model="selectedSupportCard" class="form-control" id="selectedSupportCard">
-                      <option v-for="card in umausumeSupportCardList" :value="card">({{card.desc}}) {{card.name}}</option>
-                    </select>
+                    <input
+                      type="text"
+                      class="form-control"
+                      :value="renderSupportCardText(selectedSupportCard)"
+                      readonly
+                      id="selectedSupportCard"
+                    >
                     <span class="btn auto-btn ml-2" style="white-space:nowrap;" v-on:click="openSupportCardSelectModal">更改</span>
                   </div>
                 </div>
@@ -404,6 +408,7 @@
       <SupportCardSelectModal
         v-model:show="showSupportCardSelectModal"
         @cancel="closeSupportCardSelectModal"
+        @confirm="handleSupportCardConfirm"
       ></SupportCardSelectModal>
       <!-- 遮罩层，支持两种弹窗 -->
       <div v-if="showAoharuConfigModal || showSupportCardSelectModal" class="modal-backdrop-overlay" @click.stop></div>
@@ -483,40 +488,6 @@ export default {
         {id:25, name:'优秀素质'},
         {id:26, name:'帝王光环'},
       ],
-      umausumeSupportCardList:[
-        {id:1, name:'在耀眼景色的前方', desc:'速铃鹿'},
-        {id:2, name:'献上全国第一的演出' , desc: '根特别周'},
-        {id:3, name:'有梦想就要大声说出来！', desc: '速帝王'},
-        {id:4, name:'不沉舰的进击', desc: '耐黄金船'},
-        {id:5, name:'伏特加之路', desc: '力伏特加'},
-        {id:6, name:'万紫千红中一枝独秀', desc: '根草上飞'},
-        {id:7, name:'热情的冠军', desc: '力神鹰'},
-        {id:8, name:'期待已久的计谋', desc: '耐青云'},
-        {id:9, name:'划破天空的闪电少女！', desc: '耐玉藻十字'},
-        {id:10, name:'全身心的感谢', desc: '智美妙姿势'},
-        {id:11, name:'飞奔吧，闪耀吧', desc: '根风神'},
-        {id:12, name:'B·N·Winner!', desc: '根奖券'},
-        {id:13, name:'冲向前方7厘米之外', desc: '智空中神宫'},
-        {id:14, name:'Run(my)way', desc: '速黄金城'},
-        {id:15, name:'好快！好吃！好快', desc: '速进王'},
-        {id:16, name:'一颗安心糖', desc: '耐小海湾'},
-        {id:17, name:'这就是我的优俊偶像之道', desc: '力飞鹰'},
-        {id:18, name:'哪怕还未长大', desc: '速西野花'},
-        {id:19, name:'必杀技！双胡萝卜拳', desc: '速微光飞驹'},
-        {id:20, name:'欢迎来到特雷森学园！', desc: '绿帽'},
-        {id:21, name:'夕阳是憧憬之色', desc: '速特别周'},
-        {id:22, name:'要受人喜爱啊', desc: '力小栗帽'},
-        {id:23, name:'涡轮引擎马力全开！', desc: '速双涡轮'},
-        {id:24, name:'心中的烈火无法抑制', desc: '力八重'},
-        {id:25, name:'身后迫近的热浪是动力', desc: '速北黑'},
-        {id:26, name:'超越那前方的背影', desc: '耐光钻'},
-        {id:27, name:'身为新娘！', desc: '速川上公主'},
-        {id:28, name:'独享冰凉？', desc: '速东商变革'},
-        {id:29, name:'心中的烈火无法抑制', desc: '力八重'},
-        {id:30, name:'即使满身泥土，也要追逐梦想', desc: '智内恰'},
-        {id:31, name:'Two Pieces', desc: '速成田白仁'},
-        {id:32, name:'见习魔女与漫漫长夜', desc: '速东商变革'},
-      ],
       umamusumeRaceList_1:[
         {id:1401, name:'函馆初级锦标赛',date: '7月后', type: 'GIII'},
         {id:1601, name:'新潟初级锦标赛',date: '8月后', type: 'GIII'},
@@ -571,16 +542,16 @@ export default {
         {id:3707, name:'七夕奖', date: '7月前', type: 'GIII'},
         {id:3709, name:'日经广播奖', date: '7月前', type: 'GIII'},
         {id:3705, name:'全国泥地德比', date: '7月前', type: 'GI'},
-		{id:3801, name:'皇后锦标赛', date: '7月后', type: 'GIII'},
-		{id:3803, name:'中京纪念', date: '7月后', type: 'GIII'},
-		{id:3804, name:'朱鹭夏季冲刺赛', date: '7月后', type: 'GIII'},
-		{id:3901, name:'榆木锦标赛', date: '8月前', type: 'GIII'},
-		{id:3906, name:'小仓纪念', date: '8月前', type: 'GIII'},
-		{id:3907, name:'关屋纪念', date: '8月前', type: 'GIII'},
-		{id:3908, name:'猎豹锦标赛', date: '8月前', type: 'GIII'},
-		{id:4005, name:'札幌纪念', date: '8月后', type: 'GII'},
-		{id:4006, name:'北九州纪念', date: '8月后', type: 'GIII'},
-		{id:4007, name:'科尼杯', date: '8月后', type: 'GIII'},
+        {id:3801, name:'皇后锦标赛', date: '7月后', type: 'GIII'},
+        {id:3803, name:'中京纪念', date: '7月后', type: 'GIII'},
+        {id:3804, name:'朱鹭夏季冲刺赛', date: '7月后', type: 'GIII'},
+        {id:3901, name:'榆木锦标赛', date: '8月前', type: 'GIII'},
+        {id:3906, name:'小仓纪念', date: '8月前', type: 'GIII'},
+        {id:3907, name:'关屋纪念', date: '8月前', type: 'GIII'},
+        {id:3908, name:'猎豹锦标赛', date: '8月前', type: 'GIII'},
+        {id:4005, name:'札幌纪念', date: '8月后', type: 'GII'},
+        {id:4006, name:'北九州纪念', date: '8月后', type: 'GIII'},
+        {id:4007, name:'科尼杯', date: '8月后', type: 'GIII'},
         {id:4101, name:'人马锦标赛', date: '9月前', type: 'GII'},
         {id:4102, name:'玫瑰锦标赛', date: '9月前', type: 'GII'},
         {id:4103, name:'新潟記念', date: '9月前', type: 'GIII'},
@@ -599,10 +570,10 @@ export default {
         {id:4407, name:'天王奖(秋)', date: '10月后', type: 'GI'},
         {id:4408, name:'秋华奖', date: '10月后', type: 'GI'},
         {id:4409, name:'菊花奖', date: '10月后', type: 'GI'},
-		{id:4501, name:'白银杯', date: '11月前', type: 'GII'},
-		{id:4502, name:'都城锦标赛', date: '11月前', type: 'GIII'},
-		{id:4503, name:'武藏野锦标赛', date: '11月前', type: 'GIII'},
-		{id:4504, name:'松浪纪念', date: '11月前', type: 'GIII'},
+        {id:4501, name:'白银杯', date: '11月前', type: 'GII'},
+        {id:4502, name:'都城锦标赛', date: '11月前', type: 'GIII'},
+        {id:4503, name:'武藏野锦标赛', date: '11月前', type: 'GIII'},
+        {id:4504, name:'松浪纪念', date: '11月前', type: 'GIII'},
         {id:4506, name:'伊丽莎白女王杯', date: '11月前', type: 'GI'},
         {id:4507, name:'全国育成杯 女士经典赛', date: '11月前', type: 'GI'},
         {id:4508, name:'全国育成杯 短途赛', date: '11月前', type: 'GI'},
@@ -613,10 +584,10 @@ export default {
         {id:4701, name:'长途锦标赛', date: '12月前', type: 'GII'},
         {id:4702, name:'挑战杯', date: '12月前', type: 'GIII'},
         {id:4703, name:'中日新闻杯', date: '12月前', type: 'GIII'},
-		{id:4704, name:'五车二锦标赛', date: '12月前', type: 'GIII'},
+		    {id:4704, name:'五车二锦标赛', date: '12月前', type: 'GIII'},
         {id:4705, name:'绿松石锦标赛', date: '12月前', type: 'GIII'},
         {id:4711, name:'全国冠军杯', date: '12月前', type: 'GI'},
-		{id:4801, name:'阪神杯', date: '12月后', type: 'GII'},
+		    {id:4801, name:'阪神杯', date: '12月后', type: 'GII'},
         {id:4804, name:'中山大奖赛', date: '12月后', type: 'GI'},
         {id:4805, name:'东京大奖赛', date: '12月后', type: 'GI'},
       ],
@@ -635,47 +606,47 @@ export default {
         {id:5202, name:'京都优骏少女锦标赛', date: '2月后', type: 'GIII'},
         {id:5203, name:'钻石锦标赛', date: '2月后', type: 'GIII'},
         {id:5204, name:'小仓大奖赛', date: '2月后', type: 'GIII'},
-		{id:5205, name:'阪急杯', date: '2月后', type: 'GIII'},
+		    {id:5205, name:'阪急杯', date: '2月后', type: 'GIII'},
         {id:5208, name:'二月锦标赛', date: '2月后', type: 'GI'},
         {id:5301, name:'金鯱賞', date: '3月前', type: 'GII'},
         {id:5302, name:'海洋锦标赛', date: '3月前', type: 'GIII'},
         {id:5303, name:'中山优俊少女锦标赛', date: '3月前', type: 'GIII'},
-		{id:5401, name:'阪神大奖赛', date: '3月后', type: 'GII'},
-		{id:5402, name:'日经奖', date: '3月后', type: 'GII'},
+		    {id:5401, name:'阪神大奖赛', date: '3月后', type: 'GII'},
+		    {id:5402, name:'日经奖', date: '3月后', type: 'GII'},
         {id:5403, name:'三月锦标赛', date: '3月后', type: 'GIII'},
         {id:5406, name:'中京短途赛', date: '3月后', type: 'GI'},
         {id:5407, name:'大阪杯', date: '3月后', type: 'GI'},
         {id:5501, name:'阪神优俊少女锦标赛', date: '4月前', type: 'GII'},
-		{id:5502, name:'德比伯爵挑战赛', date: '4月前', type: 'GIII'},
+		    {id:5502, name:'德比伯爵挑战赛', date: '4月前', type: 'GIII'},
         {id:5503, name:'心宿二锦标赛', date: '4月前', type: 'GIII'},
         {id:5601, name:'英里杯', date: '4月后', type: 'GII'},
-		{id:5602, name:'松浪优俊少女锦标赛', date: '4月后', type: 'GIII'},
+		    {id:5602, name:'松浪优俊少女锦标赛', date: '4月后', type: 'GIII'},
         {id:5605, name:'天王奖(春)', date: '4月后', type: 'GI'},
         {id:5701, name:'京王杯春季杯', date: '5月前', type: 'GII'},
         {id:5702, name:'新潟大奖赛', date: '5月前', type: 'GIII'},
         {id:5709, name:'维多利亚英里杯', date: '5月前', type: 'GI'},
         {id:5801, name:'目黑記念', date: '5月后', type: 'GII'},
         {id:5802, name:'平安锦标赛', date: '5月后', type: 'GIII'},
-		{id:5901, name:'人鱼锦标赛', date: '6月前', type: 'GIII'},
+		    {id:5901, name:'人鱼锦标赛', date: '6月前', type: 'GIII'},
         {id:5904, name:'东京英里赛', date: '6月前', type: 'GI'},
         {id:5905, name:'鸣尾纪念', date: '6月前', type: 'GIII'},
-		{id:5906, name:'叶森杯', date: '6月前', type: 'GIII'},
+		    {id:5906, name:'叶森杯', date: '6月前', type: 'GIII'},
         {id:6006, name:'宝冢纪念', date: '6月后', type: 'GI'},
         {id:6007, name:'函館短途锦标赛', date: '6月后', type: 'GIII'},
         {id:6008, name:'帝王奖', date: '6月后', type: 'GI'},
-		{id:6101, name:'南河三锦标赛', date: '7月前', type: 'GIII'},
-		{id:6105, name:'中部广播奖', date: '7月前', type: 'GIII'},
-		{id:6106, name:'七夕奖', date: '7月前', type: 'GIII'},
-		{id:6107, name:'函馆纪念', date: '7月前', type: 'GIII'},
-		{id:6201, name:'皇后锦标赛', date: '7月后', type: 'GIII'},
-		{id:6203, name:'中京纪念', date: '7月后', type: 'GIII'},
-		{id:6204, name:'朱鹭夏季冲刺赛', date: '7月后', type: 'GIII'},
-		{id:6301, name:'榆木锦标赛', date: '8月前', type: 'GIII'},
-		{id:6306, name:'小仓纪念', date: '8月前', type: 'GIII'},
-		{id:6307, name:'关屋纪念', date: '8月前', type: 'GIII'},
-		{id:6405, name:'札幌纪念', date: '8月后', type: 'GII'},
-		{id:6406, name:'北九州纪念', date: '8月后', type: 'GIII'},
-		{id:6407, name:'科尼杯', date: '8月后', type: 'GIII'},
+        {id:6101, name:'南河三锦标赛', date: '7月前', type: 'GIII'},
+        {id:6105, name:'中部广播奖', date: '7月前', type: 'GIII'},
+        {id:6106, name:'七夕奖', date: '7月前', type: 'GIII'},
+        {id:6107, name:'函馆纪念', date: '7月前', type: 'GIII'},
+        {id:6201, name:'皇后锦标赛', date: '7月后', type: 'GIII'},
+        {id:6203, name:'中京纪念', date: '7月后', type: 'GIII'},
+        {id:6204, name:'朱鹭夏季冲刺赛', date: '7月后', type: 'GIII'},
+        {id:6301, name:'榆木锦标赛', date: '8月前', type: 'GIII'},
+        {id:6306, name:'小仓纪念', date: '8月前', type: 'GIII'},
+        {id:6307, name:'关屋纪念', date: '8月前', type: 'GIII'},
+        {id:6405, name:'札幌纪念', date: '8月后', type: 'GII'},
+        {id:6406, name:'北九州纪念', date: '8月后', type: 'GIII'},
+        {id:6407, name:'科尼杯', date: '8月后', type: 'GIII'},
         {id:6501, name:'人马锦标赛', date: '9月前', type: 'GII'},
         {id:6502, name:'新潟記念', date: '9月前', type: 'GIII'},
         {id:6503, name:'京成杯秋季让磅赛', date: '9月前', type: 'GIII'},
@@ -684,14 +655,14 @@ export default {
         {id:6601, name:'短途者锦标赛', date: '9月后', type: 'GI'},
         {id:6701, name:'每日王冠', date: '10月前', type: 'GII'},
         {id:6702, name:'京都大奖赛', date: '10月前', type: 'GII'},
-		{id:6703, name:'府中优俊少女锦标赛', date: '10月前', type: 'GII'},
+		    {id:6703, name:'府中优俊少女锦标赛', date: '10月前', type: 'GII'},
         {id:6801, name:'天鹅锦标赛', date: '10月后', type: 'GII'},
         {id:6802, name:'富士锦标赛', date: '10月后', type: 'GII'},
         {id:6807, name:'天王奖(秋)', date: '10月后', type: 'GI'},
         {id:6901, name:'白银杯', date: '11月前', type: 'GII'},
-		{id:6902, name:'都城锦标赛', date: '11月前', type: 'GIII'},
-		{id:6903, name:'武藏野锦标赛', date: '11月前', type: 'GIII'},
-		{id:6904, name:'松浪纪念', date: '11月前', type: 'GIII'},
+        {id:6902, name:'都城锦标赛', date: '11月前', type: 'GIII'},
+        {id:6903, name:'武藏野锦标赛', date: '11月前', type: 'GIII'},
+        {id:6904, name:'松浪纪念', date: '11月前', type: 'GIII'},
         {id:6906, name:'伊丽莎白女王杯', date: '11月前', type: 'GI'},
         {id:6907, name:'全国育成杯 女士经典赛', date: '11月前', type: 'GI'},
         {id:6908, name:'全国育成杯 短途赛', date: '11月前', type: 'GI'},
@@ -700,10 +671,10 @@ export default {
         {id:7007, name:'英里冠军赛', date: '11月后', type: 'GI'},
         {id:7008, name:'全国杯', date: '11月后', type: 'GI'},
         {id:7101, name:'长途锦标赛', date: '12月前', type: 'GII'},
-		{id:7102, name:'挑战杯', date: '12月前', type: 'GIII'},
+		    {id:7102, name:'挑战杯', date: '12月前', type: 'GIII'},
         {id:7103, name:'中日新闻杯', date: '12月前', type: 'GIII'},
-		{id:7104, name:'五车二锦标赛', date: '12月前', type: 'GIII'},
-		{id:7105, name:'绿松石锦标赛', date: '12月前', type: 'GIII'},
+        {id:7104, name:'五车二锦标赛', date: '12月前', type: 'GIII'},
+        {id:7105, name:'绿松石锦标赛', date: '12月前', type: 'GIII'},
         {id:7111, name:'全国冠军杯', date: '12月前', type: 'GI'},
         {id:7201, name:'阪神杯', date: '12月后', type: 'GII'},
         {id:7204, name:'中山大奖赛', date: '12月后', type: 'GI'},
@@ -714,8 +685,9 @@ export default {
           name: "默认",
           race_list: [],
           skill: "",
+          skill_priority_list:[],
           expect_attribute:[800, 800, 800, 400, 400],
-          follow_support_card: {id:1, name:'在耀眼景色的前方'},
+          follow_support_card: {id:10001, name:'在耀眼景色的前方', desc:'无声铃鹿'},
           follow_support_card_level: 50,
           clock_use_limit: 99,
           learn_skill_threshold: 9999,
@@ -728,8 +700,9 @@ export default {
           name: "小栗帽基础育成赛程",
           race_list: [1701, 2303, 2401, 5208, 5407, 5904],
           skill: "",
+          skill_priority_list:[],
           expect_attribute:[800, 650, 800, 300, 400],
-          follow_support_card: {id:16, name:'一颗安心糖'},
+          follow_support_card: {id:20004, name:'一颗安心糖', desc:'超级溪流'},
           follow_support_card_level: 50,
           clock_use_limit: 99,
           learn_skill_threshold: 9999,
@@ -741,8 +714,9 @@ export default {
           name: "大和赤骥基础育成赛程",
           race_list: [1701, 2303],
           skill: "",
+          skill_priority_list:[],
           expect_attribute:[800, 600, 600, 300, 400],
-          follow_support_card: {id:16, name:'一颗安心糖'},
+          follow_support_card: {id:20004, name:'一颗安心糖', desc:'超级溪流'},
           follow_support_card_level: 50,
           clock_use_limit: 99,
           learn_skill_threshold: 9999,
@@ -754,8 +728,9 @@ export default {
           name: "目白麦昆基础育成赛程",
           race_list: [2203, 2401],
           skill: "",
+          skill_priority_list:[],
           expect_attribute:[700, 700, 600, 350, 400],
-          follow_support_card: {id:16, name:'一颗安心糖'},
+          follow_support_card: {id:20004, name:'一颗安心糖', desc:'超级溪流'},
           follow_support_card_level: 50,
           clock_use_limit: 99,
           learn_skill_threshold: 9999,
@@ -767,8 +742,9 @@ export default {
           name:"历战小栗帽35战60w粉丝(需求觉醒3,借满破小海湾,种马速耐,支援卡带赛后加成高的)",
           race_list:[1601,1701,1902,2103,2302,2401,2701,2905,3103,3303,3404,3601,4102,4203,4408,4506,4607,4804,4902,5208,5407,5601,5709,5904,6006,6602,6701,6807,7007,7111,7204],
           skill:"大胃王",
+          skill_priority_list:[],
           expect_attribute:[700,500,700,350,350],
-          follow_support_card:{"id":16,"name":"一颗安心糖","desc":"耐小海湾"},
+          follow_support_card: {id:20004, name:'一颗安心糖', desc:'超级溪流'},
           follow_support_card_level:50,
           clock_use_limit:2,
           learn_skill_threshold:450,
@@ -792,7 +768,7 @@ export default {
           skill_priority_list:[],
           skill_blacklist: "",
           expect_attribute:[650, 800, 650, 400, 400],
-          follow_support_card: {id:1, name:'在耀眼景色的前方'},
+          follow_support_card: {id:10001, name:'在耀眼景色的前方', desc:'无声铃鹿'},
           follow_support_card_level: 50,
           clock_use_limit: 99,
           learn_skill_threshold: 9999,
@@ -869,7 +845,7 @@ export default {
         )
     },
     initSelect: function (){
-      this.selectedSupportCard = this.umausumeSupportCardList[0]
+      this.selectedSupportCard = {id:10001, name:'在耀眼景色的前方', desc:'无声铃鹿'}
       this.selectedUmamusumeTaskType = this.umamusumeTaskTypeList[0]
     },
     switchRaceList: function(){
@@ -1091,6 +1067,24 @@ export default {
     },
     closeSupportCardSelectModal: function() {
       this.showSupportCardSelectModal = false;
+    },
+    handleSupportCardConfirm(card) {
+      this.selectedSupportCard = card;
+      this.showSupportCardSelectModal = false;
+    },
+    renderSupportCardText(card) {
+      if (!card) return '';
+      let type = '';
+      if (card.id >= 10000 && card.id < 20000) type = '速';
+      else if (card.id >= 20000 && card.id < 30000) type = '耐';
+      else if (card.id >= 30000 && card.id < 40000) type = '力';
+      else if (card.id >= 40000 && card.id < 50000) type = '根';
+      else if (card.id >= 50000 && card.id < 60000) type = '智';
+      if (type) {
+        return `【${card.name}】${type}·${card.desc}`;
+      } else {
+        return `【${card.name}】${card.desc}`;
+      }
     },
   },
   watch:{
