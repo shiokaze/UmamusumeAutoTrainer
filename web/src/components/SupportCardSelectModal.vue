@@ -1,11 +1,11 @@
 <template>
   <div id="support-card-select-modal" class="modal fade" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h5>支援卡选择</h5>
         </div>
-        <div class="modal-body">
+        <div class="modal-body support-card-modal-body">
           <div class="form-group">
             <label for="supportCardSelect">选择支援卡</label>
             <select v-model="selectedCard" class="form-control" id="supportCardSelect">
@@ -14,8 +14,66 @@
               </option>
             </select>
           </div>
+          <div class="type-btn-row">
+            <button
+              v-for="type in supportCardTypes"
+              :key="type.name"
+              type="button"
+              class="type-btn"
+              :class="{ active: activeType === type.name }"
+              @click="setActiveType(type.name)"
+            >
+              <img :src="type.img" :alt="type.name" class="type-btn-img" />
+            </button>
+          </div>
+          <hr class="type-btn-divider"/>
+          <!-- 支援卡图片展示区域 -->
+          <div class="support-card-img-grid mt-3">
+            <div v-for="row in filteredCardImageRows" :key="row[0].id" class="img-row">
+              <div
+                v-for="card in row"
+                :key="card.id"
+                class="img-cell"
+                :style="{ flex: '0 0 12.5%' }"
+              >
+                <div class="img-content">
+                  <div class="card-img-wrapper">
+                    <img
+                      :src="getCardImgUrl(card.id)"
+                      :alt="card.name"
+                      class="support-card-img"
+                      :title="renderSupportCardText(card)"
+                      @error="handleImgError"
+                    />
+                    <!-- 左上角SSR图标 -->
+                    <img
+                      src="/src/assets/img/support_cards/rarity/SSR.png"
+                      class="card-ssr-icon"
+                      alt="SSR"
+                    />
+                    <!-- 右上角类型图标 -->
+                    <img
+                      :src="getTypeIcon(card.id)"
+                      class="card-type-icon"
+                      alt="type"
+                    />
+                  </div>
+                  <div class="support-card-label">
+                    {{ renderSupportCardTextEllipsis(card) }}
+                  </div>
+                </div>
+              </div>
+              <!-- 补齐空位，保证最后一行图片对齐 -->
+              <div
+                v-for="n in (8 - row.length)"
+                :key="'empty-'+n"
+                class="img-cell"
+                :style="{ flex: '0 0 12.5%' }"
+              ></div>
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer support-card-modal-footer">
           <span class="btn cancel-btn" @click="handleCancel">取消</span>
           <span class="btn auto-btn" style="margin-left:8px;" @click="handleConfirm">确认</span>
         </div>
@@ -111,7 +169,50 @@ export default {
         {id:50009, name:'倔强的集市', desc:'成田大进'},
         {id:50010, name:'饱含心意的纸杯蛋糕', desc:'西野花'},
       ],
-      selectedCard: null
+      selectedCard: null,
+      supportCardTypes: [
+        { name: 'speed', img: '/src/assets/img/support_cards/types/speed.png' },
+        { name: 'stamina', img: '/src/assets/img/support_cards/types/stamina.png' },
+        { name: 'power', img: '/src/assets/img/support_cards/types/power.png' },
+        { name: 'will', img: '/src/assets/img/support_cards/types/will.png' },
+        { name: 'intelligence', img: '/src/assets/img/support_cards/types/intelligence.png' }
+      ],
+      activeType: 'speed', // 默认速度
+    }
+  },
+  computed: {
+    filteredSupportCardList() {
+      // 根据activeType筛选支援卡
+      if (this.activeType === 'speed') {
+        return this.umamusumeSupportCardList.filter(card => card.id >= 10000 && card.id < 20000);
+      } else if (this.activeType === 'stamina') {
+        return this.umamusumeSupportCardList.filter(card => card.id >= 20000 && card.id < 30000);
+      } else if (this.activeType === 'power') {
+        return this.umamusumeSupportCardList.filter(card => card.id >= 30000 && card.id < 40000);
+      } else if (this.activeType === 'will') {
+        return this.umamusumeSupportCardList.filter(card => card.id >= 40000 && card.id < 50000);
+      } else if (this.activeType === 'intelligence') {
+        return this.umamusumeSupportCardList.filter(card => card.id >= 50000 && card.id < 60000);
+      }
+      return [];
+    },
+    filteredCardImageRows() {
+      // 每行8张图片
+      const cards = this.filteredSupportCardList;
+      const rows = [];
+      for (let i = 0; i < cards.length; i += 8) {
+        rows.push(cards.slice(i, i + 8));
+      }
+      return rows;
+    },
+    cardImageRows() {
+      // 每行8张图片
+      const cards = this.umamusumeSupportCardList;
+      const rows = [];
+      for (let i = 0; i < cards.length; i += 8) {
+        rows.push(cards.slice(i, i + 8));
+      }
+      return rows;
     }
   },
   watch: {
@@ -164,7 +265,93 @@ export default {
           }
         }
       }, 100);
-    }
+    },
+    getCardImgUrl(id) {
+      return `/src/assets/img/support_cards/cards/${id}.png`;
+    },
+    handleImgError(event) {
+      event.target.src = '/src/assets/img/support_cards/cards/default.png';
+    },
+    renderSupportCardText(card) {
+      if (!card) return '';
+      let type = '';
+      if (card.id >= 10000 && card.id < 20000) type = '速';
+      else if (card.id >= 20000 && card.id < 30000) type = '耐';
+      else if (card.id >= 30000 && card.id < 40000) type = '力';
+      else if (card.id >= 40000 && card.id < 50000) type = '根';
+      else if (card.id >= 50000 && card.id < 60000) type = '智';
+      if (type) {
+        return `【${card.name}】${type}·${card.desc}`;
+      } else {
+        return `【${card.name}】${card.desc}`;
+      }
+    },
+    renderSupportCardTextEllipsis(card) {
+      if (!card) return '';
+      const imgWidth = 115; // px, 扣去两边的括号
+      const name = card.name;
+      // 计算整体宽度
+      let totalWidth = 0;
+      let charWidth = [];
+      for (let i = 0; i < name.length; i++) {
+        const width = /[A-Za-z0-9]/.test(name[i]) ? 7 : 13;
+        totalWidth += width;
+        charWidth.push(width);
+      }
+      // 如果宽度足够，直接返回
+      if (totalWidth <= imgWidth) {
+        let type = '';
+        if (card.id >= 10000 && card.id < 20000) type = '速';
+        else if (card.id >= 20000 && card.id < 30000) type = '耐';
+        else if (card.id >= 30000 && card.id < 40000) type = '力';
+        else if (card.id >= 40000 && card.id < 50000) type = '根';
+        else if (card.id >= 50000 && card.id < 60000) type = '智';
+        if (type) {
+          return `${name}\n${type}·${card.desc}`;
+        } else {
+          return `${name}\n${card.desc}`;
+        }
+      }
+      // 需要省略
+      // 计算省略号宽度
+      const ellipsis = '...';
+      const ellipsisWidth = 3 * 3;
+      // 计算需要去掉多少字符
+      let left = Math.ceil(name.length/2)-1;
+      let right = name.length - left - 1;
+
+      while (totalWidth + ellipsisWidth > imgWidth){
+        totalWidth -= charWidth[left];
+        totalWidth -= charWidth[right];
+        left--;
+        right++;
+      }
+
+      const leftStr = name.slice(0, left + 1);
+      const rightStr = name.slice(right);
+      let type = '';
+      if (card.id >= 10000 && card.id < 20000) type = '速';
+      else if (card.id >= 20000 && card.id < 30000) type = '耐';
+      else if (card.id >= 30000 && card.id < 40000) type = '力';
+      else if (card.id >= 40000 && card.id < 50000) type = '根';
+      else if (card.id >= 50000 && card.id < 60000) type = '智';
+      if (type) {
+        return `${leftStr}${ellipsis}${rightStr}\n${type}·${card.desc}`;
+      } else {
+        return `${leftStr}${ellipsis}${rightStr}\n${card.desc}`;
+      }
+    },
+    setActiveType(type) {
+      this.activeType = type;
+    },
+    getTypeIcon(id) {
+      if (id >= 10000 && id < 20000) return '/src/assets/img/support_cards/types/speed.png';
+      if (id >= 20000 && id < 30000) return '/src/assets/img/support_cards/types/stamina.png';
+      if (id >= 30000 && id < 40000) return '/src/assets/img/support_cards/types/power.png';
+      if (id >= 40000 && id < 50000) return '/src/assets/img/support_cards/types/will.png';
+      if (id >= 50000 && id < 60000) return '/src/assets/img/support_cards/types/intelligence.png';
+      return '';
+    },
   },
   mounted() {
     $('#support-card-select-modal').on('hidden.bs.modal', () => {
@@ -197,5 +384,133 @@ export default {
 }
 #support-card-select-modal .modal-dialog {
   z-index: 1061;
+}
+.support-card-modal-body {
+  max-height: 600px;
+  overflow-y: auto;
+  /* 让footer固定时，body不被footer遮挡 */
+  padding-bottom: 80px;
+}
+.support-card-modal-footer {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  z-index: 2;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  /* 保证footer始终在底部 */
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.support-card-img-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+.img-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  margin-bottom: 0;
+}
+.img-cell {
+  flex: 0 0 12.5%; /* 一行8张图片 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  padding: 0 2px;
+}
+.img-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card-img-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.card-ssr-icon {
+  position: absolute;
+  top: 6px; /* 往下挪，避免超出图片边界 */
+  left: 10px;
+  width: 30px;   /* 保持原始比例，避免拉伸 */
+  height: 30px;  /* 保持原始比例，避免拉伸 */
+  z-index: 2;
+  pointer-events: none;
+}
+.card-type-icon {
+  position: absolute;
+  top: 4px; /* 往下挪，避免超出图片边界 */
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  z-index: 2;
+  pointer-events: none;
+}
+.support-card-label {
+  margin-top: 4px;
+  font-size: 0.84rem;
+  color: #333;
+  text-align: center;
+  word-break: break-all;
+  line-height: 1.2;
+  max-width: 120px; /* 与图片宽度保持一致 */
+  min-height: 1.2em;
+  white-space: pre-line;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+.support-card-img {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  background: #fafafa;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  display: block;
+}
+.type-btn-row {
+  display: flex;
+  justify-content: flex-start; /* 靠左对齐 */
+  align-items: center;
+  gap: 8px; /* 间距减小 */
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+.type-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.type-btn-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+.type-btn-divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0 0 12px 0;
+}
+.type-btn.active {
+  border: 2px solid #3485E3;
+  border-radius: 8px;
+  background: #f0f6ff;
 }
 </style>
