@@ -3,17 +3,9 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h5>支援卡选择</h5>
+          <h5>借用支援卡选择</h5>
         </div>
         <div class="modal-body support-card-modal-body">
-          <div class="form-group">
-            <label for="supportCardSelect">选择支援卡</label>
-            <select v-model="selectedCard" class="form-control" id="supportCardSelect">
-              <option v-for="card in umamusumeSupportCardList" :key="card.id" :value="card">
-                ({{card.desc}}) {{card.name}}
-              </option>
-            </select>
-          </div>
           <div class="type-btn-row">
             <button
               v-for="type in supportCardTypes"
@@ -37,7 +29,12 @@
                 :style="{ flex: '0 0 12.5%' }"
               >
                 <div class="img-content">
-                  <div class="card-img-wrapper">
+                  <div
+                    class="card-img-wrapper"
+                    :class="{ 'selected-card': selectedCard && selectedCard.id === card.id }"
+                    @click="selectCard(card)"
+                    style="cursor: pointer;"
+                  >
                     <img
                       :src="getCardImgUrl(card.id)"
                       :alt="card.name"
@@ -47,7 +44,7 @@
                     />
                     <!-- 左上角SSR图标 -->
                     <img
-                      src="/src/assets/img/support_cards/rarity/SSR.png"
+                      :src="getRarityIcon('SSR')"
                       class="card-ssr-icon"
                       alt="SSR"
                     />
@@ -171,11 +168,11 @@ export default {
       ],
       selectedCard: null,
       supportCardTypes: [
-        { name: 'speed', img: '/src/assets/img/support_cards/types/speed.png' },
-        { name: 'stamina', img: '/src/assets/img/support_cards/types/stamina.png' },
-        { name: 'power', img: '/src/assets/img/support_cards/types/power.png' },
-        { name: 'will', img: '/src/assets/img/support_cards/types/will.png' },
-        { name: 'intelligence', img: '/src/assets/img/support_cards/types/intelligence.png' }
+        { name: 'speed', img: new URL('../assets/img/support_cards/types/speed.png', import.meta.url).href },
+        { name: 'stamina', img: new URL('../assets/img/support_cards/types/stamina.png', import.meta.url).href },
+        { name: 'power', img: new URL('../assets/img/support_cards/types/power.png', import.meta.url).href },
+        { name: 'will', img: new URL('../assets/img/support_cards/types/will.png', import.meta.url).href },
+        { name: 'intelligence', img: new URL('../assets/img/support_cards/types/intelligence.png', import.meta.url).href }
       ],
       activeType: 'speed', // 默认速度
     }
@@ -267,10 +264,14 @@ export default {
       }, 100);
     },
     getCardImgUrl(id) {
-      return `/src/assets/img/support_cards/cards/${id}.png`;
+      return new URL(`../assets/img/support_cards/cards/${id}.png`, import.meta.url).href;
+    },
+    getRarityIcon(rarity){
+        // 现在只有SSR
+        return new URL('../assets/img/support_cards/rarity/SSR.png', import.meta.url).href;
     },
     handleImgError(event) {
-      event.target.src = '/src/assets/img/support_cards/cards/default.png';
+      event.target.src = new URL('../assets/img/support_cards/cards/default.png', import.meta.url).href;
     },
     renderSupportCardText(card) {
       if (!card) return '';
@@ -288,7 +289,7 @@ export default {
     },
     renderSupportCardTextEllipsis(card) {
       if (!card) return '';
-      const imgWidth = 115; // px, 扣去两边的括号
+      const imgWidth = 115; // px
       const name = card.name;
       // 计算整体宽度
       let totalWidth = 0;
@@ -345,12 +346,15 @@ export default {
       this.activeType = type;
     },
     getTypeIcon(id) {
-      if (id >= 10000 && id < 20000) return '/src/assets/img/support_cards/types/speed.png';
-      if (id >= 20000 && id < 30000) return '/src/assets/img/support_cards/types/stamina.png';
-      if (id >= 30000 && id < 40000) return '/src/assets/img/support_cards/types/power.png';
-      if (id >= 40000 && id < 50000) return '/src/assets/img/support_cards/types/will.png';
-      if (id >= 50000 && id < 60000) return '/src/assets/img/support_cards/types/intelligence.png';
+      if (id >= 10000 && id < 20000) return new URL('../assets/img/support_cards/types/speed.png', import.meta.url).href;
+      if (id >= 20000 && id < 30000) return new URL('../assets/img/support_cards/types/stamina.png', import.meta.url).href;
+      if (id >= 30000 && id < 40000) return new URL('../assets/img/support_cards/types/power.png', import.meta.url).href;
+      if (id >= 40000 && id < 50000) return new URL('../assets/img/support_cards/types/will.png', import.meta.url).href;
+      if (id >= 50000 && id < 60000) return new URL('../assets/img/support_cards/types/intelligence.png', import.meta.url).href;
       return '';
+    },
+    selectCard(card) {
+      this.selectedCard = card;
     },
   },
   mounted() {
@@ -373,9 +377,28 @@ export default {
   border-radius: 0.25rem;
   border: none;
   cursor: pointer;
+  min-width: 60px;
+  min-height: 30px;
+  font-weight: 500;
 }
 .cancel-btn:hover {
   background-color: #c82333 !important;
+  color: white !important;
+}
+.auto-btn {
+  background-color: #0faedf !important;
+  color: white !important;
+  padding: 0.4rem 0.8rem !important;
+  font-size: 1rem !important;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  min-width: 60px;
+  min-height: 30px;
+  font-weight: 500;
+}
+.auto-btn:hover {
+  background-color: #1ea7e1 !important;
   color: white !important;
 }
 /* 保证弹窗在遮罩层之上 */
@@ -433,12 +456,38 @@ export default {
   position: relative;
   display: inline-block;
 }
+.card-img-wrapper.selected-card {
+  box-shadow: none;
+  border-radius: 10px;
+}
+.card-img-wrapper.selected-card::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 101%; height: 98%;
+  background: rgba(0, 0, 0, 0.5); /* 半透明黑色蒙层 */
+  border-radius: 10px;
+  z-index: 3;
+  pointer-events: none;
+}
+.card-img-wrapper.selected-card::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 48px;
+  height: 36px;
+  background: url('/src/assets/img/support_cards/selected_check.svg') center center no-repeat;
+  background-size: contain;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  pointer-events: none;
+}
 .card-ssr-icon {
   position: absolute;
   top: 6px; /* 往下挪，避免超出图片边界 */
   left: 10px;
-  width: 30px;   /* 保持原始比例，避免拉伸 */
-  height: 30px;  /* 保持原始比例，避免拉伸 */
+  width: 30px;
+  height: 30px;
   z-index: 2;
   pointer-events: none;
 }
@@ -481,7 +530,7 @@ export default {
   display: flex;
   justify-content: flex-start; /* 靠左对齐 */
   align-items: center;
-  gap: 8px; /* 间距减小 */
+  gap: 8px;
   margin-top: 12px;
   margin-bottom: 8px;
 }

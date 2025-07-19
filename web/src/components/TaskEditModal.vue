@@ -818,7 +818,7 @@ export default {
   mounted() {
     this.initSelect()
     this.getPresets()
-    this.successToast = $('.toast').toast({})
+    this.successToast = $('#liveToast').toast({})
   },
   methods:{
     deleteBox(item,index){
@@ -1051,7 +1051,6 @@ export default {
       }
     },
     showWeightWarning() {
-      // 参考保存成功的通知实现
       let warnToast = document.getElementById('weightWarningToast');
       if (warnToast) {
         warnToast.classList.remove('hide');
