@@ -68,7 +68,8 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.cultivate_result = {}
     # 剧本相关设置
     td.scenario_config = ScenarioConfig(
-        aoharu_config=None if (attachment_data['aoharu_config'] is None) else AoharuConfig(attachment_data['aoharu_config']))
+        ura_config = None if (attachment_data['ura_config'] is None) else UraConfig(attachment_data['ura_config']),
+        aoharu_config = None if (attachment_data['aoharu_config'] is None) else AoharuConfig(attachment_data['aoharu_config']))
     # 限时: 富士奇石的表演秀
     td.fujikiseki_show_mode = attachment_data['fujikiseki_show_mode']
     td.fujikiseki_show_difficulty = attachment_data['fujikiseki_show_difficulty']

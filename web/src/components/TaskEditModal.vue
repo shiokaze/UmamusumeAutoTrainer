@@ -50,11 +50,19 @@
                 </div>
               </div>
             </div>
+            <!-- URA额外配置 -->
+            <div class="row" v-if="selectedScenario === 1">
+              <div class="col-4">
+                <div class="form-group">
+                  <span class="btn auto-btn ura-btn-bg" style="width: 100%; background-color:#6c757d;" v-on:click="openUraConfigModal">URA配置</span>
+                </div>
+              </div>
+            </div>
             <!-- 青春杯额外配置 -->
             <div class="row" v-if="selectedScenario === 2">
               <div class="col-4">
                 <div class="form-group">
-                  <span class="btn auto-btn" style="width: 100%; background-color:#6c757d;" v-on:click="openAoharuConfigModal">青春杯配置</span>
+                  <span class="btn auto-btn aoharu-btn-bg" style="width: 100%; background-color:#6c757d;" v-on:click="openAoharuConfigModal">青春杯配置</span>
                 </div>
               </div>
             </div>
@@ -404,6 +412,13 @@
         :aoharuTeamNameSelection="aoharuTeamNameSelection"
         @confirm="handleAoharuConfigConfirm"
       ></AoharuConfigModal>
+      <!-- URA配置弹窗 -->
+      <UraConfigModal
+        v-model:show="showUraConfigModal"
+        :skillEventWeight="skillEventWeight"
+        :resetSkillEventWeightList="resetSkillEventWeightList"
+        @confirm="handleUraConfigConfirm"
+      ></UraConfigModal>
       <!-- 支援卡选择弹窗 -->
       <SupportCardSelectModal
         v-model:show="showSupportCardSelectModal"
@@ -411,7 +426,7 @@
         @confirm="handleSupportCardConfirm"
       ></SupportCardSelectModal>
       <!-- 遮罩层，支持两种弹窗 -->
-      <div v-if="showAoharuConfigModal || showSupportCardSelectModal" class="modal-backdrop-overlay" @click.stop></div>
+      <div v-if="showAoharuConfigModal || showSupportCardSelectModal || showUraConfigModal" class="modal-backdrop-overlay" @click.stop></div>
       <!-- 通知 -->
       <div class="position-fixed" style="z-index: 5; right: 40%; width: 300px;">
         <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
@@ -435,6 +450,7 @@
 <script>
 import SkillIcon from './SkillIcon.vue';
 import AoharuConfigModal from './AoharuConfigModal.vue';
+import UraConfigModal from './UraConfigModal.vue';
 import SupportCardSelectModal from './SupportCardSelectModal.vue';
 
 export default {
@@ -442,6 +458,7 @@ export default {
   components: {
     SkillIcon,
     AoharuConfigModal,
+    UraConfigModal,
     SupportCardSelectModal
   },
   data:function () {
@@ -808,11 +825,16 @@ export default {
       extraWeight2: [0, 0, 0, 0, 0],
       extraWeight3: [0, 0, 0, 0, 0],
 
+      // URA配置
+      skillEventWeight: [0, 0, 0],
+      resetSkillEventWeightList: '',
+
       // 青春杯配置
       preliminaryRoundSelections: [2, 1, 1, 1],
       aoharuTeamNameSelection: 4,
       showAoharuConfigModal: false,
-      showSupportCardSelectModal: false,
+      showUraConfigModal: false,
+      showSupportCardSelectModal: false,      
     }
   },
   mounted() {
@@ -854,11 +876,22 @@ export default {
     switchAdvanceOption: function(){
       this.showAdvanceOption = !this.showAdvanceOption
     },
+    openUraConfigModal: function(){
+      this.showUraConfigModal = true;
+    },
+    closeUraConfigModal: function(){
+      this.showUraConfigModal = false;
+    },
     openAoharuConfigModal: function(){
       this.showAoharuConfigModal = true;
     },
     closeAoharuConfigModal: function(){
       this.showAoharuConfigModal = false;
+    },
+    handleUraConfigConfirm: function(data) {
+      this.skillEventWeight = [...data.skillEventWeight];
+      this.resetSkillEventWeightList = data.resetSkillEventWeightList;
+      this.showUraConfigModal = false;
     },
     handleAoharuConfigConfirm: function(data) {
       this.preliminaryRoundSelections = [...data.preliminaryRoundSelections];
@@ -879,6 +912,7 @@ export default {
       }
       console.log(learn_skill_list)
       var learn_skill_blacklist = this.skillLearnBlacklist ? this.skillLearnBlacklist.split(",").map(item => item.trim()) : []
+      var ura_reset_skill_event_weight_list = this.resetSkillEventWeightList ? this.resetSkillEventWeightList.split(",").map(item => item.trim()) : []
       let payload = {
         app_name: "umamusume",
         task_execute_mode: this.selectedExecuteMode,
@@ -901,6 +935,11 @@ export default {
           // 限时: 富士奇石的表演秀
           "fujikiseki_show_mode": this.fujikisekiShowMode,
           "fujikiseki_show_difficulty": this.fujikisekiShowDifficulty,
+          // URA配置
+          "ura_config": this.selectedScenario === 1 ? {
+            "skillEventWeight": [...this.skillEventWeight],
+            "resetSkillEventWeightList": ura_reset_skill_event_weight_list
+          } : null,
           // 青春杯配置
           "aoharu_config": this.selectedScenario === 2 ? {
             "preliminaryRoundSelections": [...this.preliminaryRoundSelections],
@@ -976,9 +1015,19 @@ export default {
       }
       
       // 读取青春杯配置（如果存在）
+      if ('ura_config' in this.presetsUse) {
+        this.skillEventWeight = [...this.presetsUse.ura_config.skillEventWeight];
+        this.resetSkillEventWeightList = this.presetsUse.ura_config.resetSkillEventWeightList;
+      } else {
+        this.skillEventWeight = [0, 0, 0];
+        this.resetSkillEventWeightList = '';
+      }
       if ('auharuhai_config' in this.presetsUse) {
         this.preliminaryRoundSelections = [...this.presetsUse.auharuhai_config.preliminaryRoundSelections];
         this.aoharuTeamNameSelection = this.presetsUse.auharuhai_config.aoharuTeamNameSelection;
+      } else {
+        this.preliminaryRoundSelections = [2, 1, 1, 1];
+        this.aoharuTeamNameSelection = 4;
       }
       
     },
@@ -1013,9 +1062,13 @@ export default {
           this.extraWeight3.map(v => Math.max(-1, Math.min(1, v)))
         ]
       }
-      
-      // 仅当选择青春杯剧本时，才保存青春杯配置
-      if (this.selectedScenario === 2) {
+      // 仅当剧本对应时, 添加URA或青春杯配置
+      if (this.selectedScenario === 1) {
+        preset.ura_config = {
+          skillEventWeight: [...this.skillEventWeight],
+          resetSkillEventWeightList: this.resetSkillEventWeightList
+        };
+      } else if (this.selectedScenario === 2) {
         preset.auharuhai_config = {
           preliminaryRoundSelections: [...this.preliminaryRoundSelections],
           aoharuTeamNameSelection: this.aoharuTeamNameSelection
@@ -1150,4 +1203,39 @@ export default {
   opacity: 0.6;
 }
 
+.aoharu-btn-bg {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/img/scenario/aoharu_btn_bg.png') center center no-repeat;
+  background-size: cover;
+  background-position: center -50px;
+  color: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+  padding: 0.5rem 1rem !important;
+  font-size: 1rem !important;
+  border-radius: 0.25rem;
+  width: 100%;
+  min-height: 40px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.ura-btn-bg {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/img/scenario/ura_btn_bg.png') center center no-repeat;
+  background-size: cover;
+  background-position: center -100px;
+  color: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+  padding: 0.5rem 1rem !important;
+  font-size: 1rem !important;
+  border-radius: 0.25rem;
+  width: 100%;
+  min-height: 40px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
 </style>

@@ -14,6 +14,7 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
     attribute_result = get_training_basic_attribute_score(ctx, ctx.cultivate_detail.turn_info,
                                                           ctx.cultivate_detail.expect_attribute)
     support_card_result = get_training_support_card_score(ctx)
+    support_card_event_result = get_support_card_event_score(ctx)
     training_level_result = get_training_level_score(ctx)
 
     attribute_result_max = np.max(attribute_result)
@@ -79,7 +80,8 @@ def get_operation(ctx: UmamusumeContext) -> TurnOperation | None:
     training_score = []
     for i in range(5):
         training_score.append(normalized_attribute_result[i] * attr_weight + normalized_support_card_result[i] *
-                              support_card_weight + normalized_training_level_result[i] * training_level_weight)
+                              support_card_weight + normalized_training_level_result[i] * training_level_weight + 
+                              support_card_event_result[i])
     # 将权重为-1的训练得分置为0    
     extra_weight = [0, 0, 0, 0, 0]
     date = ctx.cultivate_detail.turn_info.date
@@ -151,7 +153,7 @@ def get_training_level_score(ctx: UmamusumeContext):
     result = []
     for i in range(len(expect_attribute)):
         result.append(expect_attribute[i] / sum(expect_attribute) * total_score)
-    log.debug("每个训练设施的得分：" + str(result))
+    log.debug("每个训练设施的得分: " + str(result))
     return result
 
 
@@ -163,7 +165,26 @@ def get_training_support_card_score(ctx: UmamusumeContext) -> list[float]:
         for j in range(len(turn_info.training_info_list[i].support_card_info_list)):
             score += get_support_card_score(ctx, turn_info.training_info_list[i].support_card_info_list[j])
         result.append(score)
-    log.debug("每个训练的支援卡得分：" + str(result))
+    log.debug("每个训练的支援卡得分: " + str(result))
+    return result
+
+def get_support_card_event_score(ctx: UmamusumeContext) -> list[float]:
+    # 只对URA有效
+    if ctx.task.detail.scenario != ScenarioType.SCENARIO_TYPE_URA:
+        return [0, 0, 0, 0, 0]
+    turn_info = ctx.cultivate_detail.turn_info
+    result = []
+    for i in range (len(turn_info.training_info_list)):
+        has_event = False
+        for j in range(len(turn_info.training_info_list[i].support_card_info_list)):
+            if turn_info.training_info_list[i].support_card_info_list[j].has_event:
+                has_event = True
+                break
+        if has_event:
+            result.append(1*ctx.task.detail.scenario_config.ura_config.getSkillEventWeight(ctx.cultivate_detail.turn_info.date))
+        else:
+            result.append(0)
+    log.debug("每个训练的事件得分: " + str(result))
     return result
 
 

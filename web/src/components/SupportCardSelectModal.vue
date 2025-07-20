@@ -289,7 +289,7 @@ export default {
     },
     renderSupportCardTextEllipsis(card) {
       if (!card) return '';
-      const imgWidth = 115; // px
+      const imgWidth = 120; // px
       const name = card.name;
       // 计算整体宽度
       let totalWidth = 0;
@@ -507,7 +507,7 @@ export default {
   text-align: center;
   word-break: break-all;
   line-height: 1.2;
-  max-width: 120px; /* 与图片宽度保持一致 */
+  max-width: 125px; /* 与图片宽度保持一致 */
   min-height: 1.2em;
   white-space: pre-line;
   overflow: hidden;

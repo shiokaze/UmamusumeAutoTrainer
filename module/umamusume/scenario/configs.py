@@ -1,3 +1,29 @@
+class UraConfig:
+    skill_event_weight: list[int]
+    reset_skill_event_weight_list: list[str]
+
+    def __init__(self, config: dict):
+        if "skillEventWeight" not in config or "resetSkillEventWeightList" not in config:
+            raise ValueError("错误的配置: 必须配置 'skillEventWeight' 和 'resetSkillEventWeightList'")
+        self.skill_event_weight = config["skillEventWeight"]
+        self.reset_skill_event_weight_list = config["resetSkillEventWeightList"]
+    
+    def removeSkillFromList(self, skill: str):
+        if skill in self.reset_skill_event_weight_list:
+            self.reset_skill_event_weight_list.remove(skill)
+            # 如果技能列表空了, 重置权重
+            # 如果一开始列表就是空的, 这个分支就不会触发, 也不会重置权重
+            if len(self.reset_skill_event_weight_list) == 0:
+                self.skill_event_weight = [0, 0, 0]
+    
+    def getSkillEventWeight(self, date: int) -> int:
+        if date <= 24:
+            return self.skill_event_weight[0]
+        elif date <= 48:
+            return self.skill_event_weight[1]
+        else:
+            return self.skill_event_weight[2]
+
 class AoharuConfig:
 
     preliminary_round_selections: list[int]
@@ -17,8 +43,9 @@ class AoharuConfig:
     
 class ScenarioConfig:
     """ 所有场景的配置 """
-
+    ura_config: UraConfig = None
     aoharu_config: AoharuConfig = None
     
-    def __init__(self, aoharu_config: AoharuConfig = None):
+    def __init__(self, ura_config: UraConfig = None, aoharu_config: AoharuConfig = None):
+        self.ura_config = ura_config
         self.aoharu_config = aoharu_config

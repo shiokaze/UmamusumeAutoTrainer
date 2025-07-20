@@ -526,6 +526,12 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
                         if skill_list[k]["skill_name"] == skill_list[j]["subsequent_skill"]:
                             skill_list[k]["available"] = False
 
+    # 如果是URA, 标记已经学习的技能, 可能会用于重置启发事件权重
+    # 由于上面计算过技能pt，可以保证list里面的技能都会被学到
+    if ctx.task.detail.scenario == ScenarioType.SCENARIO_TYPE_URA:
+        for skill in target_skill_list:
+            ctx.task.detail.scenario_config.ura_config.removeSkillFromList(skill)
+
     # 向上移动至对齐
     ctx.ctrl.swipe(x1=23, y1=950, x2=23, y2=968, duration=100, name="")
     time.sleep(1)
