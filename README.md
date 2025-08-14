@@ -7,6 +7,10 @@
 1. 支持所有马娘自动完成育成剧本
 2. 自定义育成目标属性，跑法，额外赛程，学习技能，用于更轻松的刷三星因子和提高马娘继承相性 \
 
+⚠ 此项目目前只支持**国服/简体中文版**游戏, 不支持包括英文版在内的任何其它版本。
+
+⚠ This project currently only supports **Simplified Chinese version** of Umamusume game. We do not have any 
+plans to support other versions (including Global version) in the predictable future.
 
 ## 使用说明
 
