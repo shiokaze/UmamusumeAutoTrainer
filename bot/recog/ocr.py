@@ -1,4 +1,5 @@
 import cv2
+import re
 import paddleocr
 from difflib import SequenceMatcher
 import bot.base.log as logger
@@ -28,6 +29,10 @@ def ocr_line(img, lang="ch"):
             text += text_info[1][0]
     return text
 
+# 剔除所有符号, 只保留中文字符, 英文字符, 数字
+def extract_chinese_english_digits(text: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9\u4e00-\u9fff]", "", text)
+
 # ocr_digits 限制只识别数字，可以提升数字识别的准确度
 def ocr_digits(img):
     res = OCR_EN.ocr(img, cls=False)[0]
@@ -52,10 +57,12 @@ def find_text_pos(ocr_result, target):
     return result
 
 
-def find_similar_text(target_text, ref_text_list, threshold=0):
+def find_similar_text(target_text: str, ref_text_list: list[str], threshold=0):
+    # 去除所有空格, 并把英文字符转为小写
+    target_text = target_text.replace(" ", "").lower()
     result = ""
     for ref_text in ref_text_list:
-        s = SequenceMatcher(None, target_text, ref_text)
+        s = SequenceMatcher(None, target_text, ref_text.replace(" ", "").lower())
         if s.ratio() > threshold:
             result = ref_text
             threshold = s.ratio()

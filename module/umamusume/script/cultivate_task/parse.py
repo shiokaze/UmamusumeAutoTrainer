@@ -7,7 +7,7 @@ import time
 
 from bot.base.task import TaskStatus, EndTaskReason
 from bot.recog.image_matcher import image_match, compare_color_equal
-from bot.recog.ocr import ocr_line, find_similar_text
+from bot.recog.ocr import ocr_line, find_similar_text, extract_chinese_english_digits
 from module.umamusume.asset.race_data import RACE_LIST
 from module.umamusume.context import UmamusumeContext
 from module.umamusume.types import SupportCardInfo
@@ -367,7 +367,7 @@ def get_skill_list(img, skill: list[str], skill_blacklist: list[str]) -> list:
 
                 skill_name_img = skill_info_img[10: 47, 100: 445]
                 skill_cost_img = skill_info_img[69: 99, 525: 588]
-                text = ocr_line(skill_name_img)
+                text = extract_chinese_english_digits(ocr_line(skill_name_img))
                 cost = re.sub("\\D", "", ocr_line(skill_cost_img))
 
                 # 检查是不是金色技能

@@ -328,7 +328,7 @@
               <div class="form-group row">
                 <label class="col-sm-3" for="'skill-learn-' + item.id">❗ 学习优先级 {{ item.priority+1 }}</label>
                 <div class="col-sm-6">
-                  <textarea type="text"  v-model="item.skills" class="form-control" id="skill-learn-priority" placeholder="技能1名称,技能2名称,....(使用英文逗号)"></textarea>
+                  <textarea type="text" v-model="item.skills" class="form-control" id="skill-learn-priority" :placeholder="'技能1名称,技能2名称,....(使用英文逗号)\n技能名称可忽略符号, 空格和特殊字符'" ></textarea>
                 </div>
                 <div class="col-sm-3">
                   <span class="red-button auto-btn ml-2" v-on:click="deleteBox(item,index)">删除当前优先级</span>
@@ -1254,5 +1254,59 @@ export default {
   min-height: 40px;
   display: inline-block;
   transition: all 0.3s ease;
+}
+
+/* Tooltip 帮助样式 -- 悬浮鼠标后展示提示*/
+.tooltip-help {
+  display: inline-block;
+  margin-left: 8px;
+  position: relative;
+  cursor: default;
+  line-height: 1; /* 保持与文本对齐，避免图标垂直压缩 */
+  vertical-align: middle;
+}
+.tooltip-help-text {
+  visibility: hidden;
+  /* 使用自适应宽度但限制最大值，避免在窄屏上溢出 */
+  width: auto;
+  max-width: 720px;
+  display: block; /* 确保为块级元素以便 min-width 生效 */
+  min-width: 160px;
+  white-space: normal; /* 允许换行 */
+  word-break: normal;
+  overflow-wrap: break-word;
+  background-color: rgba(0,0,0,0.85);
+  color: #fff;
+  text-align: left;
+  border-radius: 4px;
+  padding: 8px;
+  position: absolute;
+  z-index: 2000;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-sizing: border-box;
+  line-height: 1.3; /* 改善可读性，避免文字重叠 */
+  /* 强制横向排版，覆盖可能的全局竖排规则 */
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  direction: ltr !important;
+  min-height: 1.2em;
+}
+.tooltip-help-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(0,0,0,0.85) transparent transparent transparent;
+}
+.tooltip-help:hover .tooltip-help-text,
+.tooltip-help:focus .tooltip-help-text {
+  visibility: visible;
 }
 </style>
