@@ -5,6 +5,7 @@ import threading
 import numpy as np
 
 from bot.base.task import TaskStatus, EndTaskReason
+from bot.engine.scheduler import scheduler
 from module.umamusume.asset.point import *
 from module.umamusume.types import TurnInfo
 from module.umamusume.script.cultivate_task.const import SKILL_LEARN_PRIORITY_LIST
@@ -28,6 +29,8 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
         ctx.cultivate_detail.turn_info.date = current_date
         log.debug("进入新回合，日期：" + str(current_date))
         ctx.cultivate_detail.reset_skill_learn()
+        # 进入新会合后降低技能学习冷却倒计时
+        ctx.cultivate_detail.learn_skill_cooldown = max(0, ctx.cultivate_detail.learn_skill_cooldown - 1)
 
     # 解析主界面
     if not ctx.cultivate_detail.turn_info.parse_main_menu_finish:
@@ -42,7 +45,11 @@ def script_cultivate_main_menu(ctx: UmamusumeContext):
 
     if (ctx.cultivate_detail.turn_info.uma_attribute.skill_point > ctx.cultivate_detail.learn_skill_threshold
             and not ctx.cultivate_detail.turn_info.turn_learn_skill_done):
-        if len(ctx.cultivate_detail.learn_skill_list) > 0 or not ctx.cultivate_detail.learn_skill_only_user_provided:
+        if (any(len(skill_list) for skill_list in ctx.cultivate_detail.learn_skill_list) \
+            or not ctx.cultivate_detail.learn_skill_only_user_provided) \
+            and ctx.cultivate_detail.learn_skill_cooldown == 0:
+            # 如果只允许学习用户的技能, 且技能列表为空,则不学习技能
+            # 如果冷却倒计时为0, 则可以学习技能 (无需判断是否育成结束)
             ctx.ctrl.click_by_point(CULTIVATE_SKILL_LEARN)
         else:
             ctx.cultivate_detail.learn_skill_done = True
@@ -452,6 +459,16 @@ def script_cultivate_finish(ctx: UmamusumeContext):
 
 
 def script_cultivate_learn_skill(ctx: UmamusumeContext):
+    # 如果指定育成结束后停留在学习技能页面:
+    if ctx.cultivate_detail.cultivate_finish and ctx.task.detail.stop_at_skill_learn:
+        ctx.task.end_task(TaskStatus.TASK_STATUS_SUCCESS, EndTaskReason.STOP_AT_SKILL_LEARN)
+        # 终止所有待处理任务
+        task_list = scheduler.get_task_list()
+        for task in task_list:
+            if task.task_status == TaskStatus.TASK_STATUS_PENDING:
+                task.end_task(TaskStatus.TASK_STATUS_FAILED, EndTaskReason.CANCELLED_DUE_TO_STOP_AT_SKILL_LEARN)
+        return
+
     if ctx.cultivate_detail.learn_skill_done:
         if ctx.cultivate_detail.learn_skill_selected:
             ctx.ctrl.click_by_point(CULTIVATE_LEARN_SKILL_CONFIRM)
@@ -461,13 +478,13 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
     learn_skill_list: list[list[str]]
     learn_skill_blacklist: list[str] = ctx.cultivate_detail.learn_skill_blacklist
     if ctx.cultivate_detail.cultivate_finish or not ctx.cultivate_detail.learn_skill_only_user_provided:
-        if len(ctx.cultivate_detail.learn_skill_list) == 0:
+        if not any(len(skill_list) for skill_list in ctx.cultivate_detail.learn_skill_list):
             learn_skill_list = SKILL_LEARN_PRIORITY_LIST
         else:
             #如果用户自定义了技能优先级，那么不再采用预设的优先级
             learn_skill_list = ctx.cultivate_detail.learn_skill_list
     else:
-        if len(ctx.cultivate_detail.learn_skill_list) == 0:
+        if not any(len(skill_list) for skill_list in ctx.cultivate_detail.learn_skill_list):
             ctx.ctrl.click_by_point(RETURN_TO_CULTIVATE_FINISH)
             ctx.cultivate_detail.learn_skill_done = True
             ctx.cultivate_detail.turn_info.turn_learn_skill_done = True
@@ -547,6 +564,10 @@ def script_cultivate_learn_skill(ctx: UmamusumeContext):
                 prioritylist.remove(skill['skill_name_raw'])
     #如果一个优先级全为空，则直接将其删除
     ctx.cultivate_detail.learn_skill_list = [x for x in ctx.cultivate_detail.learn_skill_list if x != []]
+
+    if len(target_skill_list) == 0:
+        # 如果什么技能都没学, 则至少冷却12回合后再检查
+        ctx.cultivate_detail.learn_skill_cooldown = 12
 
     # 点技能
     while True:

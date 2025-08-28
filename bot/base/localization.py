@@ -51,9 +51,9 @@ class LocalizationMap:
     RACE_TACTIC_TYPE_ESCAPE = '领跑'
 
     TASK_STATUS_INVALID = '任务无效'
-    TASK_STATUS_PENDING = '任务暂停'
-    TASK_STATUS_RUNNING = '任务运行'
-    TASK_STATUS_INTERRUPT = '任务被打断'
+    TASK_STATUS_PENDING = '任务等待中'
+    TASK_STATUS_RUNNING = '任务运行中'
+    TASK_STATUS_INTERRUPT = '任务被中断'
     TASK_STATUS_SUCCESS = '任务完成'
     TASK_STATUS_FAILED = '任务失败'
     TASK_STATUS_SCHEDULED = '任务定时'

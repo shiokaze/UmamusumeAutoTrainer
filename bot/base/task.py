@@ -29,7 +29,9 @@ class TaskStatus(Enum):
 
 class EndTaskReason(Enum):
     COMPLETE = "任务已完成"
+    STOP_AT_SKILL_LEARN = "任务完成并在学习技能页面停止"
     MANUAL_ABORTED = "任务被手动中止"
+    CANCELLED_DUE_TO_STOP_AT_SKILL_LEARN = "因其它任务等待学习技能而取消"
     SYSTEM_ERROR = "系统异常"
     SCENARIO_NOT_FOUND = "找不到育成剧本"
 

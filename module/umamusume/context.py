@@ -26,6 +26,7 @@ class CultivateContextDetail:
     learn_skill_threshold: int
     learn_skill_only_user_provided: bool
     learn_skill_before_race: bool
+    learn_skill_cooldown: int
     allow_recover_tp: bool
     parse_factor_done: bool
     extra_weight: list
@@ -44,6 +45,7 @@ class CultivateContextDetail:
         self.debut_race_win = False
         self.clock_use_limit = 0
         self.clock_used = 0
+        self.learn_skill_cooldown = 0
         self.allow_recover_tp = False
         self.parse_factor_done = False
         self.extra_weight = []

@@ -90,20 +90,20 @@
               <div class="col-8">
                 <div class="form-group">
                   <label for="race-select">⭐ 使用预设</label>
-                    <div class="form-inline">
-                      <select v-model="presetsUse" style="text-overflow: ellipsis;width: 40em;"  class="form-control" id="use_presets">
-                        <option v-for="set in cultivatePresets" :value="set">{{set.name}}</option>
-                      </select>
-                      <span class="btn auto-btn ml-2" v-on:click="applyPresetRace">应用</span>
-                    </div>
+                  <div style="display:flex; gap:8px; align-items:center;">
+                    <select v-model="presetsUse" class="form-control" id="use_presets" style="flex:1; min-width:0; text-overflow:ellipsis;">
+                      <option v-for="set in cultivatePresets" :value="set">{{set.name}}</option>
+                    </select>
+                    <span class="btn auto-btn" v-on:click="applyPresetRace">应用</span>
+                  </div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="presetNameEditInput">保存为预设</label>
-                  <div class="form-inline">
-                    <input v-model="presetNameEdit" type="text" class="form-control" id="presetNameEditInput" placeholder="预设名称">
-                    <span class="btn auto-btn ml-2" v-on:click="addPresets">保存</span>
+                  <div style="display:flex; gap:8px; align-items:center;">
+                    <input v-model="presetNameEdit" type="text" class="form-control" id="presetNameEditInput" placeholder="预设名称" style="flex:1; min-width:0;">
+                    <span class="btn auto-btn" v-on:click="addPresets">保存</span>
                   </div>
                 </div>
               </div>
@@ -383,6 +383,19 @@
                   <div class="form-group">
                     <label for="inputSkillLearnThresholdLimit">育成中pt超过此值后学习技能</label>
                     <input v-model="learnSkillThreshold" type="number" class="form-control" id="inputSkillLearnThresholdLimit" placeholder="">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-3">
+                  <div class="form-group">
+                    <label for="stopAtSkillLearnSelector">育成结束后停留在选择技能界面</label>
+                    <select v-model="stopAtSkillLearn" class="form-control" id="stopAtSkillLearnSelector">
+                      <option :value=true>是</option>
+                      <option :value=false>否</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -813,6 +826,7 @@ export default {
       skillLearnBlacklist:"",
       learnSkillOnlyUserProvided: false,
       learnSkillBeforeRace: false,
+      stopAtSkillLearn: false,
       selectedRaceTactic1: 4,
       selectedRaceTactic2: 4,
       selectedRaceTactic3: 4,
@@ -931,6 +945,7 @@ export default {
           "learn_skill_threshold": this.learnSkillThreshold,
           "allow_recover_tp": this.recoverTP,
           "learn_skill_only_user_provided": this.learnSkillOnlyUserProvided,
+          "stop_at_skill_learn": this.stopAtSkillLearn,
           "extra_weight": [this.extraWeight1, this.extraWeight2, this.extraWeight3],
           // 限时: 富士奇石的表演秀
           "fujikiseki_show_mode": this.fujikisekiShowMode,
@@ -972,6 +987,7 @@ export default {
       this.supportCardLevel = this.presetsUse.follow_support_card_level,
       this.clockUseLimit = this.presetsUse.clock_use_limit,
       this.learnSkillThreshold = this.presetsUse.learn_skill_threshold,
+      this.stopAtSkillLearn = this.presetsUse.stop_at_skill_learn || false,
       this.selectedRaceTactic1 = this.presetsUse.race_tactic_1,
       this.selectedRaceTactic2 = this.presetsUse.race_tactic_2,
       this.selectedRaceTactic3 = this.presetsUse.race_tactic_3,
@@ -1053,6 +1069,7 @@ export default {
         follow_support_card_level: this.supportCardLevel,
         clock_use_limit: this.clockUseLimit,
         learn_skill_threshold: this.learnSkillThreshold,
+        stop_at_skill_learn: this.stopAtSkillLearn,
         race_tactic_1: this.selectedRaceTactic1,
         race_tactic_2: this.selectedRaceTactic2,
         race_tactic_3: this.selectedRaceTactic3,
