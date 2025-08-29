@@ -42,10 +42,11 @@
               </div>
               <div class="col">
                 <div class="form-group">
-                  <label for="selectAutoRecoverTP">TP不足时自动恢复（仅使用药水）</label>
+                  <label for="selectAutoRecoverTP">回复TP</label>
                   <select v-model="recoverTP" class="form-control" id="selectAutoRecoverTP">
-                    <option :value=true>是</option>
-                    <option :value=false>否</option>
+                    <option :value="0">仅使用TP</option>
+                    <option :value="1">TP不足时使用体力药</option>
+                    <option :value="2">TP不足时使用体力药和钻石</option>
                   </select>
                 </div>
               </div>
@@ -832,7 +833,7 @@ export default {
       selectedRaceTactic3: 4,
       clockUseLimit: 99,
       learnSkillThreshold: 9999,
-      recoverTP: false,
+      recoverTP: 0, // 0=仅使用TP, 1=使用体力药, 2=体力药+钻石
       presetNameEdit: "",
       successToast: undefined,
       extraWeight1: [0, 0, 0, 0, 0],

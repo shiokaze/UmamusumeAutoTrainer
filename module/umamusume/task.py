@@ -17,7 +17,7 @@ class TaskDetail:
     learn_skill_threshold: int
     learn_skill_only_user_provided: bool
     stop_at_skill_learn: bool
-    allow_recover_tp: bool
+    allow_recover_tp: int # 0=仅使用TP(不自动恢复), 1=使用体力药, 2=体力药+钻石
     cultivate_progress_info: dict
     extra_weight: list
     # 剧本相关配置
@@ -29,6 +29,7 @@ class TaskDetail:
 
 class EndTaskReason(Enum):
     TP_NOT_ENOUGH = "训练值不足"
+    TP_DRINK_NOT_ENOUGH = "体力药不足"
     DIFFICULTY_LOCKED = "难度未解锁"
 
 
@@ -65,7 +66,7 @@ def build_task(task_execute_mode: TaskExecuteMode, task_type: int,
     td.learn_skill_threshold = attachment_data['learn_skill_threshold']
     td.learn_skill_only_user_provided = attachment_data['learn_skill_only_user_provided']
     td.stop_at_skill_learn = attachment_data['stop_at_skill_learn']
-    td.allow_recover_tp = attachment_data['allow_recover_tp']
+    td.allow_recover_tp = int(attachment_data['allow_recover_tp'])
     td.extra_weight = attachment_data['extra_weight']
     td.cultivate_result = {}
     # 剧本相关设置

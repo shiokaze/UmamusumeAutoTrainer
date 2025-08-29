@@ -34,6 +34,7 @@ class EndTaskReason(Enum):
     CANCELLED_DUE_TO_STOP_AT_SKILL_LEARN = "因其它任务等待学习技能而取消"
     SYSTEM_ERROR = "系统异常"
     SCENARIO_NOT_FOUND = "找不到育成剧本"
+    UMAMUSUME_HALL_FULL = "名人堂优俊少女已满"
 
 
 class Task(metaclass=ABCMeta):

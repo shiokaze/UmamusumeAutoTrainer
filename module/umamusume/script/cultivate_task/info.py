@@ -51,6 +51,8 @@ TITLE = [
     # 青春杯
     "自动编成",
     "对战确认",
+    # TODO: 重新修改编号方便添加新的title
+    "名人堂优俊少女上限",
 ]
 
 
@@ -139,16 +141,32 @@ def script_info(ctx: UmamusumeContext):
         if title_text == TITLE[25]:
             ctx.ctrl.click_by_point(ACTIVITY_STORY_UNLOCK_CONFIRM)
         if title_text == TITLE[26]:
-            if not ctx.cultivate_detail.allow_recover_tp:
+            if ctx.cultivate_detail.allow_recover_tp == 0: # 不允许用体力药或者钻石
                 ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, UEndTaskReason.TP_NOT_ENOUGH)
             else:
                 ctx.ctrl.click_by_point(TO_RECOVER_TP)
         if title_text == TITLE[27]:
-            if image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_1).find_match:
-                ctx.ctrl.click_by_point(USE_TP_DRINK)
-            elif image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_2).find_match:
+            # 到这里时, 一定已经允许恢复体力了
+            screen = ctx.ctrl.get_screen(to_gray=True)
+            if image_match(screen, REF_RECOVER_TP_1).find_match:
+                if image_match(screen, REF_TP_RECOVER_DRINK).find_match: # 如果还有tp饮料, 就直接喝饮料
+                    ctx.ctrl.click_by_point(USE_TP_DRINK)
+                else:
+                    # TODO: 没有考虑钻石也没了的情况
+                    if ctx.cultivate_detail.allow_recover_tp == 2: # 允许用钻石回复TP
+                        ctx.ctrl.click_by_point(USE_DIAMOND_RECOVER_TP)
+                    else: # 只允许用体力药
+                        # 直接结束任务
+                        ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, UEndTaskReason.TP_DRINK_NOT_ENOUGH)
+                    
+            elif image_match(screen, REF_RECOVER_TP_2).find_match:
                 ctx.ctrl.click_by_point(USE_TP_DRINK_CONFIRM)
-            elif image_match(ctx.ctrl.get_screen(to_gray=True), REF_RECOVER_TP_3).find_match:
+            elif image_match(screen, REF_RECOVER_TP_2_DIAMOND).find_match:
+                ctx.ctrl.click_by_point(USE_DIAMOND_RECOVER_TP_ADD)
+                time.sleep(2)
+                ctx.ctrl.click_by_point(USE_DIAMOND_RECOVER_CONFIRM)
+            elif image_match(screen, REF_RECOVER_TP_3).find_match or\
+                 image_match(screen, REF_RECOVER_TP_3_DIAMOND).find_match:
                 ctx.ctrl.click_by_point(USE_TP_DRINK_RESULT_CLOSE)
         if title_text == TITLE[28]:
             # 限时: 富士奇石的表演秀
@@ -190,5 +208,7 @@ def script_info(ctx: UmamusumeContext):
         if title_text == TITLE[32]:
             # 确认青春杯对手
             ctx.ctrl.click(520, 920, "确认对战")
+        if title_text == TITLE[33]:
+            ctx.task.end_task(TaskStatus.TASK_STATUS_FAILED, EndTaskReason.UMAMUSUME_HALL_FULL)
         time.sleep(1)
 
