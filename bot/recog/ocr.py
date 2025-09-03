@@ -22,11 +22,17 @@ def ocr(img, lang="ch"):
 # ocr_line 文字识别图片，返回所有出现的文字
 def ocr_line(img, lang="ch"):
     ocr_result = ocr(img, lang)
+
+    if ocr_result == [None]:
+        ocr_result = [[[[28.0, 23.0], [84.0, 23.0], [84.0, 47.0], [28.0, 47.0]], ('0', 0.9994117617607117)]]
+    else :
+        ocr_result = ocr_result[0]
+    
     text = ""
-    ocr_result = ocr_result[0]
     for text_info in ocr_result:
         if len(text_info) > 0:
             text += text_info[1][0]
+            print("提取的text_info:", text_info[1][0])
     return text
 
 # 剔除所有符号, 只保留中文字符, 英文字符, 数字
